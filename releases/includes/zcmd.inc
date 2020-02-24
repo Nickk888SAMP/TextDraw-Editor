@@ -86,9 +86,7 @@ public OnPlayerCommandText(playerid, cmdtext[])
     {
         return 1;
     }
-    new
-        pos,
-        funcname[MAX_FUNC_NAME];
+    new pos, funcname[MAX_FUNC_NAME];
     while (cmdtext[++pos] > ' ') 
 	{
 		funcname[pos-1] = tolower(cmdtext[pos]); 
