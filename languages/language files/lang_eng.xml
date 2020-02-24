@@ -68,7 +68,7 @@
 <tdfontinfo>~w~Font~n~~y~#1
 <tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
-<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~~n~ALT=Manual~n~SPACEBAR=End
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End
 <tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~~p~ALT=Manual~n~~p~SPACEBAR=End
 <tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End
 <tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
