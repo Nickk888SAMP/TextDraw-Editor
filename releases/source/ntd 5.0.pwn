@@ -828,7 +828,7 @@ new EditorAcceptKey;
 new EditorLanguage;
 new EditorVersion[10];
 new EditorLString[5000];
-new EditorString[300];
+new EditorString[400];
 new EditorLanguageFile[32];
 
 
@@ -3059,7 +3059,7 @@ stock bool:VariableExists(string[])
 
 stock IsValidString(string[])
 {
-	new un[][] = {" ", "!", "?", "=", "$", "§", "'", "´", "^", "°", "/", "*", "+", "~", ".", ","};
+	new un[][] = {" ", "!", "?", "=", "$", "Â§", "'", "Â´", "^", "Â°", "/", "*", "+", "~", ".", ","};
 	for(new i; i < sizeof un; i++)
 		if(strfind(string, un[i][0], true) != -1) return false;
 	return true;
