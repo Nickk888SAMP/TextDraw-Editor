@@ -5232,7 +5232,7 @@ stock LanguageLoad(languagefile[], langname[])
 					else if(mline[0] != -1 && mline[1] != -1)
 					{
 						strmid(macro, line, mline[0] + 1, mline[1]);
-						strmid(macrotext, line, mline[1] + 1, j - 2);
+						strmid(macrotext, line, mline[1] + 1, j - 1);
 						break;
 					}
 				}
