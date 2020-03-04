@@ -1,0 +1,351 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Turkish
+# Author: Spîke
+# Version: 1.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Bu komutu kullanma iznine sahip değilsin! RCON girişi yapmayı dene.
+<editordisabled>{FFFFFF}Editor exited.
+<editorinuse>{FFFFFF}Düzenleyici başka bir oyuncu tarafından kullanılmaya başlandı.
+<infodialogcaption>Bilgi
+<infoeditorleave>{FFFFFF}Düzenleyiciden çıkmak için {00FFFF}/NTD {FFFFFF}komutunu kullan.
+<infoeditorlocked>{FFFFFF}Script has been blocked! #n{FFFFFF}Check server LOGs for more informations!
+<infoeditorreset>{FFFFFF}Ayarlar onarıldı!
+<infoeditorkeyswiched>{FFFFFF}Tuşlar değiştirildi!
+<infoeditorfastselectdisabled>{FFFFFF}Hızlı Seçim: {FF0000}Kapalı
+<infoeditorfastselectenabled>{FFFFFF}Hızlı Seçim: {00FF00}Açık
+<infoeditortdvisibility>{FFFFFF}The display of TextDraws has been changed!
+<infoinvalidmodelid>{FFFFFF}Model ID doğru değil!
+<languagefilenotfound>{FFFFFF}Dil dosyası bulunamadı.
+<infoprojectexported>{FFFFFF}Proje başarıyla dışarıya aktarıldı. #n{FFFFFF}Proje şuraya aktarıldı
+<infoprojectexporterror>Dışa aktarılırken bir hata oluştu ...
+<infoparamnamechange>{FFFFFF}Değişken adı değiştirildi. #nYeni değişken adı: {F5D742}#1#n{FFFFFF} TextDraw metni: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Değişken adı zaten kullanılıyor!
+<infoparamnamechangecharserr>{FFFFFF}Değişken adları özel karakterler veya boşluklar içeremez!
+<infoparamnamechangeammerr>{FFFFFF}Değişken adı 35 karakteri aşamaz!
+<infomaxtextdrawsreached>{FFFFFF}Maksimum proje sayısına ulaşıldı!
+<infolanguagechanged>{FFFFFF}Dil değiştirildi.
+<fsenabled>{00FF00}ACIK{FFFFFF}
+<fsdisabled>{FF0000}KAPALI{FFFFFF}
+<tdvforme>{F5D742}SADECE BEN{FFFFFF}
+<tdvforall>{0080C0}HERKES{FFFFFF}
+<keysinverted>{FFFF00}DEGISTIRILDI{FFFFFF}
+<infoprojectlimit>{FFFFFF}Maksimum proje sayısına ulaştınız!
+<infoprojectinvalidname>{FFFFFF} Girdiğiniz metin çok kısa, çok uzun veya hatalı karakterler içeriyor!
+<infoprojectexists>{FFFFFF}Bu proje zaten var!
+<infoprojectcreated>{FFFFFF}Proje "{F5D742}#1{FFFFFF}" oluşturuldu!
+<infoprojectclosed>{FFFFFF}Proje kayıt edildi ve kapatıldı.
+<infoprojectsaveerror>{FFFFFF}Proje kayıt edilirken bir hata oluştu.
+<infoprojectloaded>{FFFFFF}Proje "{F5D742}#1{FFFFFF}" yüklendi!
+<previewmodelidinvalid>{FFFFFF}Model ID yanlış!
+<projectrenamed>{FFFFFF}Proje ismi başarıyla değiştirildi. #n{FFFFFFEski proje ismi:{F5D742}"#1"#n{FFFFFF}Yeni proje ismi: {F5D742}"#2"
+<projectnamechangecharerr>{FFFFFF}Girdiğiniz metin çok kısa, çok uzun veya hatalı karakterler içeriyor!
+<projectnameexists>{FFFFFF}Bu proje zaten var!
+<projectnamechangeerror>{FFFFFF}Proje yeniden adlandırılırken bir hata oluştu.
+<projectloaderror>{FFFFFF}Proje yüklenirken bir hata oluştu.
+<projectdeleteerror>{FFFFFF}Proje silinirken bir hata oluştu.
+<projectdeleted>{FFFFFF}Proje "{00FF00}#1{FFFFFF}" silindi.
+<modelpreviewinvalidfont>{FFFFFF}Bu seçeneği kullanmak için fontu 5 yapın!
+<noprojectsfound>{FFFFFF}Şu anda hiç projeniz yok.
+<modeltexterror>{FFFFFF}Ön izlemeli model metni değiştirilemiyor
+<infocompmodedisabled>{FFFFFF}Kompakt mod: {FF0000}Kapalı
+<infocompmodeenabled>{FFFFFF}Kompakt mod: {00FF00}Açık
+<compmodeenabled>{00FF00}Açık{FFFFFF}
+<compmodedisabled>{FF0000}Kapalı{FFFFFF}
+<manualchangemessage>{FFFFFF}{F5D742}#1#n{FFFFFF} için yeni değer gir! Şimdiki değer: {F5D742}#2
+<manualchangetypemzoom>Yakınlaştır
+<manualchangetypemcolor1>Renk 1
+<manualchangetypemcolor2>Renk 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~KLONLANAN_ID~r~#1
+<tddeletedinfo>~r~SILINEN_ID#1
+<tdcreatedinfo>~g~YENI_TEXTDRAW_OLUSTURULDU~r~#1
+<tdselectedinfo>~g~SECILEN_ID~r~#1
+<tdfontspriteinfo>~w~Font~n~~g~4/TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~5/Ön izlemeli model
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Opaklık:~y~#1~n~~p~SHIFT=Hızlı~n~SPACEBAR=Bitir
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Hızlı~n~SPACEBAR=Bitir
+<tdprevmodelcolor>~w~Renk 1:~y~#1 ~w~Renk 2:~y~#2 ~n~~p~SHIFT=Renk 2~n~~n~ALT=Manuel~n~SPACEBAR=Bitir
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Hızlı~n~~p~ALT=Manuel~n~~p~SPACEBAR=Bitir
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Değer Y~n~ALT=Manuel~n~SPACEBAR=Bitir
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Hızlı~n~ALT=Manuel~n~SPACEBAR=Bitir
+<tdpremodelzoom>~w~Yakınlaştırma:~y~#1~n~~p~SHIFT=Hızlı~n~ALT=Manuel~n~SPACEBAR=Bitir
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=Bitir
+<tdlayer>~w~Katman: ~y~#1~n~~p~SPACEBAR=Bitir
+<tdpublic>~g~Genel
+<tdperplayer>~b~Oyuncu için
+<tdclickable>~w~Tıklanabilir: ~g~Evet
+<tdHayırtclickable>~w~Tıklanabilir: ~r~Hayır
+<tdshadowsize>~w~Gölge Boyutu~n~~y~#1
+<tdboxenabled>~w~Kutu: ~g~Açık
+<tdboxdisabled>~w~Kutu: ~r~Kapalı
+<tdoutlinesize>~w~Dış Çizgi Boyutu~n~~y~#1
+<tdproportionality_true>~g~Orantılı
+<tdproportionality_false>~r~Orantısız
+<tdalignment_left>~w~Hizalama~n~~y~Sol
+<tdalignment_center>~w~Hizalama~n~~g~Merkez
+<tdalignment_right>~w~Hizalama~n~~r~Sağ
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Düzenleyici ayarları
+	<info0>{FFFFFF}Düzenleyicinin pozisyonunu değiştir
+	<info1>{FFFFFF}Vurgu rengini değiştir
+	<info2>{FFFFFF}Butonların rengini değiştir
+	<info3>{FFFFFF}SPACEBAR ile SHIFT tuşlarını değiştir #1
+	<info4>{FFFFFF}Hızlı Seçim [#2]
+	<info5>{FFFFFF}TextDraw Görüntüle: [#3]
+	<info6>{FFFFFF}Kompakt mod: [#4]
+	<info7>{FFFFFF}Dil değiştir
+	<info8>{FF0000}Ayarları varsayılana sıfırla
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Sprite değiştir
+	<info0>{FFFFFF}Kütüphane ve sprite ismini gir
+	<info1>{FFFFFF}Örnek: {FF8040}hud:radar_impound
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Vurgu rengini değiştir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Butonların rengini değiştir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Yeni sürüm tespit edildi
+	<info0>{FFFFFF}Komut dosyası sürümü yapılandırma dosyası sürümünden farklı.
+	<info1>{FFFFFF}Komut dosyasının düzgün çalışabilmesi için ayarları geri yüklemek ister misiniz?
+	<button1>Evet
+	<button2>Hayır
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Varsayılan ayarları geri yükleme
+	<info0>{FFFFFF}Varsayılan ayarları geri yüklemek istediğine emin misin?
+	<button1>Evet
+	<button2>Hayır
+</dialog>
+
+<dialog name="newproject">
+	<caption>Yeni proje
+	<info0>{FFFFFF}Yeni projenin adını gir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>TextDrawlarım (#1/#2)
+	<info0>{FFFFFF}ID/Yazı#t{FFFFFF}Değişken ismi
+	<info1>{FF8800}Yeni TextDraw oluştur#t#n
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Projelerim (#1/#2)
+	<info0>{FF8800}İsim#t{FF8800}TextDraw Miktarı#t{FF8800}Son düzenleme#n
+	<button1>Seç
+	<button2>Geri
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Dışa aktar...
+	<info0>{FF8800}Normal dışa aktarım
+	<info1>{FF8800}Tamamlanmış dışa aktarım
+	<button1>Dışa aktar
+	<button2>Geri
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Yeni TextDraw
+	<info0>{FF8800}Normal
+	<info1>{FF8800}Şablon kullan
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Çık
+	<info0>{FFFFFF}Düzenleyiciden çıkmak istediğinden emin misin?
+	<info1>{FFFFFF}Açık proje otomatik olarak kayıt edilecektir.
+	<button1>Evet
+	<button2>Hayır
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Değiştir
+	<info1>{FF8800}Klonla
+	<info2>{FF8800}Katmanı değiştir
+	<info3>{FF8800}Değişken ismi değiştir
+	<info4>{FF0000}Sil
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Proje
+	<info0>{FFFFFF}Yükle
+	<info1>{FFFFFF}İsim Değiştir
+	<info2>{FFFFFF}Yedek Oluştur
+	<info3>{FF0000}Sil
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Ön İzlemeli Model
+	<info0>{FFFFFF}Karakter modeli, araba modeli veya obje modeli gir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Değişken ismi değiştir
+	<info0>{FFFFFF}Yeni değişken ismi gir
+	<info1>{FFFFFF}Özel adı silmek için boş bırakın
+	<info2>{FFFFFF}Şimdiki değişken ismi: {F5D742}#1
+	<info3>{FFFFFF}TextDraw Yazısı: {F5D742}#2
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Renk değiştir
+	<info0>{FFFFFF}Bu formatlarda bir renk girin:#n
+	<info1>{FFFFFF}RGBA Örneği: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}HEX/HTML Örneği: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Şimdiki RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Şimdiki HEX/HTML: {F5D742}#5
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Siliniyor
+	<info0>{FFFFFF}Bu TextDrawı silmek istediğine emin misin?
+	<info1>{FFFFFF}Yazı: {F5D742}"#1"
+	<button1>Evet
+	<button2>Hayır
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Şablon kullan
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Renk değiştir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="textchange">
+	<caption>Yazı değiştir
+	<info0>{FFFFFF}Ayarlamak için yazıyı gir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Sprite değiştir
+	<info0>{FF8800}Manuel gir
+	<info1>{FF8800}Kütüphaneden seç
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Boyut değiştir
+	<info0>{FF8800}Yazı/Kutu (Boyut)
+	<info1>{FF8800}Kutu (Genişlik)
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Ön izlemeli model
+	<info0>{FF8800}Model ID değiştir
+	<info1>{FF8800}Döndür
+	<info2>{FF8800}Büyült / Küçült
+	<info3>{FF8800}Araba modelinin rengini değiştir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Siliniyor
+	<info0>{FFFFFF}Bu projeyi silmek istediğine emin misin?
+	<button1>EVET
+	<button2>HAYIR
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Proje ismini değiştir
+	<info0>{FFFFFF}Projenin yeni ismini gir.
+	<info1>{FFFFFF}Şimdiki isim: {F5D742}"#1"
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Renk değiştir
+	<info0>{FF8800}Yazı rengi
+	<info1>{FF8800}Arkaplan / kenar rengi
+	<info2>{FF8800}Kutu color
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Renk değiştir
+	<info0>{FF8800}Hazır renkler
+	<info1>{FF8800}Özel
+	<info2>{FF8800}Opaklığı değiştir
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Proje dışa aktarma
+	<info0>{FFFFFF}Bu projeyi dizi modu etkinken dışa aktarmak ister misiniz?
+	<info1>{FFFFFF}Kod değişkenini azaltmak için diziye varsayılan değişken adıyla metin çekimleri eklenir.
+	<button1>Evet
+	<button2>Hayır
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Manuel değer değişimi
+	<info0>{FFFFFF}Değişken#t{FFFFFF}Şimdiki Değer
+	<info1>{FFFFFF}Değer {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Değer {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Değer {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Değer {F5D742}Yakınlaştırma#t{FFFFFF}#4
+	<info5>{FFFFFF}Değer {F5D742}Renk 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Değer {F5D742}Renk 2#t{FFFFFF}#6
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+
+
+
+
+
+
