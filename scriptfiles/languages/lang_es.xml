@@ -39,7 +39,7 @@
 <infoprojectsaveerror>{FFFFFF}Se ha producido un error al guardar el proyecto.
 <infoprojectloaded>{FFFFFF}!El proyecto "{F5D742}#1{FFFFFF}" ha sido cargado con éxito!
 <previewmodelidinvalid>{FFFFFF}!El ID del modelo es incorrecto!
-<projectrenamed>{FFFFFF}El nombre del proyecto ha sido cambiado con éxito. #n{FFFFFF}Nombre del proyecto antiguo:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Nombre del proyecto nuevo: "{F5D742}#2{FFFF}"
+<projectrenamed>{FFFFFF}El nombre del proyecto ha sido cambiado con éxito. #n{FFFFFF}Nombre del proyecto antiguo:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Nombre del proyecto nuevo: "{F5D742}#2{FFFFFF}"
 <projectnamechangecharerr>{FFFFFF}El nombre es demasiado corto, demasiado largo o tiene caracteres inválidos.
 <projectnameexists>{FFFFFF}!El nombre del proyecto ya existe!
 <projectnamechangeerror>{FFFFFF}Se ha producido un error al renombrar el proyecto.
@@ -228,7 +228,7 @@
 	<caption>Cambiar de color
 	<info0>{FFFFFF}Proveer el color en los formatos:#n
 	<info1>{FFFFFF}Ejemplo de RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
-	<info2>{FFFFFF}Ejemplo de HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFF}FF#n
+	<info2>{FFFFFF}Ejemplo de HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
 	<info3>{FFFFFF}Actual RGBA: {F5D742}#1 #2 #3 #4
 	<info4>{FFFFFF}Actual HEX/HTML: {F5D742}#5
 	<button1>Confirmar
@@ -332,7 +332,7 @@
 <dialog name="manualvarchange">
 	<caption>Cambio manual de valor
 	<info0>{FFFFFF}Variable#t{FFFFFF}Valor actual
-	<info1>{FFFFFF}Valor {F5D742}X#t{FFFF}#1
+	<info1>{FFFFFF}Valor {F5D742}X#t{FFFFFF}#1
 	<info2>{FFFFFF}Valor {F5D742}Y#t{FFFFFF}#2
 	<info3>{FFFFFF}Valor {F5D742}Z#t{FFFFFF}#3
 	<info4>{FFFFFF}Valor {F5D742}Zoom#t{FFFFFF}#4
