@@ -1,6 +1,6 @@
 /********************************************************************
 *	Nickk's TextDraw editor											*
-*	Release: 5.0												*
+*	Release: 5.1												*
 *	All right reserved! C By: Nickk888								*
 *																	*
 *	Credits:														*
@@ -31,14 +31,14 @@
 #endif
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v5.0"
-#define SCRIPT_VERSION_CHECK 			"5.0"
+#define SCRIPT_VERSION 					"v5.1"
+#define SCRIPT_VERSION_CHECK 			"5.1"
 #define TD_PICKER_TEXT					"S"
 // Limits
 #define MAX_TEMPLATES					50
 #define MAX_PROJECTS 					50
 #define MAX_TDS							500
-#define MAX_LANGUAGES					10
+#define MAX_LANGUAGES					20
 #define MAX_SPRITES 					100
 #define MAX_LANGUAGE_DIALOGS			40
 #define MAX_DIALOG_INFO					10
@@ -828,7 +828,7 @@ new EditorAcceptKey;
 new EditorLanguage;
 new EditorVersion[10];
 new EditorLString[5000];
-new EditorString[400];
+new EditorString[500];
 new EditorLanguageFile[32];
 
 
@@ -911,7 +911,7 @@ public OnPlayerDeath(playerid, killerid)
 	return 1;
 }
 
-public OnPlayerDisconnect(playerid)
+public OnPlayerDisconnect(playerid, reason)
 {
 	if(ScriptScriptActive && NTD_User[User_InEditor])
 			if(NTD_User[User_PlayerIDInEditor] == playerid)
@@ -969,9 +969,9 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 				case CH_POSITION, CH_SIZE, CH_MODEL_ROTATION, CH_MODEL_ZOOM, CH_MODEL_COLOR:
 				{
 					if(playerid == NTD_User[User_PlayerIDInEditor])
-				{
-					ShowManualVarChangeDialog(playerid);
-				}
+					{
+						ShowManualVarChangeDialog(playerid);
+					}
 				}
 			}
 		}
