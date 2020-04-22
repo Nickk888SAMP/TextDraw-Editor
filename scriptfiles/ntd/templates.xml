@@ -1,0 +1,143 @@
+<template name = "Zwyk³y Box" lang = "lang_pl.xml">
+<template name = "Simple Box" lang = "lang_eng.xml">
+<template name = "Einfache Box" lang = "lang_de.xml">
+<template name = "Box Simpel" lang = "lang_id.xml">
+<template name = "Basit Kutu" lang = "lang_tur.xml">
+<template name = "Box Don Gian" lang = "lang_vn.xml">
+<template name = "Box simple" lang = "lang_es.xml">
+<template name = "Eenvoudige doos" lang = "lang_nl.xml">
+<templatedata>_ 295.000000 169.000000 1 1 1 0 0.600000 10.300003 -1 255 135 1 298.500000 75.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 135
+</template>
+
+<template name = "Zegarek" lang = "lang_pl.xml">
+<template name = "Clock" lang = "lang_eng.xml">
+<template name = "Uhr" lang = "lang_de.xml">
+<template name = "Jam" lang = "lang_id.xml">
+<template name = "Saat" lang = "lang_tur.xml">
+<template name = "Dong Ho" lang = "lang_vn.xml">
+<template name = "Relog" lang = "lang_es.xml">
+<template name = "Klok" lang = "lang_nl.xml">
+<templatedata>00:00 577.000000 20.000000 3 1 2 0 0.554166 2.449999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Data" lang = "lang_pl.xml">
+<template name = "Date" lang = "lang_eng.xml">
+<template name = "Datum" lang = "lang_de.xml">
+<template name = "Tanggal" lang = "lang_id.xml">
+<template name = "Tarih" lang = "lang_tur.xml">
+<template name = "Ngay" lang = "lang_vn.xml">
+<template name = "Fecha" lang = "lang_es.xml">
+<template name = "Datum" lang = "lang_nl.xml">
+<templatedata>00.00.0000 577.000000 8.000000 3 1 2 0 0.266666 1.299999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Niestandardowy licznik pieniêdzy" lang = "lang_pl.xml">
+<template name = "Custom money counter" lang = "lang_eng.xml">
+<template name = "Benutzerdefinierter Geldzähler" lang = "lang_de.xml">
+<template name = "Penghitung kustom uang" lang = "lang_id.xml">
+<template name = "Para Sayaci" lang = "lang_tur.xml">
+<template name = "Bo dem tien tuy chinh" lang = "lang_vn.xml">
+<template name = "Contador de dinero personalizado" lang = "lang_es.xml">
+<template name = "Aangepaste geldteller" lang = "lang_nl.xml">
+<templatedata>$00000000 496.000000 76.000000 3 0 2 0 0.579166 2.399999 1097458175 255 50 0 400.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Licznik pojazdu" lang = "lang_pl.xml">
+<template name = "Speedometer" lang = "lang_eng.xml">
+<template name = "Fahrzeugtacho" lang = "lang_de.xml">
+<template name = "Speedometer" lang = "lang_id.xml">
+<template name = "Hiz Göstergesi" lang = "lang_tur.xml">
+<template name = "Dong ho toc do" lang = "lang_vn.xml">
+<template name = "Velocímetro" lang = "lang_es.xml">
+<template name = "Snelheidsmeter" lang = "lang_nl.xml">
+<templatedata>~y~NAME:_~g~INFERNUS~n~~y~SPEED:_~b~100KM/h~n~~y~HEALTH:_~r~100~n~~y~FUEL:_~w~64L 480.000000 316.000000 2 0 1 0 0.229166 1.950000 -1 255 100 1 604.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 100
+</template>
+
+<template name = "Procentualna kamizelka" lang = "lang_pl.xml">
+<template name = "Percent Armour" lang = "lang_eng.xml">
+<template name = "Schutzweste in prozent" lang = "lang_de.xml">
+<template name = "Persen Armour" lang = "lang_id.xml">
+<template name = "Yüzdeli Zirh" lang = "lang_tur.xml">
+<template name = "Phan tram giap" lang = "lang_vn.xml">
+<template name = "Porcentaje de armadura" lang = "lang_es.xml">
+<template name = "Procent Armor" lang = "lang_nl.xml">
+<templatedata>100% 578.000000 44.000000 2 0 1 0 0.241666 0.900000 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Procentualne ¿ycie" lang = "lang_pl.xml">
+<template name = "Percent Health" lang = "lang_eng.xml">
+<template name = "Gesundheit in prozent" lang = "lang_de.xml">
+<template name = "Persen Darah" lang = "lang_id.xml">
+<template name = "Yüzdeli Can" lang = "lang_tur.xml">
+<template name = "Phan tram mau" lang = "lang_vn.xml">
+<template name = "Porcentaje de vida" lang = "lang_es.xml">
+<template name = "Percentage gezondheid" lang = "lang_nl.xml">
+<templatedata>100% 578.000000 66.000000 2 0 1 0 0.241666 0.899999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Miejscowoœæ (Zones.inc)" lang = "lang_pl.xml">
+<template name = "Zones (Zones.inc)" lang = "lang_eng.xml">
+<template name = "Zonen (Zones.inc)" lang = "lang_de.xml">
+<template name = "Zona (Zones.inc)" lang = "lang_id.xml">
+<template name = "Bölgeler" lang = "lang_tur.xml">
+<template name = "Khu vuc (Zones.inc)" lang = "lang_vn.xml">
+<template name = "Zonas (Zones.inc)" lang = "lang_es.xml">
+<template name = "Zones (Zones.inc)" lang = "lang_nl.xml">
+<templatedata>ZONE_NAME 89.000000 322.000000 3 0 1 0 0.233333 1.450000 -293409025 255 30 1 400.000000 129.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 30
+</template>
+
+<template name = "Podgl¹d modeli" lang = "lang_pl.xml">
+<template name = "Preview model" lang = "lang_eng.xml">
+<template name = "Vorschau modell" lang = "lang_de.xml">
+<template name = "Model preview" lang = "lang_id.xml">
+<template name = "Ön izlemeli model" lang = "lang_tur.xml">
+<template name = "Xem truoc model" lang = "lang_vn.xml">
+<template name = "Preview model" lang = "lang_es.xml">
+<template name = "Modelvoorbeeld" lang = "lang_nl.xml">
+<templatedata>Preview_Model 250.000000 150.000000 5 1 0 0 0.600000 2.000000 -1 125 255 0 112.500000 150.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 125 255
+</template>
+
+<template name = "Klikalny przycisk" lang = "lang_pl.xml">
+<template name = "Selectable button" lang = "lang_eng.xml">
+<template name = "Auswählbare Schaltfläche" lang = "lang_de.xml">
+<template name = "Tombol Selectable" lang = "lang_id.xml">
+<template name = "Seçilebilir buton" lang = "lang_tur.xml">
+<template name = "Button co the lua chon" lang = "lang_vn.xml">
+<template name = "Botón seleccionable" lang = "lang_es.xml">
+<template name = "Selecteerbare knop" lang = "lang_nl.xml">
+<templatedata>MY_BUTTON 310.000000 211.000000 2 1 1 0 0.258333 1.750000 -1 255 200 1 16.500000 90.500000 1 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 200
+</template>
+
+<template name = "Sprite" lang = "lang_pl.xml">
+<template name = "Sprite" lang = "lang_eng.xml">
+<template name = "Sprite" lang = "lang_de.xml">
+<template name = "Sprite" lang = "lang_id.xml">
+<template name = "Sprite" lang = "lang_tur.xml">
+<template name = "Sprite" lang = "lang_vn.xml">
+<template name = "Sprite" lang = "lang_es.xml">
+<template name = "Sprite" lang = "lang_nl.xml">
+<templatedata>HUD:radar_burgershot 301.000000 211.000000 4 1 1 0 0.600000 2.000000 -1 255 50 1 17.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
+</template>
+
+<template name = "Pasek stanu gracza" lang = "lang_pl.xml">
+<template name = "Player information bar" lang = "lang_eng.xml">
+<template name = "Spielerinformationsleiste" lang = "lang_de.xml">
+<template name = "Informasi player bar" lang = "lang_id.xml">
+<template name = "Oyuncu bilgi bari" lang = "lang_tur.xml">
+<template name = "Thong tin nguoi choi" lang = "lang_vn.xml">
+<template name = "Barra de información del jugador" lang = "lang_es.xml">
+<template name = "Informatiebalk speler" lang = "lang_nl.xml">
+<templatedata>ID:_0_I_PING:_14_I_XP:_150/1840_I_LVL:_15_I_K:_64_I_D:_102 319.000000 236.000000 2 1 0 0 0.279166 1.350000 -1 255 101 1 12.000000 640.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 101
+</template>
+
+<template name = "Pasek postêpu gracza" lang = "lang_pl.xml">
+<template name = "Player progress bar" lang = "lang_eng.xml">
+<template name = "Spieler fortschrittsbalken" lang = "lang_de.xml">
+<template name = "Bilah progres pemain" lang = "lang_id.xml">
+<template name = "Oyuncu ilerleme çubugu" lang = "lang_tur.xml">
+<template name = "Thanh tien trinh cua nguoi choi" lang = "lang_vn.xml">
+<template name = "Barra de progreso del jugador" lang = "lang_es.xml">
+<template name = "Voortgangsbalk van de speler" lang = "lang_nl.xml">
+<templatedata>PlayerProgressBar 287.000000 233.000000 6 1 1 0 0.600000 2.000000 -1 255 50 1 62.000000 4.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50 
+</template>
+
