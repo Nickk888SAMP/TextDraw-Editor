@@ -1,7 +1,11 @@
 /********************************************************************
 *	Nickk's TextDraw editor											*
-*	Release: 5.1												*
+*	Release: 6.0													*
 *	All right reserved! C By: Nickk888								*
+*																	*
+*	! ! ! Compile with Zeex's Compiler ! ! !						*
+*	https://github.com/pawn-lang/compiler/releases/					*
+*	Recommended version: 3.10.8 and below!							*
 *																	*
 *	Credits:														*
 *	a_samp: SAMP Team												*
@@ -9,39 +13,46 @@
 *	dfile: DrAkE													*
 *	rgb: Abyss Morgan												*
 *	sscanf: Y_Less													*
-*	a_http: SAMP Team												*
+*	YSI: Y_Less														*
+*	ndialogpages: Nickk888 											*
+*	progress2: Southclaws 											*
 *																	*
 *	YOU ARE NOT ALLOWED TO RECREATE THIS FILTERSCRIPT WITHOUT		*
 *	GIVEN ANY CREDITS! DO NOT COPY THIS SCRIPT ELSEWHERE!			*
 *********************************************************************/
+
+//DEFINES
+#define YSI_NO_OPTIMISATION_MESSAGE
+#define YSI_NO_VERSION_CHECK
+#define YSI_NO_CACHE_MESSAGE
+#define YSI_NO_MODE_CACHE
+#if !defined isnull
+    #define isnull(%1) ((!(%1[0])) || (((%1[0]) == '\1') && (!(%1[1]))))
+#endif
 
 //INCLUDES
 #include <a_samp>
 #include <zcmd>
 #include <dfile>
 #include <rgb>
-#include <sscanf>
-#include <YSI\y_stringhash>
-#include <YSI\y_iterate>
+#include <YSI_Data\y_iterate>
+#include <YSI_Coding\y_stringhash>
 #include <ndialog-pages>
-
-//DEFINES
-#if !defined isnull
-    #define isnull(%1) ((!(%1[0])) || (((%1[0]) == '\1') && (!(%1[1]))))
-#endif
+#include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v5.1"
-#define SCRIPT_VERSION_CHECK 			"5.1"
+#define SCRIPT_VERSION 					"v6.0"
+#define SCRIPT_VERSION_CHECK 			"6.0"
 #define TD_PICKER_TEXT					"S"
+
 // Limits
-#define MAX_TEMPLATES					50
-#define MAX_PROJECTS 					50
-#define MAX_TDS							500
-#define MAX_LANGUAGES					20
-#define MAX_SPRITES 					100
-#define MAX_LANGUAGE_DIALOGS			40
-#define MAX_DIALOG_INFO					10
+#define MAX_NTD_TEMPLATES					50
+#define MAX_NTD_PROJECTS 					50
+#define MAX_NTD_TDS							500
+#define MAX_NTD_LANGUAGES				20
+#define MAX_NTD_SPRITES 					100
+#define MAX_NTD_LANGUAGE_DIALOGS			40
+#define MAX_NTD_DIALOG_INFO					10
 //
 #define DEFAULT_LANG_STRING_SIZE		328
 #define BUTTON_TD_SIZE					35.5
@@ -56,12 +67,18 @@
 #define DIALOG_DIALOG_ADDER				1000
 #define TDPICKER_COLOR_ACTIVE 			0xFFFF00FF
 #define TDPICKER_COLOR 					0xFFFFFF55
+#define CONFIRM_SOUNDID					1083
+#define TEXT_DRAW_FONT_PROGRESS_BAR		6 //Do NOT change!
+
 // File paths
-#define PROJECTLIST_FILEPATH 			"NTD/projects.list"
-#define LANGUAGESLIST_FILEPATH			"NTD/languages.list"
-#define TEMPLATESLIST_FILEPATH			"NTD/templates.xml"
-#define SETTINGS_FILEPATH 				"NTD/settings.ini"
-#define LANGUAGES_PATH					"NTD/languages"
+#define NTD_DIRECTORYPATH				"ntd"
+#define EXPORTS_DIRECTORYPATH			"ntd/exports"
+#define PROJECTS_DIRECTORYPATH			"ntd/projects"
+#define LANGUAGES_PATH					"ntd/languages"
+#define PROJECTLIST_FILEPATH 			"ntd/projects.list"
+#define LANGUAGESLIST_FILEPATH			"ntd/languages.list"
+#define TEMPLATESLIST_FILEPATH			"ntd/templates.xml"
+#define SETTINGS_FILEPATH 				"ntd/settings.ini"
 
 //DIALOG CAPTION TEXT
 #define CAPTION_TEXT 					"{FFFFFF}NTD "SCRIPT_VERSION" - {00FF00}"
@@ -88,7 +105,7 @@
 #define BUTTON_SWITCHPUBLIC 			"NTD_RESOURCES:Button_SwitchPublic"
 #define BUTTON_SELECTABLE 				"NTD_RESOURCES:Button_Selectable"
 #define BUTTON_PROPORTIONALITY 			"NTD_RESOURCES:Button_Proportionality"
-#define BUTTON_MPREVIEW 				"NTD_RESOURCES:Button_MPreview"
+#define BUTTON_TDSETTINGS 				"NTD_RESOURCES:Button_TDSettings"
 
 //LANGUAGES
 #define LANG_NONE 						-1
@@ -129,6 +146,7 @@
 #define DIALOG_EXPORT2 					(31 + DIALOG_DIALOG_ADDER)
 #define DIALOG_MANUALVARCHANGE 			(32 + DIALOG_DIALOG_ADDER)
 #define DIALOG_MANUALVARCHANGE1 		(33 + DIALOG_DIALOG_ADDER)
+#define DIALOG_MAXBARPERCCHANGE			(34 + DIALOG_DIALOG_ADDER)
 
 //SPRITES
 #define SPRITE_TYPE_0 					"FONTS"
@@ -184,6 +202,7 @@
 #define DL_EXPORTWITHARRAY 				28
 #define DL_MANUALVARCHANGE 				29
 #define DL_MANUALVARCHANGE1 			30
+#define DL_MAXBARPERCCHANGE				31
 
 //CHANGING TYPES
 #define CH_NONE 						0
@@ -197,11 +216,19 @@
 #define CH_SPRITE 						8
 #define CH_LAYER 						9
 
+//FORWARDS
+forward bool:VariableExists(const string[]);
+forward BlockVarsChanger(bool:block);
+forward ChangingVarsTime();
+forward PlayerSelectTD(playerid, bool:select);
+forward HLTD(playerid, td);
+forward FadeTimer(bool:fadein);
+
 //ITERATORS
-new Iterator:I_TEMPLATES<MAX_TEMPLATES>;
-new Iterator:I_LANGUAGES<MAX_LANGUAGES>;
-new Iterator:I_PROJECTS<MAX_PROJECTS>;
-new Iterator:I_TEXTDRAWS<MAX_TDS>;
+new Iterator:I_TEMPLATES<MAX_NTD_TEMPLATES>;
+new Iterator:I_LANGUAGES<MAX_NTD_LANGUAGES>;
+new Iterator:I_PROJECTS<MAX_NTD_PROJECTS>;
+new Iterator:I_TEXTDRAWS<MAX_NTD_TDS>;
 
 //TEXTDRAWS
 new Text:E_Box;
@@ -222,7 +249,7 @@ new Text:B_Alignment;
 new Text:B_SwitchPublic;
 new Text:B_Selectable;
 new Text:B_Proportionality;
-new Text:B_MPreview;
+new Text:B_TDSettings;
 new Text:B_Exit;
 new Text:B_Settings;
 new Text:WelcomeScreen;
@@ -620,7 +647,7 @@ enum E_TEMPLATE
 	Template_Name[60],
 	Template_Data[258]
 };
-new Template[MAX_TEMPLATES][E_TEMPLATE];
+new Template[MAX_NTD_TEMPLATES][E_TEMPLATE];
 
 //Languages Data
 enum E_LANGUAGE_STR_DIALOG
@@ -629,15 +656,15 @@ enum E_LANGUAGE_STR_DIALOG
 	d_s_button1[32],
 	d_s_button2[32]
 }
-new DLS[MAX_LANGUAGE_DIALOGS][E_LANGUAGE_STR_DIALOG]; //Dialog Language String
-new DLI[MAX_LANGUAGE_DIALOGS][MAX_DIALOG_INFO][128]; //Dialog Language Info
+new DLS[MAX_NTD_LANGUAGE_DIALOGS][E_LANGUAGE_STR_DIALOG]; //Dialog Language String
+new DLI[MAX_NTD_LANGUAGE_DIALOGS][MAX_NTD_DIALOG_INFO][128]; //Dialog Language Info
 
 enum E_LANGUAGE
 {
 	l_name[32],
 	l_file[32]
 }
-new Language[MAX_LANGUAGES][E_LANGUAGE]; //Languages List
+new Language[MAX_NTD_LANGUAGES][E_LANGUAGE]; //Languages List
 
 enum E_LANGUAGE_STR
 {
@@ -695,6 +722,8 @@ enum E_LANGUAGE_STR
 	str_tdalignment_left[DEFAULT_LANG_STRING_SIZE],
 	str_tdalignment_center[DEFAULT_LANG_STRING_SIZE],
 	str_tdalignment_right[DEFAULT_LANG_STRING_SIZE],
+	str_tdalignment_up[DEFAULT_LANG_STRING_SIZE],
+	str_tdalignment_down[DEFAULT_LANG_STRING_SIZE],
 	str_projectrenamed[DEFAULT_LANG_STRING_SIZE],
 	str_projectnamechangecharerr[DEFAULT_LANG_STRING_SIZE],
 	str_projectnameexists[DEFAULT_LANG_STRING_SIZE],
@@ -722,7 +751,8 @@ enum E_LANGUAGE_STR
 	str_manualchangemessage[DEFAULT_LANG_STRING_SIZE],
 	str_manualchangetypemzoom[DEFAULT_LANG_STRING_SIZE],
 	str_manualchangetypemcolor1[DEFAULT_LANG_STRING_SIZE],
-	str_manualchangetypemcolor2[DEFAULT_LANG_STRING_SIZE]
+	str_manualchangetypemcolor2[DEFAULT_LANG_STRING_SIZE],
+	str_tdfontplayerprogressbar[DEFAULT_LANG_STRING_SIZE]
 };
 new Language_Strings[E_LANGUAGE_STR]; //Language strings
 
@@ -732,7 +762,7 @@ enum E_SPRITE
 	Sprite_Lib[50],
 	Sprite_Name[50]
 }
-new Sprite_Library[MAX_SPRITES][E_SPRITE]; //Sprites Data
+new Sprite_Library[MAX_NTD_SPRITES][E_SPRITE]; //Sprites Data
 
 //TextDraw Data
 enum E_TD
@@ -752,7 +782,9 @@ enum E_TD
 	Float:TD_LetterSizeY,
 	Float:TD_BoxSizeX,
 	Float:TD_BoxSizeY,
+	Float:TD_BarMaxPercentage,
 	Text:TD_SelfID,
+	PlayerBar:TD_BarID,
 	Text:TD_PickerID,
 	TD_Text[300],
 	TD_VarName[35],
@@ -769,9 +801,10 @@ enum E_TD
 	TD_BGColorAlpha,
 	TD_BoxColor,
 	TD_BoxColorAlpha,
-	TD_HighlightTimer
+	TD_HighlightTimer,
+	TD_BarDirectory
 }
-new NTD_TD[MAX_TDS][E_TD]; //Textdraws Data
+new NTD_TD[MAX_NTD_TDS][E_TD]; //Textdraws Data
 
 //Player Data
 enum E_USER
@@ -780,6 +813,7 @@ enum E_USER
 	bool:User_ProjectOpened,
 	bool:User_Accelerate,
 	bool:User_BlockVarsTime,
+	bool:User_ChangingColorBar,
 	User_ChangingState,
 	User_ManualChangeType,
 	User_ExportType,
@@ -810,7 +844,7 @@ enum E_PROJECT
 	Pro_LastMonth,
 	Pro_LastYear
 }
-new NTD_Projects[MAX_PROJECTS][E_PROJECT]; //Projects Data
+new NTD_Projects[MAX_NTD_PROJECTS][E_PROJECT]; //Projects Data
 
 //OTHERS
 new bool:ScriptScriptActive;
@@ -825,7 +859,7 @@ new EditorCursorColor;
 new EditorButtonsColor;
 new EditorFasterKey;
 new EditorAcceptKey;
-new EditorLanguage;
+new EditorLanguage = LANG_NONE;
 new EditorVersion[10];
 new EditorLString[5000];
 new EditorString[500];
@@ -835,8 +869,7 @@ new EditorLanguageFile[32];
 //CALLBACKS
 public OnFilterScriptInit()
 {
-	EditorLanguage = LANG_NONE;
-	if(dfile_FileExists("/NTD") && dfile_FileExists("/NTD/Exports") && dfile_FileExists("/NTD/Projects") && dfile_FileExists(LANGUAGES_PATH))
+	if(dfile_FileExists(NTD_DIRECTORYPATH) && dfile_FileExists(EXPORTS_DIRECTORYPATH) && dfile_FileExists(PROJECTS_DIRECTORYPATH) && dfile_FileExists(LANGUAGES_PATH))
 	{
 		ScriptScriptActive = true;
 		printf("[NTD] TextDraw editor by Nickk888 %s has been successfully initialized!\n", SCRIPT_VERSION);
@@ -844,9 +877,9 @@ public OnFilterScriptInit()
 	else
 	{
 		ScriptScriptActive = false;
-		printf("\n[NTD ERROR] Could not find folder or folders!");
-		printf("[NTD ERROR] Please create 'NTD' folder inside 'scriptfiles'!");
-		printf("[NTD ERROR] Within 'NTD' you should create the 'Exports', 'Projects' and 'Languages' folder!");
+		printf("\n[NTD ERROR] Could not find directory or directories!");
+		printf("[NTD ERROR] Please create 'NTD' directory inside 'scriptfiles'!");
+		printf("[NTD ERROR] Within 'NTD' you should create the 'exports', 'projects' and 'languages' directory!");
 		printf("[NTD ERROR] The script will be unloaded or blocked!\n");
 		SendRconCommand("unloadfs ntd");
 		return 1;
@@ -906,16 +939,16 @@ public OnPlayerConnect(playerid)
 public OnPlayerDeath(playerid, killerid)
 {
 	if(ScriptScriptActive && NTD_User[User_InEditor])
-			if(NTD_User[User_PlayerIDInEditor] == playerid)
-				cmd_ntd(playerid, " ");
+		if(NTD_User[User_PlayerIDInEditor] == playerid)
+			CallNTDCommand(playerid);
 	return 1;
 }
 
 public OnPlayerDisconnect(playerid, reason)
 {
 	if(ScriptScriptActive && NTD_User[User_InEditor])
-			if(NTD_User[User_PlayerIDInEditor] == playerid)
-				cmd_ntd(playerid, " ");
+		if(NTD_User[User_PlayerIDInEditor] == playerid)
+			CallNTDCommand(playerid);
 	return 1;
 }
 
@@ -926,8 +959,9 @@ public OnFilterScriptExit()
 		if(ScriptScriptActive && NTD_User[User_InEditor])
 			if(NTD_User[User_PlayerIDInEditor] == i)
 			{
-				cmd_ntd(i, "");
+				CallNTDCommand(i);
 				ShowPlayerDialog(i, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
+				break;
 			}
 	}
 	return 1;
@@ -996,7 +1030,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					format(EditorLanguageFile, sizeof EditorLanguageFile, Language[listitem][l_file]);
 					SaveConfigurations();
 				}
-				cmd_ntd(playerid, " ");
+				CallNTDCommand(playerid);
 			}
 		}
 	}
@@ -1012,7 +1046,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			EditorVersion = SCRIPT_VERSION_CHECK;
 			SaveConfigurations();
 		}
-		cmd_ntd(playerid, " ");
+		CallNTDCommand(playerid);
 	}
 	else if(ScriptScriptActive && NTD_User[User_InEditor])
 	{
@@ -1390,8 +1424,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						EditorLanguage = LANGUAGE_LOADED;
 						format(EditorLanguageFile, sizeof EditorLanguageFile, Language[listitem][l_file]);
 						SaveConfigurations();
-						cmd_ntd(playerid, " ");
-						cmd_ntd(playerid, " ");
+						CallNTDCommand(playerid);
+						CallNTDCommand(playerid);
 						ShowInfo(playerid, Language_Strings[str_infolanguagechanged]);
 					}
 					else ShowInfo(playerid, Language_Strings[str_languagefilenotfound]);
@@ -1401,9 +1435,22 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			case DIALOG_EXIT:
 			{
 				if(response)
-					cmd_ntd(playerid, " ");
+					CallNTDCommand(playerid);
 				else
 					ShowEditorEx(playerid);
+			}
+			case DIALOG_MAXBARPERCCHANGE:
+			{
+				if(response)
+				{
+					if((IsNumeric(inputtext) || IsFloat(inputtext)) && strval(inputtext) >= 0 && (floatstr(inputtext) > 0.0 && floatstr(inputtext) < cellmax))
+					{
+						NTD_TD[tdid][TD_BarMaxPercentage] = floatstr(inputtext);
+						UpdateTD(playerid, tdid);
+						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+					}
+				}
+				ShowEditorEx(playerid);
 			}
 			case DIALOG_PREVIEWMODEL1:
 			{
@@ -1413,6 +1460,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						NTD_TD[tdid][TD_PrevModelID] = strval(inputtext);
 						UpdateTD(playerid, tdid);
+						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 						ShowEditorEx(playerid);
 					}
 					else 
@@ -1508,7 +1556,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					UpdateTD(playerid, tdid);
 					ShowEditorEx(playerid);
 				}
-				else ColorDialog(playerid, 1);
+				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 1);
+				else ColorDialog(playerid, 2);
 			}
 			case DIALOG_COLOR4:
 			{
@@ -1547,7 +1596,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						ShowEditorEx(playerid);
 					}
 				}
-				else ColorDialog(playerid, 1);
+				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 1);
+				else ColorDialog(playerid, 2);
 			}
 			case DIALOG_COLOR2:
 			{
@@ -1594,7 +1644,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						HideEditor(playerid);
 					}
 				}
-				else ColorDialog(playerid, 0);
+				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 0);
+				else PlayerSelectTD(playerid, true);
 			}
 			case DIALOG_COLOR1:
 			{
@@ -1632,6 +1683,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						TextDrawDestroy(NTD_TD[tdid][TD_PickerID]);
 						DrawTD(tdid);
 						ShowEditorEx(playerid);
+						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					}
 					else ShowEditorEx(playerid);
 				}
@@ -1695,7 +1747,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								strreplace(EditorString, "#1", tmp_str);
 								//
 								GameTextForPlayer(playerid, EditorString, 5000, 6);
-								PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+								PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 								RelayerEditor();
 								ShowEditorEx(playerid, true);
 							}
@@ -1739,7 +1791,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					DestroyTD(NTD_User[User_ChoosenTDID]);
+					new next;
+					DestroyTD(NTD_User[User_ChoosenTDID], next);
 					Iter_Remove(I_TEXTDRAWS, NTD_User[User_ChoosenTDID]);
 					if(NTD_User[User_EditingTDID] == NTD_User[User_ChoosenTDID])
 						NTD_User[User_EditingTDID] = -1;
@@ -1750,7 +1803,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					strreplace(EditorString, "#1", tmp_str);
 					//
 					GameTextForPlayer(playerid, EditorString, 5000, 6);
-					PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					ShowEditorEx(playerid, true);
 				}
 				else ShowEditorEx(playerid);
@@ -1771,7 +1824,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						strreplace(EditorString, "#1", tmp_str);
 						//
 						GameTextForPlayer(playerid, EditorString, 5000, 6);
-						PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 						RelayerEditor();
 						ShowEditorEx(playerid, true);
 						
@@ -1797,7 +1850,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							format(tmp_str, sizeof tmp_str, "%i", tdid);
 							strreplace(EditorString, "#1", tmp_str);
 							//
-							PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+							PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 							GameTextForPlayer(playerid, EditorString, 5000, 6);
 							//
 							RelayerEditor();
@@ -2018,7 +2071,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}
-		else if(clickedid == B_MPreview)
+		else if(clickedid == B_TDSettings)
 		{
 			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 			{
@@ -2027,9 +2080,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PREVIEWMODELCHANGELIST][d_s_button1], DLS[DL_PREVIEWMODELCHANGELIST][d_s_button2]);
 				PlayerSelectTD(playerid, false);
 			}
-			else 
+			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				ShowInfo(NTD_User[User_PlayerIDInEditor], Language_Strings[str_modelpreviewinvalidfont]);
+				CreateDialogOnLanguageData(DL_MAXBARPERCCHANGE);
+				CreateDialogCaptionOnLangData(DL_MAXBARPERCCHANGE);
+				strreplace(EditorLString, "#1", "%f");
+				format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_BarMaxPercentage]);
+				ShowPlayerDialog(playerid, DIALOG_MAXBARPERCCHANGE, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_MAXBARPERCCHANGE][d_s_button1], DLS[DL_MAXBARPERCCHANGE][d_s_button2]);
 				PlayerSelectTD(playerid, false);
 			}
 			return 1;
@@ -2051,17 +2108,47 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Alignment)
 		{
-			if(NTD_TD[tdid][TD_Alignment] == 3)
-				NTD_TD[tdid][TD_Alignment] = 0;
-			
-			NTD_TD[tdid][TD_Alignment]++;
-			UpdateTD(playerid, tdid);
-			switch(NTD_TD[tdid][TD_Alignment])
+			if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				case 1: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_left], 1500, 6);
-				case 2: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_center], 1500, 6);
-				case 3: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_right], 1500, 6);
+				if(NTD_TD[tdid][TD_Alignment] == 3)
+					NTD_TD[tdid][TD_Alignment] = 0;
+				
+				NTD_TD[tdid][TD_Alignment]++;
+				
+				switch(NTD_TD[tdid][TD_Alignment])
+				{
+					case 1: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_left], 1500, 6);
+					case 2: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_center], 1500, 6);
+					case 3: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_right], 1500, 6);
+				}
 			}
+			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			{
+				switch(NTD_TD[tdid][TD_BarDirectory])
+				{
+					case BAR_DIRECTION_DOWN:
+					{
+						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_right], 1500, 6);
+					}
+					case BAR_DIRECTION_RIGHT:
+					{
+						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_LEFT;
+						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_left], 1500, 6);
+					}
+					case BAR_DIRECTION_LEFT:
+					{
+						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_UP;
+						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_up], 1500, 6);
+					}
+					case BAR_DIRECTION_UP:
+					{
+						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_DOWN;
+						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_down], 1500, 6);
+					}
+				}
+			}
+			UpdateTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_SwitchPublic)
@@ -2140,7 +2227,10 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Color)
 		{
-			ColorDialog(playerid, 0);
+			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+				ColorDialog(playerid, 2);
+			else 
+				ColorDialog(playerid, 0);
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}
@@ -2167,18 +2257,21 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Size)
 		{
-			if(NTD_TD[tdid][TD_Font] != 4 && NTD_TD[tdid][TD_Font] != 5) 
+			switch(NTD_TD[tdid][TD_Font])
 			{
-				CreateDialogOnLanguageData(DL_BOXSIZECHANGELIST);
-				CreateDialogCaptionOnLangData(DL_BOXSIZECHANGELIST);
-				ShowPlayerDialog(playerid, DIALOG_SIZE, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_BOXSIZECHANGELIST][d_s_button1], DLS[DL_BOXSIZECHANGELIST][d_s_button2]);
-			}
-			else if(NTD_TD[tdid][TD_Font] == 4 || NTD_TD[tdid][TD_Font] == 5)
-			{
-				NTD_User[User_ChangingSizeState] = 1;
-				NTD_User[User_ChangingState] = CH_SIZE;
-				EnableVarChangeTimer(true);
-				HideEditor(playerid);
+				case 4, 5, TEXT_DRAW_FONT_PROGRESS_BAR:
+				{
+					NTD_User[User_ChangingSizeState] = 1;
+					NTD_User[User_ChangingState] = CH_SIZE;
+					EnableVarChangeTimer(true);
+					HideEditor(playerid);
+				}
+				default:
+				{
+					CreateDialogOnLanguageData(DL_BOXSIZECHANGELIST);
+					CreateDialogCaptionOnLangData(DL_BOXSIZECHANGELIST);
+					ShowPlayerDialog(playerid, DIALOG_SIZE, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_BOXSIZECHANGELIST][d_s_button1], DLS[DL_BOXSIZECHANGELIST][d_s_button2]);
+				}
 			}
 			PlayerSelectTD(playerid, false);
 			return 1;
@@ -2193,7 +2286,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Font)
 		{
-			if(NTD_TD[tdid][TD_Font] == 5)
+			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 				NTD_TD[tdid][TD_Font] = 0;
 			else
 				NTD_TD[tdid][TD_Font]++;
@@ -2203,6 +2296,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			{
 				case 4: GameTextForPlayer(playerid, Language_Strings[str_tdfontspriteinfo], 1500, 6);
 				case TEXT_DRAW_FONT_MODEL_PREVIEW: GameTextForPlayer(playerid, Language_Strings[str_tdfontprevmodelinfo], 1500, 6);
+				case TEXT_DRAW_FONT_PROGRESS_BAR: GameTextForPlayer(playerid, Language_Strings[str_tdfontplayerprogressbar], 1500, 6);
 				default: 
 				{
 					new tmp_str[12];
@@ -2212,11 +2306,12 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 					GameTextForPlayer(playerid, EditorString, 1500, 6);
 				}
 			}
+			ShowEditorEx(playerid);
 			return 1;
 		}
 		else if(clickedid == B_NewProject)
 		{
-			if(Iter_Count(I_PROJECTS) < MAX_PROJECTS)
+			if(Iter_Count(I_PROJECTS) < MAX_NTD_PROJECTS)
 			{
 				CreateDialogOnLanguageData(DL_NEWPROJECT);
 				CreateDialogCaptionOnLangData(DL_NEWPROJECT);
@@ -2234,7 +2329,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				ShowInfo(playerid, Language_Strings[str_infoprojectclosed]);
 			
 			foreach(new i : I_TEXTDRAWS)
-				DestroyTD(i);
+				DestroyTD(i, i);
 			NTD_User[User_ProjectOpened] = false;
 			NTD_User[User_EditingTDID] = -1;
 			
@@ -2266,7 +2361,6 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 
 //TIMERS
 
-forward BlockVarsChanger(bool:block);
 public BlockVarsChanger(bool:block)
 {
 	if(block)
@@ -2278,7 +2372,6 @@ public BlockVarsChanger(bool:block)
 	return 1;
 }
 
-forward ChangingVarsTime();
 public ChangingVarsTime()
 {
 	new tdid = NTD_User[User_EditingTDID];
@@ -2697,7 +2790,16 @@ public ChangingVarsTime()
 		{
 			if(NTD_User[User_ChangingState] == CH_POSITION || NTD_User[User_ChangingState] == CH_SPRITE) 
 			{
-				TextDrawDestroy(NTD_TD[tdid][TD_SelfID]);
+				if(NTD_TD[tdid][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+				{
+					TextDrawDestroy(NTD_TD[tdid][TD_SelfID]);
+					NTD_TD[tdid][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+				}
+				if(NTD_TD[tdid][TD_BarID] != INVALID_PLAYER_BAR_ID)
+				{
+					DestroyPlayerProgressBar(playerid, NTD_TD[tdid][TD_BarID]);
+					NTD_TD[tdid][TD_BarID] = INVALID_PLAYER_BAR_ID;
+				}
 				TextDrawDestroy(NTD_TD[tdid][TD_PickerID]);
 				DrawTD(tdid);
 			}
@@ -2783,7 +2885,7 @@ CMD:ntd(playerid, params[])
 					{
 						SaveProject();
 						foreach(new i : I_TEXTDRAWS)
-							DestroyTD(i);
+							DestroyTD(i, i);
 						NTD_User[User_ProjectOpened] = false;
 					}
 				}
@@ -2818,6 +2920,9 @@ CMD:ntd(playerid, params[])
 }
 
 //FUNCTIONS
+
+stock CallNTDCommand(playerid)
+	return CallLocalFunction("cmd_ntd", "i", playerid);
 
 stock EnableVarChangeTimer(bool:starttimer)
 {
@@ -2980,7 +3085,7 @@ stock strreplace(sstring[], const search[], const replacement[], bool:ignorecase
 stock CreateDialogOnLanguageData(dialoglanguageid)
 {
 	EditorLString = "";
-	for(new i; i < MAX_DIALOG_INFO; i++)
+	for(new i; i < MAX_NTD_DIALOG_INFO; i++)
 	{
 		if(strlen(DLI[dialoglanguageid][i]) > 1)
 		{
@@ -3049,15 +3154,14 @@ stock RenameProject(projectname[], newprojectname[])
 	return 1;
 }
 
-forward bool:VariableExists(string[]);
-stock bool:VariableExists(string[])
+stock bool:VariableExists(const string[])
 {
 	foreach(new i : I_TEXTDRAWS)
 		if(!strcmp(NTD_TD[i][TD_VarName], string, false) && !isnull(NTD_TD[i][TD_VarName]) && NTD_TD[i][TD_Created]) return true;
 	return false;
 }
 
-stock IsValidString(string[])
+stock IsValidString(const string[])
 {
 	new un[][] = {" ", "!", "?", "=", "$", "§", "'", "´", "^", "°", "/", "*", "+", "~", ".", ","};
 	for(new i; i < sizeof un; i++)
@@ -3089,29 +3193,72 @@ stock UpdateTD(playerid, td)
 {
 	new red,green,blue,alpha;
 	#pragma unused alpha
-	TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
-	TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
-	TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
-	TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
-	RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-	HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-	TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-	RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-	HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-	TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-	RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-	HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-	TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
-	TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
-	TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
-	TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
-	TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
-	TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
-	TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
-	TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
-	TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
-	if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
-	else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
+	if(NTD_TD[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+	{
+		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		{
+			DestroyPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+			NTD_TD[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
+		}
+		if(NTD_TD[td][TD_SelfID] == Text:INVALID_TEXT_DRAW)
+			NTD_TD[td][TD_SelfID] = TextDrawCreate(NTD_TD[td][TD_PosX], NTD_TD[td][TD_PosY], NTD_TD[td][TD_Text]);
+		TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
+		TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
+		TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
+		TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
+		RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+		HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
+		RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+		HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
+		RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+		HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
+		TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
+		TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
+		TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
+		TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
+		TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
+		TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
+		TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
+		TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
+		if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+		else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
+	}
+	else
+	{
+		if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+		{
+			TextDrawDestroy(NTD_TD[td][TD_SelfID]);
+			NTD_TD[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+		}
+		if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
+		{
+			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
+			NTD_TD[td][TD_PosX], 
+			NTD_TD[td][TD_PosY], 
+			NTD_TD[td][TD_BoxSizeX], 
+			NTD_TD[td][TD_BoxSizeY],
+			NTD_TD[td][TD_Color], 
+			NTD_TD[td][TD_BarMaxPercentage],
+			NTD_TD[td][TD_BarDirectory]);
+		}
+		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		{
+			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			SetPlayerProgressBarDirection(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BarDirectory]);
+			SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_Color]);
+			SetPlayerProgressBarWidth(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BoxSizeX]);
+			SetPlayerProgressBarHeight(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BoxSizeY]);
+			SetPlayerProgressBarMaxValue(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BarMaxPercentage]);
+			SetPlayerProgressBarValue(playerid, NTD_TD[td][TD_BarID], (NTD_TD[td][TD_BarMaxPercentage] / 2.0));
+			ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+		}
+	}
 	return 1;
 }
 
@@ -3146,7 +3293,7 @@ stock SelectTD(playerid, tdid)
 		strreplace(EditorString, "#1", tmp_str);
 		//
 		GameTextForPlayer(playerid, EditorString, 5000, 6);
-		PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+		PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 		HighlightTD(playerid, NTD_User[User_EditingTDID]);
 		ShowEditorEx(playerid);
 		TextDrawColor(NTD_TD[tdid][TD_PickerID], TDPICKER_COLOR_ACTIVE);
@@ -3178,18 +3325,18 @@ stock CreateProject(projectname[])
 	return -1;
 }
 
-stock ShowInfo(playerid, text[])
+stock ShowInfo(playerid, const text[])
 {
 	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", Language_Strings[str_infodialogcaption]);
 	ShowPlayerDialog(playerid, DIALOG_INFO, DIALOG_STYLE_MSGBOX, EditorString, text, "OK", #);
-	PlayerPlaySound(playerid, 1083, 0.0, 0.0, 0.0);
+	PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 	return 1;
 }
 
 
 stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 {
-	new filename[128], bool:clickableTD, publiccount, nonpubliccount;
+	new filename[128], bool:clickableTD, publiccount, nonpubliccount, barscount;
 	format(filename, 128, "/NTD/Exports/%s.pwn", projectname);
 	if(dfile_FileExists(filename))
 		dfile_Delete(filename);
@@ -3211,8 +3358,12 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						//Count non custom vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-							else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
+								else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							}
+							else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
 						}
 						//Generate Non custom Vars
 						if(publiccount > 0)
@@ -3225,10 +3376,15 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							format(EditorString, sizeof EditorString, "new PlayerText:PlayerTD[MAX_PLAYERS][%i];\n", nonpubliccount);
 							fwrite(file, EditorString);
 						}
+						if(barscount > 0)
+						{
+							format(EditorString, sizeof EditorString, "new PlayerBar:PlayerProgressBar[MAX_PLAYERS][%i];\n", barscount);
+							fwrite(file, EditorString);
+						}
 						//Generate Custom Vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3236,9 +3392,17 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
 							}
 						}
@@ -3247,13 +3411,27 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic]) format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
-							fwrite(file, EditorString);
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							{
+								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic]) format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
-							fwrite(file, EditorString);
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							{
+								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
 						}
 					}
 					fwrite(file, "\n//Textdraws\n");
@@ -3261,9 +3439,10 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						publiccount = 0;
 						nonpubliccount = 0;
+						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
 								{
@@ -3353,7 +3532,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						fwrite(file, "\n//Player Textdraws\n");
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
 								{
@@ -3438,12 +3617,39 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							if(NTD_TD[i][TD_Selectable])
 								clickableTD = true;
 						}
+						fwrite(file, "\n/*Player Progress Bars\n");
+						fwrite(file, "Requires \"progress2\" include by Southclaws\n");
+						fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								
+								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+								{
+									format(EditorString, sizeof EditorString, "PlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+									fwrite(file, EditorString);
+									format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+									fwrite(file, EditorString);
+									fwrite(file, "\n");
+									barscount++;
+								}
+								else //Custom var name
+								{
+									format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+									fwrite(file, EditorString);
+									format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+									fwrite(file, EditorString);
+									fwrite(file, "\n");
+								}
+							}
+						}
 					}
 					else //NON ARRAY
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3489,7 +3695,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						fwrite(file, "//Player Textdraws\n");
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3531,18 +3737,47 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							if(NTD_TD[i][TD_Selectable])
 								clickableTD = true;
 						}
+						fwrite(file, "\n/*Player Progress Bars\n");
+						fwrite(file, "Requires \"progress2\" include by Southclaws\n");
+						fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								fwrite(file, EditorString);
+								format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								fwrite(file, EditorString);
+								fwrite(file, "\n");
+							}
+						}
 					}
 				}
 				else if(exporttype == 1) //WORKING FS EXPORT
 				{
-					fwrite(file, "#include <a_samp>\n\n");
+					fwrite(file, "#include <a_samp>\n");
+					foreach(new i : I_TEXTDRAWS)
+					{
+						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						{
+							fwrite(file, "#include <progress2>\n");
+							fwrite(file, "//Requires \"progress2\" include by Southclaws\n");
+							fwrite(file, "//Download: https://github.com/Southclaws/progress2/releases\n");
+							break;
+						}
+					}
+					fwrite(file, "\n");
 					if(intoarray) //ARRAY
 					{
 						//Count non custom vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-							else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
+								else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							}
+							else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
 						}
 						//Generate Non custom Vars
 						if(publiccount > 0)
@@ -3555,10 +3790,15 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							format(EditorString, sizeof EditorString, "new PlayerText:PlayerTD[MAX_PLAYERS][%i];\n", nonpubliccount);
 							fwrite(file, EditorString);
 						}
+						if(barscount > 0)
+						{
+							format(EditorString, sizeof EditorString, "new PlayerBar:PlayerProgressBar[MAX_PLAYERS][%i];\n", barscount);
+							fwrite(file, EditorString);
+						}
 						//Generate Custom Vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3566,9 +3806,17 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
 							}
 						}
@@ -3577,13 +3825,27 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic]) format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
-							fwrite(file, EditorString);
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							{
+								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic]) format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
-							fwrite(file, EditorString);
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							{
+								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
 						}
 					}
 
@@ -3593,7 +3855,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
 								{
@@ -3685,7 +3947,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3737,7 +3999,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(PublicTD[%i]);\n", publiccount);
 								fwrite(file, EditorString);
@@ -3746,7 +4008,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsPublic]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3757,7 +4019,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3770,9 +4032,10 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					if(intoarray) //ARRAY
 					{
 						nonpubliccount = 0;
+						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
 								{
@@ -3857,12 +4120,36 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							if(NTD_TD[i][TD_Selectable])
 								clickableTD = true;
 						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								
+								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+								{
+									format(EditorString, sizeof EditorString, "\tPlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+									fwrite(file, EditorString);
+									format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+									fwrite(file, EditorString);
+									fwrite(file, "\n");
+									barscount++;
+								}
+								else //Custom var name
+								{
+									format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+									fwrite(file, EditorString);
+									format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+									fwrite(file, EditorString);
+									fwrite(file, "\n");
+								}
+							}
+						}
 					}
 					else //NON ARRAY
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3907,15 +4194,27 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 							if(NTD_TD[i][TD_Selectable])
 								clickableTD = true;		
 						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								fwrite(file, EditorString);
+								format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								fwrite(file, EditorString);
+								fwrite(file, "\n");
+							}
+						}
 					}
 					fwrite(file, "\treturn 1;\n}\n");
-					fwrite(file, "\npublic OnPlayerDisconnect(playerid)\n{\n");
+					fwrite(file, "\npublic OnPlayerDisconnect(playerid, reason)\n{\n");
 					if(intoarray) //ARRAY
 					{
 						nonpubliccount = 0;
+						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 								fwrite(file, EditorString);
@@ -3924,10 +4223,27 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsPublic]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								if(strlen(NTD_TD[i][TD_VarName]) == 0)
+								{
+									format(EditorString, sizeof EditorString, "\tDestroyPlayerProgressBar(playerid, PlayerProgressBar[playerid][%i]);\n", barscount);
+									fwrite(file, EditorString);
+									barscount++;
+								}
+								else
+								{
+									format(EditorString, sizeof EditorString, "\tDestroyPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
+									fwrite(file, EditorString);
+								}
 							}
 						}
 					}
@@ -3935,9 +4251,17 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "\tDestroyPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
 							}
 						}
@@ -3951,7 +4275,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, PublicTD[%i]);\n", publiccount);
 								fwrite(file, EditorString);
@@ -3960,7 +4284,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3971,7 +4295,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic])
+							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3983,7 +4307,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						nonpubliccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 								fwrite(file, EditorString);
@@ -3992,7 +4316,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4003,9 +4327,41 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic])
+							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
+								fwrite(file, EditorString);
+							}
+						}
+					}
+					if(intoarray) //ARRAY
+					{
+						barscount = 0;
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								if(strlen(NTD_TD[i][TD_VarName]) == 0)
+								{
+									format(EditorString, sizeof EditorString, "\t\tShowPlayerProgressBar(playerid, PlayerProgressBar[playerid][%i]);\n", barscount);
+									fwrite(file, EditorString);
+									barscount++;
+								}
+								else
+								{
+									format(EditorString, sizeof EditorString, "\t\tShowPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
+									fwrite(file, EditorString);
+								}
+							}
+						}
+					}
+					else
+					{
+						foreach(new i : I_TEXTDRAWS)
+						{
+							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+							{
+								format(EditorString, sizeof EditorString, "\t\tShowPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
 							}
 						}
@@ -4037,8 +4393,8 @@ stock OpenTDDialog(playerid)
 			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 			strcat(formatedtd, "...");
 		}
-		if(i != NTD_User[User_EditingTDID]) format(EditorString, sizeof EditorString, "{FFFFFF}%i. {76DCC0}\x22%s\x22\t(%s)\n", i, formatedtd, GetProcessedTDVarName(i));
-		else format(EditorString, sizeof EditorString, "{FFFFFF}%i. {FFFF00}\x22%s\x22\t(%s)\n", i, formatedtd, GetProcessedTDVarName(i));
+		if(i != NTD_User[User_EditingTDID]) format(EditorString, sizeof EditorString, "\n{FFFFFF}%i. {76DCC0}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
+		else format(EditorString, sizeof EditorString, "\n{FFFFFF}%i. {FFFF00}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
 		strcat(EditorLString, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
@@ -4046,7 +4402,7 @@ stock OpenTDDialog(playerid)
 	CreateDialogCaptionOnLangData(DL_TDLIST);
 	new tmp_str[2][24];
 	format(tmp_str[0], 24, "%i", Iter_Count(I_TEXTDRAWS));
-	format(tmp_str[1], 24, "%i", MAX_TDS);
+	format(tmp_str[1], 24, "%i", MAX_NTD_TDS);
 	strreplace(EditorString, "#1", tmp_str[0]);
 	strreplace(EditorString, "#2", tmp_str[1]);
 	
@@ -4066,7 +4422,7 @@ stock GetAllProjects()
 			while(fread(file, line))
 			{
 				index = Iter_Free(I_PROJECTS);
-				if(index >= 0 && index < MAX_PROJECTS)
+				if(index != ITER_NONE)
 				{
 					if(sscanf(line, "siiiiii", 
 					NTD_Projects[index][Pro_Name], 
@@ -4092,12 +4448,15 @@ stock OpenProjectDialog(playerid)
 {
 	EditorString = "";
 	EditorLString = "";
+	new count;
 	if(Iter_Count(I_PROJECTS) > 0)
 	{
 		CreateDialogOnLanguageData(DL_PROJECTSLIST);
 		foreach(new i : I_PROJECTS)
 		{
-			format(EditorString, sizeof EditorString, "%s\t%d\t%02d.%02d.%04d | %02d:%02d\n", 
+			if(count > 0)
+				strcat(EditorLString, "\n");
+			format(EditorString, sizeof EditorString, "%s\t%d\t%02d.%02d.%04d | %02d:%02d", 
 			NTD_Projects[i][Pro_Name], 
 			NTD_Projects[i][Pro_TDA], 
 			NTD_Projects[i][Pro_LastDay],
@@ -4106,12 +4465,13 @@ stock OpenProjectDialog(playerid)
 			NTD_Projects[i][Pro_LastHour], 
 			NTD_Projects[i][Pro_LastMin]);
 			strcat(EditorLString, EditorString);
+			count++;
 		}
 		//
 		CreateDialogCaptionOnLangData(DL_PROJECTSLIST);
 		new tmp_str[2][24];
 		format(tmp_str[0], 24, "%i", Iter_Count(I_PROJECTS));
-		format(tmp_str[1], 24, "%i", MAX_PROJECTS);
+		format(tmp_str[1], 24, "%i", MAX_NTD_PROJECTS);
 		strreplace(EditorString, "#1", tmp_str[0]);
 		strreplace(EditorString, "#2", tmp_str[1]);
 		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, EditorLString, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], 10);
@@ -4130,20 +4490,26 @@ stock ColorDialog(playerid, cstate)
 	{
 		CreateDialogOnLanguageData(DL_COLORCHANGELIST1);
 		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST1);
+		NTD_User[User_ChangingColorBar] = false;
 		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_COLORCHANGELIST1][d_s_button1], DLS[DL_COLORCHANGELIST1][d_s_button2]);
 		PlayerSelectTD(playerid, false);
 	}
-	else if(cstate == 1)
+	else
 	{
 		CreateDialogOnLanguageData(DL_COLORCHANGELIST2);
 		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST2);
+		NTD_User[User_ChangingColorBar] = false;
+		if(cstate == 2)
+		{
+			NTD_User[User_ChangingMColorState] = 0;
+			NTD_User[User_ChangingColorBar] = true;
+		}
 		ShowPlayerDialog(playerid, DIALOG_COLOR2, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_COLORCHANGELIST2][d_s_button1], DLS[DL_COLORCHANGELIST2][d_s_button2]);
 		PlayerSelectTD(playerid, false);
 	}
 	return 1;
 }
 
-forward PlayerSelectTD(playerid, bool:select);
 public PlayerSelectTD(playerid, bool:select)
 {
 	if(select)
@@ -4247,7 +4613,7 @@ stock LoadConfigurations()
 			while(fread(file, EditorString, sizeof EditorString))
 			{
 				free = Iter_Free(I_LANGUAGES);
-				if(free >= 0 && free < MAX_LANGUAGES)
+				if(free != ITER_NONE)
 				{
 					if(sscanf(EditorString, "p=ss", Language[free][l_name], Language[free][l_file]) == 0)
 					{
@@ -4280,9 +4646,19 @@ stock LoadConfigurations()
 stock RelayerEditor()
 {
 	DestroyEditor();
+	new playerid = NTD_User[User_PlayerIDInEditor];
 	foreach(new i : I_TEXTDRAWS)
 	{
-		TextDrawDestroy(NTD_TD[i][TD_SelfID]);
+		if(NTD_TD[i][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+		{
+			TextDrawDestroy(NTD_TD[i][TD_SelfID]);
+			NTD_TD[i][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+		}
+		if(NTD_TD[i][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		{
+			DestroyPlayerProgressBar(playerid, NTD_TD[i][TD_BarID]);
+			NTD_TD[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
+		}
 		TextDrawDestroy(NTD_TD[i][TD_PickerID]);
 	}
 	foreach(new i : I_TEXTDRAWS)
@@ -4318,7 +4694,7 @@ stock SaveConfigurations()
 	return 1;
 }
 
-stock ProjectFileLineReplace(filename[], find[], replace[])
+stock ProjectFileLineReplace(const filename[], const find[], const replace[])
 {
     if(!fexist(filename)) return 0;
     new File:handle = fopen(filename, io_read);
@@ -4375,20 +4751,23 @@ stock SaveProject()
 		GetAllProjects();
 	}
 	
-	//Project File
-	format(file, sizeof file, "NTD/Projects/%s.ntdp", NTD_User[User_ProjectName]);
+	//Project File 
+	format(file, sizeof file, PROJECTS_DIRECTORYPATH"/%s.ntdp", NTD_User[User_ProjectName]);
 	if(dfile_FileExists(file) && NTD_User[User_ProjectOpened])
 	{
+		dfile_Delete(file);
+		dfile_Create(file);
 		dfile_Open(file);
+		new count;
 		foreach(new i : I_TEXTDRAWS)
 		{
 			if(NTD_TD[i][TD_Created])
 			{
 				EditorLString = "";
 				
-				format(EditorString, sizeof EditorString, "td_%i_string", i);
+				format(EditorString, sizeof EditorString, "td_%i_string", count);
 				dfile_WriteString(EditorString, NTD_TD[i][TD_Text]);
-				format(EditorString, sizeof EditorString, "td_%i_data", i);
+				format(EditorString, sizeof EditorString, "td_%i_data", count);
 				format(stringex, sizeof stringex, "%f %f ", NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY]);
 				strcat(EditorLString, stringex);
 				format(stringex, sizeof stringex, "%i %i ", NTD_TD[i][TD_Font], NTD_TD[i][TD_IsPublic]);
@@ -4408,13 +4787,11 @@ stock SaveProject()
 				format(stringex, sizeof stringex, "%i %i %i %s", NTD_TD[i][TD_ColorAlpha], NTD_TD[i][TD_BGColorAlpha], NTD_TD[i][TD_BoxColorAlpha], NTD_TD[i][TD_VarName]);
 				strcat(EditorLString, stringex);
 				dfile_WriteString(EditorString, EditorLString);
-			}
-			else
-			{
-				format(EditorString, sizeof EditorString, "td_%i_string", i);
-				dfile_UnSet(EditorString);
-				format(EditorString, sizeof EditorString, "td_%i_data", i);
-				dfile_UnSet(EditorString);
+				//Bar data
+				format(EditorString, sizeof EditorString, "td_%i_bar_data", count);
+				format(EditorLString, sizeof EditorLString, "%f %i ", NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+				dfile_WriteString(EditorString, EditorLString);
+				count++;
 			}
 		}
 		dfile_SaveFile();
@@ -4430,24 +4807,33 @@ stock LoadProject(projectname[])
 	if(dfile_FileExists(EditorString))
 	{
 		Iter_Clear(I_TEXTDRAWS);
-		for(new i; i < MAX_TDS; i++)
+		for(new i; i < MAX_NTD_TDS; i++)
 			NTD_TD[i][TD_Created] = false;
 			
 		format(NTD_User[User_ProjectName], 128, projectname);
 		NTD_User[User_ProjectOpened] = true;
 		dfile_Open(EditorString);
 		new index;
-		for(new i; i < MAX_TDS; i++)
+		for(new i; i < MAX_NTD_TDS; i++)
 		{
+			/*
+			format(EditorString, sizeof EditorString, "td_%i_bar_data", count);
+				format(stringex, sizeof stringex, "%f %f %i ", 50.0, 100.0, BAR_DIRECTION_RIGHT);
+				dfile_WriteString(EditorString, EditorLString);
+			*/
 			format(EditorString, sizeof EditorString, "td_%i_data", i);
 			if(strlen(dfile_ReadString(EditorString)) > 0)
 			{
 				index = Iter_Free(I_TEXTDRAWS);
-				if(index >= 0 && index < MAX_TEXT_DRAWS)
+				if(index != ITER_NONE)
 				{
 					Iter_Add(I_TEXTDRAWS, index);
 					NTD_TD[index][TD_Created] = true;
 					NTD_TD[index][TD_HighlightTimer] = -1;
+					NTD_TD[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
+					NTD_TD[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+					NTD_TD[index][TD_BarMaxPercentage] = 100.0;
+					NTD_TD[index][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 					format(EditorString, sizeof EditorString, "td_%i_string", i);
 					format(NTD_TD[index][TD_Text] , 300, dfile_ReadString(EditorString));
 					format(EditorString, sizeof EditorString, "td_%i_data", i);
@@ -4464,6 +4850,15 @@ stock LoadProject(projectname[])
 					if(strlen(NTD_TD[index][TD_VarName]) == 0)
 						format(NTD_TD[index][TD_VarName], 35, "");
 					
+					//Bar Data
+					format(EditorString, sizeof EditorString, "td_%i_bar_data", i);
+					if(strlen(dfile_ReadString(EditorString)) > 0)
+					{
+						format(EditorLString, sizeof EditorLString, dfile_ReadString(EditorString));
+						sscanf(EditorLString, "fi", 
+						NTD_TD[index][TD_BarMaxPercentage], 
+						NTD_TD[index][TD_BarDirectory]);
+					}
 					DrawTD(index);
 				}
 				else break;
@@ -4528,7 +4923,7 @@ stock GetTemplatesAsLanguage(langname[])
 						{
 							strmid(template_string, line, (mline[1] + 14), strlen(line));
 							new free = Iter_Free(I_TEMPLATES);
-							if(free >= 0 && free < MAX_TEMPLATES)
+							if(free != ITER_NONE)
 							{
 								Iter_Add(I_TEMPLATES, free);
 								format(Template[free][Template_Name], 60, template_name);
@@ -4568,42 +4963,66 @@ stock GetTemplatesAsLanguage(langname[])
 	return 0;
 }
 
-stock DestroyTD(td)
+stock DestroyTD(td, &next)
 {
 	if(NTD_TD[td][TD_Created] == true)
 	{
-		//Iter_SafeRemove(I_TEXTDRAWS, td);
+		new playerid = NTD_User[User_PlayerIDInEditor];
 		NTD_TD[td][TD_Created] = false;
-		TextDrawDestroy(NTD_TD[td][TD_SelfID]);
+		if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+		{
+			TextDrawDestroy(NTD_TD[td][TD_SelfID]);
+			NTD_TD[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+		}
+		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		{
+			DestroyPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+			NTD_TD[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
+		}
 		TextDrawDestroy(NTD_TD[td][TD_PickerID]);
+		Iter_SafeRemove(I_TEXTDRAWS, td, next);
 	}
 }
 
-forward HLTD(playerid, td);
 public HLTD(playerid, td)
 {
 	new red, green, blue, alpha;
 	#pragma unused alpha
-	RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-	HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-	TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-	RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-	HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-	TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-	RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-	HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-	TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
-	TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+	if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+	{
+		RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+		HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
+		RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+		HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
+		RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+		HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
+		TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+	}
+	else if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	{
+		SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_Color]);
+		ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+	}
 	return 1;
 }
 
 stock HighlightTD(playerid, td)
 {
-	TextDrawColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-	TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-	TextDrawBoxColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-	TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
-
+	if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+	{
+		TextDrawColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawBoxColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+	}
+	else if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	{
+		SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], 0xFFFF00FF);
+		ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+	}
 	if(NTD_TD[td][TD_HighlightTimer] != -1)
 		KillTimer(NTD_TD[td][TD_HighlightTimer]);
 	NTD_TD[td][TD_HighlightTimer] = SetTimerEx("HLTD", 250, false, "ii", playerid, td);
@@ -4618,29 +5037,55 @@ stock DrawTD(td)
 	if(NTD_TD[td][TD_Created] == true)
 	{
 		//TD
-		NTD_TD[td][TD_SelfID] = TextDrawCreate(NTD_TD[td][TD_PosX], NTD_TD[td][TD_PosY], NTD_TD[td][TD_Text]);
-		TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
-		TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
-		TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
-		TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
-		RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-		RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-		HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-		RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
-		TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
-		TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
-		TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
-		TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
-		TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
-		TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
-		TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
-		TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
-		
+		if(NTD_TD[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			NTD_TD[td][TD_SelfID] = TextDrawCreate(NTD_TD[td][TD_PosX], NTD_TD[td][TD_PosY], NTD_TD[td][TD_Text]);
+			TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
+			TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
+			TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
+			TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
+			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
+			RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+			HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+			TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
+			RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+			HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+			TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
+			TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
+			TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
+			TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
+			TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
+			TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
+			TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
+			TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
+			TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
+			
+			//Show
+			if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+			else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
+		}
+		else
+		{
+			if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
+			{
+				RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+				HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+				NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
+				NTD_TD[td][TD_PosX], 
+				NTD_TD[td][TD_PosY], 
+				NTD_TD[td][TD_BoxSizeX], 
+				NTD_TD[td][TD_BoxSizeY],
+				NTD_TD[td][TD_Color], 
+				NTD_TD[td][TD_BarMaxPercentage],
+				NTD_TD[td][TD_BarDirectory]);
+			}
+			
+			//Show
+			SetPlayerProgressBarValue(playerid, NTD_TD[td][TD_BarID], (NTD_TD[td][TD_BarMaxPercentage] / 2.0));
+			ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+		}
 		//Picker
 		NTD_TD[td][TD_PickerID] = TextDrawCreate(NTD_TD[td][TD_PosX] - 1, NTD_TD[td][TD_PosY] - 10, TD_PICKER_TEXT);
 		TextDrawFont(NTD_TD[td][TD_PickerID], 1);
@@ -4655,11 +5100,7 @@ stock DrawTD(td)
 			TextDrawColor(NTD_TD[td][TD_PickerID], TDPICKER_COLOR);
 		else
 			TextDrawColor(NTD_TD[td][TD_PickerID], TDPICKER_COLOR_ACTIVE);
-		
-		//Show
-		if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
-		else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
-		
+
 		if(EditorQuickSelect) 
 			TextDrawShowForPlayer(playerid, NTD_TD[td][TD_PickerID]);
 		return 1;
@@ -4675,22 +5116,32 @@ stock GetProcessedTDVarName(tdid)
 		if(strlen(NTD_TD[tdid][TD_VarName]) > 0)
 			format(string, sizeof string, NTD_TD[tdid][TD_VarName]);
 		else
-			format(string, sizeof string, "textdraw_%i", tdid);
+		{
+			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+				format(string, sizeof string, "playerprogressbar_%i", tdid);
+			else if(!NTD_TD[tdid][TD_IsPublic])
+				format(string, sizeof string, "playertextdraw_%i", tdid);
+			else 
+				format(string, sizeof string, "textdraw_%i", tdid);
+		}
 	}
 	return string;
 }
 
-stock CreateNewTD(cloneid = -1, Tstring[] = "_", Float:TPosX = 0.0, Float:TPosY = 0.0, TFont = 0, bool:TisPublic = true, TOutlineSize = 0, 
+stock CreateNewTD(cloneid = -1, const Tstring[] = "_", Float:TPosX = 0.0, Float:TPosY = 0.0, TFont = 0, bool:TisPublic = true, TOutlineSize = 0, 
 TShadowSize = 0, Float:TLetterSizeX = 0.0, Float:TLetterSizeY = 0.0, TColor = -1, TBGColor = -1, TBoxColor = -1, 
 bool:ZUseBox = true, Float:TBoxSizeX = 0.0, Float:TBoxSizeY = 0.0, bool:TSelectable = false, TAlignment = 0, 
 bool:TProportional = true, TPrevModel = 0, TPrevModelC1 = -1, TPrevModelC2 = -1, Float:TPrevRotX = 0.0, Float:TPrevRotY = 0.0,
-Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, TBoxColorA = 255)
+Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, TBoxColorA = 255,
+Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 {
 	new index = Iter_Free(I_TEXTDRAWS);
-	if(index >= 0 && index < MAX_TEXT_DRAWS)
+	if(index != ITER_NONE)
 	{
 		Iter_Add(I_TEXTDRAWS, index);
 		NTD_TD[index][TD_Created] = true;
+		NTD_TD[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+		NTD_TD[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
 		switch(cloneid)
 		{
 			case -2: //Template
@@ -4724,6 +5175,8 @@ Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, 
 				NTD_TD[index][TD_PrevRotY] = TPrevRotY;
 				NTD_TD[index][TD_PrevRotZ] = TPrevRotZ;
 				NTD_TD[index][TD_PrevRotZoom] = TPrevRotZoom;
+				NTD_TD[index][TD_BarMaxPercentage] = TBarMaxPercentage;
+				NTD_TD[index][TD_BarDirectory] = TBarDirectory;
 			}
 			case -1: //Normal
 			{
@@ -4756,6 +5209,8 @@ Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, 
 				NTD_TD[index][TD_PrevRotY] = 0.0;
 				NTD_TD[index][TD_PrevRotZ] = -20.0;
 				NTD_TD[index][TD_PrevRotZoom] = 1.0;
+				NTD_TD[index][TD_BarMaxPercentage] = 100.0;
+				NTD_TD[index][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 			}
 			default: //Clone
 			{
@@ -4790,6 +5245,8 @@ Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, 
 					NTD_TD[index][TD_PrevRotY] = NTD_TD[cloneid][TD_PrevRotY];
 					NTD_TD[index][TD_PrevRotZ] = NTD_TD[cloneid][TD_PrevRotZ];
 					NTD_TD[index][TD_PrevRotZoom] = NTD_TD[cloneid][TD_PrevRotZoom];
+					NTD_TD[index][TD_BarMaxPercentage] = NTD_TD[cloneid][TD_BarMaxPercentage];
+					NTD_TD[index][TD_BarDirectory] = NTD_TD[cloneid][TD_BarDirectory];
 				}
 			}
 		}
@@ -4811,7 +5268,7 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	TextDrawSetSelectable(B_Export, false);
 	TextDrawSetSelectable(B_Manage, false);
 	TextDrawSetSelectable(B_Font, false);
-	TextDrawSetSelectable(B_MPreview, false);
+	TextDrawSetSelectable(B_TDSettings, false);
 	TextDrawSetSelectable(B_Position, false);
 	TextDrawSetSelectable(B_Size, false);
 	TextDrawSetSelectable(B_Tekst, false);
@@ -4834,7 +5291,7 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	TextDrawColor(B_Export, unsetcolor);
 	TextDrawColor(B_Manage, unsetcolor);
 	TextDrawColor(B_Font, unsetcolor);
-	TextDrawColor(B_MPreview, unsetcolor);
+	TextDrawColor(B_TDSettings, unsetcolor);
 	TextDrawColor(B_Position, unsetcolor);
 	TextDrawColor(B_Size, unsetcolor);
 	TextDrawColor(B_Tekst, unsetcolor);
@@ -4847,6 +5304,7 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	TextDrawColor(B_Selectable, unsetcolor);
 	TextDrawColor(B_Proportionality, unsetcolor);
 	
+	new tdid = NTD_User[User_EditingTDID];
 	if(b1_active) 
 		TextDrawSetSelectable(B_NewProject, true),
 		TextDrawColor(B_NewProject, EditorButtonsColor);
@@ -4856,7 +5314,7 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	if(b3_active) 
 		TextDrawSetSelectable(B_CloseProject, true),
 		TextDrawColor(B_CloseProject, EditorButtonsColor);
-	if(b4_active) 
+	if(b4_active && (Iter_Count(I_TEXTDRAWS) > 0)) 
 		TextDrawSetSelectable(B_Export, true),
 		TextDrawColor(B_Export, EditorButtonsColor);
 	if(b5_active) 
@@ -4865,42 +5323,87 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	if(b6_active) 
 		TextDrawSetSelectable(B_Font, true),
 		TextDrawColor(B_Font, EditorButtonsColor);
-	if(b7_active) 
-		TextDrawSetSelectable(B_MPreview, true),
-		TextDrawColor(B_MPreview, EditorButtonsColor);
+	if(b7_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW || NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_TDSettings, true);
+			TextDrawColor(B_TDSettings, EditorButtonsColor);
+		}
+	}
 	if(b8_active) 
 		TextDrawSetSelectable(B_Position, true),
 		TextDrawColor(B_Position, EditorButtonsColor);
 	if(b9_active) 
 		TextDrawSetSelectable(B_Size, true),
 		TextDrawColor(B_Size, EditorButtonsColor);
-	if(b10_active) 
-		TextDrawSetSelectable(B_Tekst, true),
-		TextDrawColor(B_Tekst, EditorButtonsColor);
+	if(b10_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_Tekst, true);
+			TextDrawColor(B_Tekst, EditorButtonsColor);
+		}
+	}
 	if(b11_active) 
 		TextDrawSetSelectable(B_Color, true),
 		TextDrawColor(B_Color, EditorButtonsColor);
-	if(b12_active) 
-		TextDrawSetSelectable(B_Outline, true),
-		TextDrawColor(B_Outline, EditorButtonsColor);
-	if(b13_active) 
-		TextDrawSetSelectable(B_Shadow, true),
-		TextDrawColor(B_Shadow, EditorButtonsColor);
-	if(b14_active) 
-		TextDrawSetSelectable(B_UseBox, true),
-		TextDrawColor(B_UseBox, EditorButtonsColor);
-	if(b15_active) 
-		TextDrawSetSelectable(B_Alignment, true),
-		TextDrawColor(B_Alignment, EditorButtonsColor);
-	if(b16_active) 
-		TextDrawSetSelectable(B_SwitchPublic, true),
-		TextDrawColor(B_SwitchPublic, EditorButtonsColor);
-	if(b17_active) 
-		TextDrawSetSelectable(B_Selectable, true),
-		TextDrawColor(B_Selectable, EditorButtonsColor);
-	if(b18_active) 
-		TextDrawSetSelectable(B_Proportionality, true),
-		TextDrawColor(B_Proportionality, EditorButtonsColor);
+	if(b12_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_Outline, true);
+			TextDrawColor(B_Outline, EditorButtonsColor);
+		}
+	}
+	if(b13_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_Shadow, true);
+			TextDrawColor(B_Shadow, EditorButtonsColor);
+		}
+	}
+	if(b14_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_UseBox, true);
+			TextDrawColor(B_UseBox, EditorButtonsColor);
+		}
+	}
+	if(b15_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW)
+		{
+			TextDrawSetSelectable(B_Alignment, true);
+			TextDrawColor(B_Alignment, EditorButtonsColor);
+		}
+	}
+	if(b16_active && tdid != -1) 
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_SwitchPublic, true);
+			TextDrawColor(B_SwitchPublic, EditorButtonsColor);
+		}
+	}
+	if(b17_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_Selectable, true);
+			TextDrawColor(B_Selectable, EditorButtonsColor);
+		}
+	}
+	if(b18_active && tdid != -1)
+	{
+		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		{
+			TextDrawSetSelectable(B_Proportionality, true),
+			TextDrawColor(B_Proportionality, EditorButtonsColor);
+		}
+	}
 	
 	TextDrawShowForPlayer(playerid, B_NewProject);
 	TextDrawShowForPlayer(playerid, B_OpenProject);
@@ -4908,7 +5411,7 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	TextDrawShowForPlayer(playerid, B_Export);
 	TextDrawShowForPlayer(playerid, B_Manage);
 	TextDrawShowForPlayer(playerid, B_Font);
-	TextDrawShowForPlayer(playerid, B_MPreview);
+	TextDrawShowForPlayer(playerid, B_TDSettings);
 	TextDrawShowForPlayer(playerid, B_Position);
 	TextDrawShowForPlayer(playerid, B_Size);
 	TextDrawShowForPlayer(playerid, B_Tekst);
@@ -4946,7 +5449,7 @@ stock HideEditor(playerid)
 	TextDrawHideForPlayer(playerid, B_SwitchPublic);
 	TextDrawHideForPlayer(playerid, B_Selectable);
 	TextDrawHideForPlayer(playerid, B_Proportionality);
-	TextDrawHideForPlayer(playerid, B_MPreview);
+	TextDrawHideForPlayer(playerid, B_TDSettings);
 	return 1;
 }
 
@@ -4972,7 +5475,7 @@ stock DestroyEditor()
 	TextDrawDestroy(B_SwitchPublic);
 	TextDrawDestroy(B_Selectable);
 	TextDrawDestroy(B_Proportionality);
-	TextDrawDestroy(B_MPreview);
+	TextDrawDestroy(B_TDSettings);
 	return 1;
 }
 
@@ -5000,7 +5503,6 @@ stock WriteIntoList(name[])
 	return 0;
 }
 
-forward FadeTimer(bool:fadein);
 public FadeTimer(bool:fadein)
 {
 	if(fadein)
@@ -5131,11 +5633,11 @@ stock CreateEditor()
 	TextDrawSetSelectable(B_Font, true);
 	TextDrawColor(B_Font, EditorButtonsColor);
 	
-	B_MPreview = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 6, EditorPosY, BUTTON_MPREVIEW);
-	TextDrawFont(B_MPreview, 4);
-	TextDrawTextSize(B_MPreview, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
-	TextDrawSetSelectable(B_MPreview, true);
-	TextDrawColor(B_MPreview, EditorButtonsColor);
+	B_TDSettings = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 6, EditorPosY, BUTTON_TDSETTINGS);
+	TextDrawFont(B_TDSettings, 4);
+	TextDrawTextSize(B_TDSettings, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
+	TextDrawSetSelectable(B_TDSettings, true);
+	TextDrawColor(B_TDSettings, EditorButtonsColor);
 	
 	B_Position = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 7, EditorPosY, BUTTON_POSITION);
 	TextDrawFont(B_Position, 4);
@@ -5283,7 +5785,7 @@ stock LanguageLoad(languagefile[], langname[])
 	return 0;
 }
 
-stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] = "")
+stock LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, const dialogstr[] = "")
 {
 	if(!isdialogmacro)
 	{
@@ -5344,6 +5846,8 @@ stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] =
 			case _H<tdalignment_left>: format(Language_Strings[str_tdalignment_left], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<tdalignment_center>: format(Language_Strings[str_tdalignment_center], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<tdalignment_right>: format(Language_Strings[str_tdalignment_right], DEFAULT_LANG_STRING_SIZE, macrotext);
+			case _H<tdalignment_up>: format(Language_Strings[str_tdalignment_up], DEFAULT_LANG_STRING_SIZE, macrotext);
+			case _H<tdalignment_down>: format(Language_Strings[str_tdalignment_down], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<projectrenamed>: format(Language_Strings[str_projectrenamed], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<projectnamechangecharerr>: format(Language_Strings[str_projectnamechangecharerr], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<projectnameexists>: format(Language_Strings[str_projectnameexists], DEFAULT_LANG_STRING_SIZE, macrotext);
@@ -5370,6 +5874,7 @@ stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] =
 			case _H<manualchangetypemzoom>: format(Language_Strings[str_manualchangetypemzoom], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<manualchangetypemcolor1>: format(Language_Strings[str_manualchangetypemcolor1], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<manualchangetypemcolor2>: format(Language_Strings[str_manualchangetypemcolor2], DEFAULT_LANG_STRING_SIZE, macrotext);
+			case _H<tdfontplayerprogressbar>: format(Language_Strings[str_tdfontplayerprogressbar], DEFAULT_LANG_STRING_SIZE, macrotext);
 		}
 	}
 	else
@@ -5412,6 +5917,7 @@ stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] =
 				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
 				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
 				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
+				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
 			}
 		}
 		else if(strcmp(macro, "button1", true) == 0)
@@ -5449,6 +5955,7 @@ stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] =
 				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_button1], 32, macrotext);
 				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_button1], 32, macrotext);
 				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_button1], 32, macrotext);
+				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_button1], 32, macrotext);
 			}
 		}
 		else if(strcmp(macro, "button2", true) == 0)
@@ -5486,177 +5993,184 @@ stock LanguageMacroApply(macro[], macrotext[], bool:isdialogmacro, dialogstr[] =
 				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_button2], 32, macrotext);
 				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_button2], 32, macrotext);
 				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_button2], 32, macrotext);
+				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_button2], 32, macrotext);
 			}
 		}
 		else
 		{
-			for(new i; i < MAX_DIALOG_INFO; i++)
+			for(new i; i < MAX_NTD_DIALOG_INFO; i++)
 			{
 				format(EditorString, sizeof EditorString, "info%i", i);
 				if(strcmp(macro, EditorString, true) == 0)
 				{
 					switch(YHash(dialogstr))
 					{	
+						case _H<barmaxpercentagechange>:
+						{
+							strpack(DLI[DL_MAXBARPERCCHANGE][i], macrotext);
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
+								format(DLI[DL_MAXBARPERCCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
+						}
 						case _H<manualchangemessage>:
 						{
 							strpack(DLI[DL_MANUALVARCHANGE1][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_MANUALVARCHANGE1][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<manualvarchange>:
 						{
 							strpack(DLI[DL_MANUALVARCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_MANUALVARCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<exportwitharray>:
 						{
 							strpack(DLI[DL_EXPORTWITHARRAY][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_EXPORTWITHARRAY][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<oldversionsettingsreset>:
 						{
 							strpack(DLI[DL_OLDVERSIONSETTINGSRESET][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_OLDVERSIONSETTINGSRESET][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<deleteprojectconfirm>:
 						{
 							strpack(DLI[DL_DELETEPROJECTCONFIRM][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_DELETEPROJECTCONFIRM][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<colorchangelist2>:
 						{
 							strpack(DLI[DL_COLORCHANGELIST2][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_COLORCHANGELIST2][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<colorchangelist1>:
 						{
 							strpack(DLI[DL_COLORCHANGELIST1][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_COLORCHANGELIST1][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<boxsizechangelist>:
 						{
 							strpack(DLI[DL_BOXSIZECHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_BOXSIZECHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<spritechangelist>:
 						{
 							strpack(DLI[DL_SPRITECHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_SPRITECHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<textchange>:
 						{
 							strpack(DLI[DL_TEXTCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_TEXTCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<previewmodelchangelist>:
 						{
 							strpack(DLI[DL_PREVIEWMODELCHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_PREVIEWMODELCHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<changeprojectname>:
 						{
 							strpack(DLI[DL_PROJECTNAMECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_PROJECTNAMECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<variablechange>:
 						{
 							strpack(DLI[DL_VARIABLECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_VARIABLECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<dialogsettings>:
 						{
 							strpack(DLI[DL_SETTINGS][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_SETTINGS][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<spritechange>:
 						{
 							strpack(DLI[DL_SPRITECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_SPRITECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<settingsreset>:
 						{
 							strpack(DLI[DL_SETTINGSRESET][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_SETTINGSRESET][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<newproject>:
 						{
 							strpack(DLI[DL_NEWPROJECT][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_NEWPROJECT][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<textdrawslist>:
 						{
 							strpack(DLI[DL_TDLIST][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_TDLIST][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<exportproject>:
 						{
 							strpack(DLI[DL_EXPORTPROJECT][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_EXPORTPROJECT][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<newtextdraw>:
 						{
 							strpack(DLI[DL_NEWTEXTDRAW][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_NEWTEXTDRAW][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<projectslist>:
 						{
 							strpack(DLI[DL_PROJECTSLIST][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_PROJECTSLIST][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<exitconfirmation>:
 						{
 							strpack(DLI[DL_EXITCONFIRMATION][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_EXITCONFIRMATION][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<tdoptions>:
 						{
 							strpack(DLI[DL_TDOPTIONS][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_TDOPTIONS][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<projectsoptions>:
 						{
 							strpack(DLI[DL_PROJECTSOPTIONS][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_PROJECTSOPTIONS][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<previewmodelid>:
 						{
 							strpack(DLI[DL_PREVIEWMODELID][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_PREVIEWMODELID][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<colorchange>:
 						{
 							strpack(DLI[DL_COLORCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_COLORCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 						case _H<deletedconfirm>:
 						{
 							strpack(DLI[DL_DELETECONFIRM][i], macrotext);
-							for(new j = i + 1; j < MAX_DIALOG_INFO; j++)
+							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
 								format(DLI[DL_DELETECONFIRM][j], DEFAULT_LANG_STRING_SIZE, "");
 						}
 					}
@@ -5678,7 +6192,31 @@ stock IsNumeric(const string[])
     return 1;
 }
 
-stock HexToInt(string[])
+stock IsFloat(const buf[])
+{
+    new l = strlen(buf);
+    new dcount = 0;
+    for(new i=0; i<l; i++)
+    {
+        if(buf[i] == '.')
+        {
+            if(i == 0 || i == l-1) return 0;
+            else
+            {
+                dcount++;
+            }
+        }
+        if((buf[i] > '9' || buf[i] < '0') && buf[i] != '+' && buf[i] != '-' && buf[i] != '.') return 0;
+        if(buf[i] == '+' || buf[i] == '-')
+        {
+            if(i != 0 || l == 1) return 0;
+        }
+    }
+    if(dcount == 0 || dcount > 1) return 0;
+    return 1;
+}
+
+stock HexToInt(const string[])
 {
 	if (string[0]==0) return 0;
     new i;
@@ -5690,3 +6228,258 @@ stock HexToInt(string[])
     }
     return res;
 }
+
+stock sscanf(const string[], const sformat[], {Float,_}:...) //By Y_Less | Edit by Nickk888
+{
+	new sscanf_string[258];
+	new sscanf_format[258];
+	format(sscanf_string, 258, string);
+	format(sscanf_format, 258, sformat);
+ 	#if defined isnull
+ 		if (isnull(sscanf_string))
+ 	#else
+ 		if (sscanf_string[0] == 0 || (sscanf_string[0] == 1 && sscanf_string[1] == 0))
+ 	#endif
+  		{
+  			return sscanf_format[0];
+  		}
+  	#pragma tabsize 4
+  	new
+  		formatPos = 0,
+  		stringPos = 0,
+   		paramPos = 2,
+  		paramCount = numargs(),
+  		delim = ' ';
+  	while (sscanf_string[stringPos] && sscanf_string[stringPos] <= ' ')
+  	{
+  		stringPos++;
+  	}
+  	while (paramPos < paramCount && sscanf_string[stringPos])
+  	{
+  		switch (sscanf_format[formatPos++])
+  		{
+  			case '\0':
+  			{
+   				return 0;
+  			}
+  			case 'i', 'd':
+ 			{
+   				new
+  					neg = 1,
+  					num = 0,
+  					ch = sscanf_string[stringPos];
+ 				if (ch == '-')
+   				{
+  					neg = -1;
+  					ch = sscanf_string[++stringPos];
+  				}
+  				do
+  				{
+  					stringPos++;
+  					if ('0' <= ch <= '9')
+   					{
+  						num = (num * 10) + (ch - '0');
+  					}
+  					else
+ 					{
+   						return -1;
+  					}
+  				}
+ 				while ((ch = sscanf_string[stringPos]) > ' ' && ch != delim);
+  				setarg(paramPos, 0, num * neg);
+  			}
+  			case 'h', 'x':
+  			{
+  				new
+  					num = 0,
+ 					ch = sscanf_string[stringPos];
+  				do
+  				{
+ 					stringPos++;
+  					switch (ch)
+   					{
+   						case 'x', 'X':
+     						{
+ 	 						num = 0;
+ 							continue;
+ 	 					}
+ 	 				 	  case '0' .. '9':
+ 	 					{
+  	 						num = (num << 4) | (ch - '0');
+ 						}
+ 	 					case 'a' .. 'f':
+ 	 					{
+  	 						num = (num << 4) | (ch - ('a' - 10));
+ 	  					}
+ 	 					case 'A' .. 'F':
+ 	 					{
+ 	 						num = (num << 4) | (ch - ('A' - 10));
+ 	 					}
+ 	 					default:
+ 	 					{
+ 	 						return -1;
+ 	 					}
+ 	 				}
+ 	 			}
+  	 			while ((ch = sscanf_string[stringPos]) > ' ' && ch != delim);
+  	  			setarg(paramPos, 0, num);
+  	 		}
+   	 		case 'c':
+ 	 		{
+  	 			setarg(paramPos, 0, sscanf_string[stringPos++]);
+  	 		}
+ 	 		case 'f':
+ 	 		{
+
+  	 			new changestr[16], changepos = 0, strpos = stringPos;
+  	  			while(changepos < 16 && sscanf_string[strpos] && sscanf_string[strpos] != delim)
+  				{
+   	 				changestr[changepos++] = sscanf_string[strpos++];
+      	 			}
+ 	  			changestr[changepos] = '\0';
+  				setarg(paramPos,0,_:floatstr(changestr));
+    	 		}
+ 	 		case 'p':
+  	 		{
+  				delim = sscanf_format[formatPos++];
+  	 			continue;
+  	 		}
+  	 		case '\'':
+  			{
+  	 			new
+  	 				end = formatPos - 1,
+   	 				ch;
+ 	 			while ((ch = sscanf_format[++end]) && ch != '\'') {}
+ 				if (!ch)
+ 	 			{
+    	 				return -1;
+ 	 			}
+ 				sscanf_format[end] = '\0';
+ 	 			if ((ch = strfind(sscanf_string, sscanf_format[formatPos], false, stringPos)) == -1)
+ 	 			{
+ 	  				if (sscanf_format[end + 1])
+ 	 				{
+ 	 					return -1;
+ 					}
+ 	 				return 0;
+ 	 			}
+ 	 			sscanf_format[end] = '\'';
+ 	 			stringPos = ch + (end - formatPos);
+ 				formatPos = end + 1;
+  	  		}
+ 	 		case 'u':
+ 	 		{
+ 	 			new
+ 	 				end = stringPos - 1,
+ 	  				id = 0,
+ 	 				bool:num = true,
+ 					ch;
+ 	 			while ((ch = sscanf_string[++end]) && ch != delim)
+ 				{
+ 	 				if (num)
+ 	 				{
+ 	 					if ('0' <= ch <= '9')
+ 						{
+ 	 						id = (id * 10) + (ch - '0');
+ 						}
+ 	 					else
+ 						{
+ 	 						num = false;
+ 	 					}
+ 	 				}
+ 	 			}
+ 				if (num && IsPlayerConnected(id))
+ 				{
+ 	 				setarg(paramPos, 0, id);
+ 	 			}
+ 	 			else
+ 	 			{
+ 	 				#if !defined foreach
+ 						#define foreach(%1,%2) for (new %2 = 0; %2 < MAX_PLAYERS; %2++) if (IsPlayerConnected(%2))
+ 						#define __SSCANF_FOREACH__
+ 					#endif
+ 	 				sscanf_string[end] = '\0';
+ 	 				num = false;
+ 	 				new
+ 	 					name[MAX_PLAYER_NAME];
+ 	 				id = end - stringPos;
+ 	 				foreach (new playerid : Player)
+ 					{
+ 	 					GetPlayerName(playerid, name, sizeof (name));
+ 	 					if (!strcmp(name, sscanf_string[stringPos], true, id))
+ 	 					{
+ 	 						setarg(paramPos, 0, playerid);
+ 	 						num = true;
+ 	 				 		break;
+ 	 					}
+ 	 				}
+ 	 				if (!num)
+ 	 				{
+   						setarg(paramPos, 0, INVALID_PLAYER_ID);
+ 	 				}
+  	 				sscanf_string[end] = ch;
+  	 				#if defined __SSCANF_FOREACH__
+ 	 					#undef foreach
+  	 					#undef __SSCANF_FOREACH__
+ 	 				#endif
+  	 			}
+ 	 			stringPos = end;
+  	 		}
+ 	 		case 's', 'z':
+ 	 		{
+ 				new
+    	 				i = 0,
+ 	 				ch;
+  	 			if (sscanf_format[formatPos])
+  	 			{
+ 	 				while ((ch = sscanf_string[stringPos++]) && ch != delim)
+  	 				{
+ 	 					setarg(paramPos, i++, ch);
+  	 				}
+ 	 				if (!i)
+ 	 				{
+  	 					return -1;
+ 	 				}
+  	 			}
+ 	 			else
+  				{
+  	 				while ((ch = sscanf_string[stringPos++]))
+  	 				{
+  	 					setarg(paramPos, i++, ch);
+ 	 				}
+ 	 			}
+  	 			stringPos--;
+ 	 			setarg(paramPos, i, '\0');
+  	 		}
+ 	 		default:
+ 	 		{
+ 	 			continue;
+ 	 		}
+ 	 	}
+ 	 	while (sscanf_string[stringPos] && sscanf_string[stringPos] != delim && sscanf_string[stringPos] > ' ')
+  	 	{
+  	 		stringPos++;
+ 	 	}
+ 	 	while (sscanf_string[stringPos] && (sscanf_string[stringPos] == delim || sscanf_string[stringPos] <= ' '))
+ 	 	{
+ 	 		stringPos++;
+ 	 	}
+ 	 	paramPos++;
+ 	 }
+  	do
+  	 {
+ 	 	if ((delim = sscanf_format[formatPos++]) > ' ')
+ 	 	{
+ 	 		if (delim == '\'')
+ 	 		{
+ 	 			while ((delim = sscanf_format[formatPos++]) && delim != '\'') {}
+  	 		}
+ 	 		else if (delim != 'z')
+ 	 		{
+ 				return delim;
+ 	 		}
+ 	 	}
+  	}
+  	while (delim > ' ');
+  	return 0;
+ }
