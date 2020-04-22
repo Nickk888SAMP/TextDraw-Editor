@@ -4,6 +4,7 @@ NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few y
 - Clickable interface.
 - No Plugins needed!
 - Multilanguage support (English, Polish and German natively included)
+- Player Progress Bar Support(With Color and Max Percentage settings!)
 - Build-in Sprite selector(Over 300 sprites!).
 - Preview Model and Sprites support.
 - Changeable TextDraw variable name in-game.
