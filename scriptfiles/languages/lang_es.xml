@@ -1,7 +1,7 @@
 # Nickk's TextDraw Editor - Language File
 # Language: Spanish
 # Author: ThePez
-# Version: 1.0
+# Version: 2.0
 
 #MESSAGES
 
@@ -63,8 +63,6 @@
 <tddeletedinfo>~r~ID_ELIMIDANO_#1
 <tdcreatedinfo>~g~NUEVO_TEXDRAW_CREADO_~r~#1
 <tdselectedinfo>~g~ID_SELECIONADO_~r~#1
-<tdfontspriteinfo>~w~Fuente~n~~g~4/TXD Sprite
-<tdfontprevmodelinfo>~w~Fuente~n~~b~5/Model Preview
 <tdfontinfo>~w~Fuente~n~~y~#1
 <tdcoloralpha>~w~Transparencia:~y~#1~n~~p~SHIFT=Más rápido~n~SPACEBAR=Guardar
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Más rápido~n~BARRA ESPACIADORA=Guardar
@@ -88,6 +86,11 @@
 <tdalignment_left>~w~Alineación~n~~y~Izquierda
 <tdalignment_center>~w~Alineación~n~~g~Centro
 <tdalignment_right>~w~Alineación~n~~r~Derecha
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Fuente~n~~r~Barra de progreso del jugador
+<tdfontspriteinfo>~w~Fuente~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Fuente~n~~b~Model Preview
 
 #DIALOGS
 
@@ -129,14 +132,14 @@
 <dialog name="oldversionsettingsreset">
 	<caption>Otra versión detectada
 	<info0>{FFFFFF}La versión del guión difiere de la versión del archivo de configuración.
-	<info1>{FFFFFF}?Quiere restaurar la configuración para que el guión pueda funcionar correctamente?
+	<info1>{FFFFFF}Quiere restaurar la configuración para que el guión pueda funcionar correctamente?
 	<button1>Sí
 	<button2>No
 </dialog>
 
 <dialog name="settingsreset">
 	<caption>Restaurar la configuración por defecto
-	<info0>{FFFFFF}?Estás seguro de que quieres restaurar la configuración por defecto?
+	<info0>{FFFFFF}Estás seguro de que quieres restaurar la configuración por defecto?
 	<button1>Sí
 	<button2>No
 </dialog>
@@ -151,7 +154,7 @@
 <dialog name="textdrawslist">
 	<caption>Mis TextDraws (#1/#2)
 	<info0>{FFFFFF}ID/Texto#t{FFFFFF}Nombre variable
-	<info1>{FF8800}Crear nuevo TextDraw#t#n
+	<info1>{FF8800}Crear nuevo TextDraw#t
 	<button1>Confirmar
 	<button2>Atrás
 </dialog>
@@ -181,7 +184,7 @@
 
 <dialog name="exitconfirmation">
 	<caption>Salir
-	<info0>{FFFFFF}?Estás seguro de que quieres salir del editor?
+	<info0>{FFFFFF}Estás seguro de que quieres salir del editor?
 	<info1>{FFFFFF}Los proyectos abiertos se guardarán automáticamente.
 	<button1>SÍ
 	<button2>NO
@@ -237,7 +240,7 @@
 
 <dialog name="deletedconfirm">
 	<caption>Eliminar
-	<info0>{FFFFFF}?Estás seguro de que quieres eliminar este TextDraw?
+	<info0>{FFFFFF}Estás seguro de que quieres eliminar este TextDraw?
 	<info1>{FFFFFF}Texto: {F5D742}"#1"
 	<button1>SÍ
 	<button2>NO
@@ -290,7 +293,7 @@
 
 <dialog name="deleteprojectconfirm">
 	<caption>Eliminar
-	<info0>{FFFFFF}?Estás seguro de que quieres eliminar este proyecto?
+	<info0>{FFFFFF}Estás seguro de que quieres eliminar este proyecto?
 	<button1>SÍ
 	<button2>NO
 </dialog>
@@ -323,7 +326,7 @@
 
 <dialog name="exportwitharray">
 	<caption>Exportación del proyecto
-	<info0>{FFFFFF}?Quiere exportar este proyecto con el modo de array activado?
+	<info0>{FFFFFF}Quiere exportar este proyecto con el modo de array activado?
 	<info1>{FFFFFF}Los dibujos de texto con el nombre de la variable por defecto se anadirán al array para reducir la cantidad de código.
 	<button1>Sí
 	<button2>No
@@ -349,6 +352,12 @@
 	<button2>Atrás
 </dialog>
 
-
+<dialog name="barmaxpercentagechange">
+	<caption>Cambiar máx. Valor de la barra de progreso
+	<info0>{FFFFFF}Ingrese un nuevo valor para el valor máximo de la barra de progreso.
+	<info1>{FFFFFF}Valor máximo actual: {F5D742}#1%
+	<button1>Confirmar
+	<button2>Atrás
+</dialog>
 
 

@@ -1,7 +1,7 @@
 # Nickk's TextDraw Editor - Language File
 # Language: German
 # Author: Nickk888
-# Version: 1.0
+# Version: 2.0
 
 #MESSAGES
 
@@ -63,8 +63,6 @@
 <tddeletedinfo>~r~GELOESCHT_ID_#1
 <tdcreatedinfo>~g~NEUER_TEXTDRAW_ERSTELLT_~r~#1
 <tdselectedinfo>~g~AUSGEWAEHLT_ID_~r~#1
-<tdfontspriteinfo>~w~Schriftart~n~~g~4/TXD Sprite
-<tdfontprevmodelinfo>~w~Schriftart~n~~b~5/Modell Vorschau
 <tdfontinfo>~w~Schriftart~n~~y~#1
 <tdcoloralpha>~w~Transparenz:~y~#1~n~~p~SHIFT=Schneller~n~LEERTASTE=Beenden
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Schneller~n~LEERTASTE=Beenden
@@ -88,6 +86,11 @@
 <tdalignment_left>~w~Ausrichtung~n~~y~Nach links
 <tdalignment_center>~w~Ausrichtung~n~~g~Zur mitte
 <tdalignment_right>~w~Ausrichtung~n~~r~Nach rechts
+<tdalignment_up>~w~Alignment~n~~b~Nach Oben
+<tdalignment_down>~w~Alignment~n~~p~Nach Unten
+<tdfontplayerprogressbar>~w~Schriftart~n~~r~Spieler Fortschrittsbalken
+<tdfontspriteinfo>~w~Schriftart~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Schriftart~n~~b~Modell Vorschau
 
 #DIALOGS
 
@@ -151,7 +154,7 @@
 <dialog name="textdrawslist">
 	<caption>Meine TextDraws (#1/#2)
 	<info0>{FFFFFF}ID/Text#t{FFFFFF}Name der Variablen
-	<info1>{FF8800}Neuen TextDraw erstellen#t#n
+	<info1>{FF8800}Neuen TextDraw erstellen#t
 	<button1>Auswählen
 	<button2>Zurück
 </dialog>
@@ -349,6 +352,12 @@
 	<button2>Zurück
 </dialog>
 
-
+<dialog name="barmaxpercentagechange">
+	<caption>Ändern des max. Fortschrittsbalkenwert
+	<info0>{FFFFFF}Geben Sie einen neuen Wert für den Maximalwert des Fortschrittsbalkens ein.
+	<info1>{FFFFFF}Aktueller Maximalwert: {F5D742}#1%
+	<button1>Auswählen
+	<button2>Zurück
+</dialog>
 
 

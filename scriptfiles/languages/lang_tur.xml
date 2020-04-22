@@ -1,7 +1,7 @@
 # Nickk's TextDraw Editor - Language File
 # Language: Turkish
 # Author: Spîke
-# Version: 1.0
+# Version: 2.0
 
 #MESSAGES
 
@@ -10,7 +10,7 @@
 <editorinuse>{FFFFFF}Düzenleyici baºka bir oyuncu tarafindan kullanilmaya baºlandi.
 <infodialogcaption>Bilgi
 <infoeditorleave>{FFFFFF}Düzenleyiciden çikmak için {00FFFF}/NTD {FFFFFF}komutunu kullan.
-<infoeditorlocked>{FFFFFF}Script engellendi! #n{FFFFFF}Sunucunun kayit(LOG) dosyasini kontrol edin.
+<infoeditorlocked>{FFFFFF}Script has been blocked! #n{FFFFFF}Check server LOGs for more informations!
 <infoeditorreset>{FFFFFF}Ayarlar onarildi!
 <infoeditorkeyswiched>{FFFFFF}Tuºlar degiºtirildi!
 <infoeditorfastselectdisabled>{FFFFFF}Hizli Seçim: {FF0000}Kapali
@@ -64,8 +64,6 @@
 <tddeletedinfo>~r~SILINEN_ID#1
 <tdcreatedinfo>~g~YENI_TEXTDRAW_OLUSTURULDU~r~#1
 <tdselectedinfo>~g~SECILEN_ID~r~#1
-<tdfontspriteinfo>~w~Font~n~~g~4/TXD Sprite
-<tdfontprevmodelinfo>~w~Font~n~~b~5/Ön izlemeli model
 <tdfontinfo>~w~Font~n~~y~#1
 <tdcoloralpha>~w~Opaklik:~y~#1~n~~p~SHIFT=Hizli~n~SPACEBAR=Bitir
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Hizli~n~SPACEBAR=Bitir
@@ -89,6 +87,11 @@
 <tdalignment_left>~w~Hizalama~n~~y~Sol
 <tdalignment_center>~w~Hizalama~n~~g~Merkez
 <tdalignment_right>~w~Hizalama~n~~r~Sag
+<tdalignment_up>~w~Alignment~n~~b~yukari
+<tdalignment_down>~w~Alignment~n~~p~Asagi
+<tdfontplayerprogressbar>~w~Font~n~~r~Oyuncu Ilerleme Cubugu
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Ön izlemeli model
 
 #DIALOGS
 
@@ -152,7 +155,7 @@
 <dialog name="textdrawslist">
 	<caption>TextDrawlarim (#1/#2)
 	<info0>{FFFFFF}ID/Yazi#t{FFFFFF}Degiºken ismi
-	<info1>{FF8800}Yeni TextDraw oluºtur#t#n
+	<info1>{FF8800}Yeni TextDraw oluºtur#t
 	<button1>Onayla
 	<button2>Geri
 </dialog>
@@ -343,3 +346,12 @@
 	<button1>Onayla
 	<button2>Geri
 </dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Maks. Ilerleme çubugu degeri
+	<info0>{FFFFFF}Ilerleme çubugunun maksimum degeri için yeni bir deger girin.
+	<info1>{FFFFFF}Mevcut maksimum deger: {F5D742}#1%
+	<button1>Onayla
+	<button2>Geri
+</dialog>
+

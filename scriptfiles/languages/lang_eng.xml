@@ -1,7 +1,7 @@
 # Nickk's TextDraw Editor - Language File
 # Language: English
 # Author: Nickk888
-# Version: 1.0
+# Version: 2.0
 
 #MESSAGES
 
@@ -63,8 +63,6 @@
 <tddeletedinfo>~r~DELETED_ID_#1
 <tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
 <tdselectedinfo>~g~SELECTED_ID_~r~#1
-<tdfontspriteinfo>~w~Font~n~~g~4/TXD Sprite
-<tdfontprevmodelinfo>~w~Font~n~~b~5/Model Preview
 <tdfontinfo>~w~Font~n~~y~#1
 <tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
@@ -88,6 +86,11 @@
 <tdalignment_left>~w~Alignment~n~~y~LEFT
 <tdalignment_center>~w~Alignment~n~~g~CENTER
 <tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Player Progress Bar
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
 
 #DIALOGS
 
@@ -151,7 +154,7 @@
 <dialog name="textdrawslist">
 	<caption>My TextDraws (#1/#2)
 	<info0>{FFFFFF}ID/Text#t{FFFFFF}Variable name
-	<info1>{FF8800}Create new TextDraw#t#n
+	<info1>{FF8800}Create new TextDraw#t
 	<button1>Confirm
 	<button2>Back
 </dialog>
@@ -349,6 +352,12 @@
 	<button2>Back
 </dialog>
 
-
+<dialog name="barmaxpercentagechange">
+	<caption>Change max. Progress bar value
+	<info0>{FFFFFF}Enter a new value for the maximum value of the progress bar.
+	<info1>{FFFFFF}Current maximum value: {F5D742}#1%
+	<button1>Confirm
+	<button2>Back
+</dialog>
 
 

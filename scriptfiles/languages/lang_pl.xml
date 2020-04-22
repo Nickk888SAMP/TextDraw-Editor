@@ -1,7 +1,7 @@
 # Nickk's TextDraw Editor - Language File
 # Language: Polish
 # Author: Nickk888
-# Version: 1.0
+# Version: 2.0
 
 #MESSAGES
 
@@ -63,8 +63,6 @@
 <tddeletedinfo>~r~USUNIETO_ID_#1
 <tdcreatedinfo>~g~STWORZONO_NOWY_TEXTDRAW_~r~#1
 <tdselectedinfo>~g~WYBRANO_ID_~r~#1
-<tdfontspriteinfo>~w~Czcionka~n~~g~4/TXD Sprite
-<tdfontprevmodelinfo>~w~Czcionka~n~~b~5/Podglad Modeli
 <tdfontinfo>~w~Czcionka~n~~y~#1
 <tdcoloralpha>~w~Przezroczystosc:~y~#1~n~~p~SHIFT=Szybciej~n~SPACJA=Zakoncz
 <tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Szybciej~n~SPACJA=Zakoncz
@@ -88,6 +86,11 @@
 <tdalignment_left>~w~Wyrownywanie~n~~y~Do lewej
 <tdalignment_center>~w~Wyrownywanie~n~~g~Do srodka
 <tdalignment_right>~w~Wyrownywanie~n~~r~Do prawej
+<tdalignment_up>~w~Wyrownywanie~n~~b~Do gory
+<tdalignment_down>~w~Wyrownywanie~n~~p~Do dolu
+<tdfontplayerprogressbar>~w~Czcionka~n~~r~Pasek postepu gracza
+<tdfontspriteinfo>~w~Czcionka~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Czcionka~n~~b~Podglad Modeli
 
 #DIALOGS
 
@@ -151,7 +154,7 @@
 <dialog name="textdrawslist">
 	<caption>Moje TextDrawy (#1/#2)
 	<info0>{FFFFFF}ID/Tekst#t{FFFFFF}Nazwa zmiennej
-	<info1>{FF8800}Stwórz nowy TextDraw#t#n
+	<info1>{FF8800}Stwórz nowy TextDraw#t
 	<button1>PotwierdŸ
 	<button2>Wróæ
 </dialog>
@@ -349,6 +352,12 @@
 	<button2>Wróæ
 </dialog>
 
-
+<dialog name="barmaxpercentagechange">
+	<caption>Zmiana maks. wartoœci paska postêpu
+	<info0>{FFFFFF}Podaj now¹ wartoœæ dla maksymalnej wartoœci paska postêpu.
+	<info1>{FFFFFF}Aktualna maksymalna wartoœæ: {F5D742}#1%
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
 
 
