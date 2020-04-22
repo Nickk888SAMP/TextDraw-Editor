@@ -1,0 +1,21 @@
+{
+	"user": "Nick888SAMP",
+	"repo": "TextDraw-Editor",
+	"entry": "ntd.pwn",
+	"output": "ntd.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib",
+		"Southclaws/progress2",
+		"Southclaws/zcmd",
+		"maddinat0r/sscanf"
+	],
+	"builds": [
+		{
+			"name": "main",
+			"args": ["-d3", "-;+", "-(+", "-Z+"],
+			"includes": [
+				"legacy"
+			]
+		}
+	]
+}
