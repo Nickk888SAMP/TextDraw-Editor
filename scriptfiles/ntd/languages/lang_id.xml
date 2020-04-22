@@ -1,0 +1,362 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Indonesian
+# Author: Se8870
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Kamu tidak boleh menggunakan perintah itu, coba login RCON akun kamu.
+<editordisabled>{FFFFFF}Mengeluarkan Editor.
+<editorinuse>{FFFFFF}Editor sedang digunakan oleh player lain!
+<infodialogcaption>Informasi
+<infoeditorleave>{FFFFFF}Untuk keluar editor, gunakan perintah {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Script telah diblokir! #n{FFFFFF}Cek server LOGs untuk info lebih lanjut!
+<infoeditorreset>{FFFFFF}Pengaturan telah dipulihkan!
+<infoeditorkeyswiched>{FFFFFF}Kunci telah diatifkan!
+<infoeditorfastselectdisabled>{FFFFFF}Pilih Cepat: {FF0000}OFF
+<infoeditorfastselectenabled>{FFFFFF}Pilih Cepat: {00FF00}ON
+<infoeditortdvisibility>{FFFFFF}Tampilan TextDraws telah dirubah!
+<infoinvalidmodelid>{FFFFFF}Model ID salah!
+<languagefilenotfound>{FFFFFF}File Bahasa tidak ditemukan!
+<infoprojectexported>{FFFFFF}Project telah berhasil diekspor! #n{FFFFFF}Project diekspor ke
+<infoprojectexporterror>{FFFFFF}Terjadi kesalahan saat mengekspor...
+<infoparamnamechange>{FFFFFF}Nama variabel telah diganti!#nNama variabel baru:{F5D742}#1#n{FFFFFF}TextDraw text: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Nama variabel sudah digunakan!
+<infoparamnamechangecharserr>{FFFFFF}Nama variabel tidak boleh mengandung karakter spesial atau spasi!
+<infoparamnamechangeammerr>{FFFFFF}Nama variabel tidak boleh lebih dari 35 karakter!
+<infomaxtextdrawsreached>{FFFFFF}Jumlah maksimum textdraws telah tercapai!
+<infolanguagechanged>{FFFFFF}Bahasa telah diganti.
+<fsenabled>{00FF00}ON{FFFFFF}
+<fsdisabled>{FF0000}OFF{FFFFFF}
+<tdvforme>{F5D742}HANYA SAYA{FFFFFF}
+<tdvforall>{0080C0}SEMUA{FFFFFF}
+<keysinverted>{FFFF00}BERALIH{FFFFFF}
+<infoprojectlimit>{FFFFFF}Jumlah maksimum projects telah tercapai!
+<infoprojectinvalidname>{FFFFFF}Nama ini terlalu pendek, terlalu panjang atau memiliki karakter yang tidak valid!
+<infoprojectexists>{FFFFFF}Project ini sudah ada!
+<infoprojectcreated>{FFFFFF}Project "{F5D742}#1{FFFFFF}" berhasil dibuat!
+<infoprojectclosed>{FFFFFF}Project telah berhasil disimpan dan ditutup.
+<infoprojectsaveerror>{FFFFFF}Terjadi kesalahan saat menyimpan project.
+<infoprojectloaded>{FFFFFF}Project "{F5D742}#1{FFFFFF}" berhasil dimuat!
+<previewmodelidinvalid>{FFFFFF}Model ID salah!
+<projectrenamed>{FFFFFF}Nama project telah berhasil diubah. #n{FFFFFF}Nama project lama:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Nama project baru: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Nama terlalu pendek, terlalu panjang atau memiliki karakter yang tidak valid.
+<projectnameexists>{FFFFFF}Nama project ini sudah ada!
+<projectnamechangeerror>{FFFFFF}Terjadi kesalahan saat mengganti nama project.
+<projectloaderror>{FFFFFF}Terjadi kesalahan saat memuat project.
+<projectdeleteerror>{FFFFFF}Terjadi kesalahan saat menghapus project.
+<projectdeleted>{FFFFFF}Project "{F5D742}#1{FFFFFF}" berhasil dihapus.
+<modelpreviewinvalidfont>{FFFFFF}Untuk menggunakan opsi ini, ubah tipe font menjadi 5!
+<noprojectsfound>{FFFFFF}Saat ini anda tidak memiliki project.
+<modeltexterror>{FFFFFF}Tidak dapat mengubah preview model text
+<infocompmodedisabled>{FFFFFF}Mode compact: {FF0000}OFF
+<infocompmodeenabled>{FFFFFF}Mode compact: {00FF00}ON
+<compmodeenabled>{00FF00}ON{FFFFFF}
+<compmodedisabled>{FF0000}OFF{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Warna 1
+<manualchangetypemcolor2>Warna 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~CLONNED_ID_~r~#1
+<tddeletedinfo>~r~DELETED_ID_#1
+<tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
+<tdselectedinfo>~g~SELECTED_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Transparansi:~y~#1~n~~p~SHIFT=Cepat~n~SPACEBAR=Akhiri
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Cepat~n~SPACEBAR=Akhiri
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=Akhiri
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Cepat~n~~p~ALT=Manual~n~~p~SPACEBAR=Akhiri
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=Akhiri
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Cepat~n~ALT=Manual~n~SPACEBAR=Akhiri
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Cepat~n~ALT=Manual~n~SPACEBAR=Akhiri
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=Akhiri
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPACEBAR=AKHIRI
+<tdpublic>~g~Publik
+<tdperplayer>~b~Untuk Player
+<tdclickable>~w~Clickable: ~g~YES
+<tdnotclickable>~w~Clickable: ~r~NO
+<tdshadowsize>~w~Shadow Size~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Outline Size~n~~y~#1
+<tdproportionality_true>~g~Proportional
+<tdproportionality_false>~r~Non-Proportional
+<tdalignment_left>~w~Alignment~n~~y~LEFT
+<tdalignment_center>~w~Alignment~n~~g~CENTER
+<tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Bilah Kemajuan Pemain
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Pengaturan Editor
+	<info0>{FFFFFF}Ubah posisi editor
+	<info1>{FFFFFF}Ubah warna highlight
+	<info2>{FFFFFF}Ubah warna tombol
+	<info3>{FFFFFF}Ganti SHIFT dengan SPACEBAR#1
+	<info4>{FFFFFF}Pilih Cepat: [#2]
+	<info5>{FFFFFF}Display textDraw: [#3]
+	<info6>{FFFFFF}Mode compact: [#4]
+	<info7>{FFFFFF}Ganti bahasa
+	<info8>{FF0000}Kembalikan pengaturan default
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Ganti Sprite
+	<info0>{FFFFFF}Masukan nama Library dan nama Sprite.
+	<info1>{FFFFFF}Contoh: {FF8040}hud:radar_impound
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Ganti warna highlight
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Ganti warna kunci
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Versi lain terdeteksi
+	<info0>{FFFFFF}Versi Script berbeda dari konfigurasi versi file.
+	<info1>{FFFFFF}Apakah kamu mau untuk mengembalikan pengaturan agar script dapat berfungsi dengan normal?
+	<button1>Ya
+	<button2>Tidak
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Mengembalikan pengaturan default
+	<info0>{FFFFFF}Apakah kamu yakin ingin mengembalikan ke pengaturan default?
+	<button1>Yes
+	<button2>No
+</dialog>
+
+<dialog name="newproject">
+	<caption>Project baru
+	<info0>{FFFFFF}Masukkan nama project baru.
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>TextDraws ku (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Nama variabel
+	<info1>{FF8800}Buat TextDraw baru#t
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Projects ku (#1/#2)
+	<info0>{FF8800}Nama#t{FF8800}Kuantitas TextDraw#t{FF8800}Terakhir diubah#n
+	<button1>Pilih
+	<button2>Kembali
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Ekspor sebagai...
+	<info0>{FF8800}Ekspor normal
+	<info1>{FF8800}Fungsional filterscript
+	<button1>Ekspor
+	<button2>Kembali
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>TextDraw baru
+	<info0>{FF8800}Simple
+	<info1>{FF8800}Gunakan template
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Keluar
+	<info0>{FFFFFF}Apakah kamu yakin ingin keluar editor?
+	<info1>{FFFFFF}Project saat ini akan disimpan secara otomatis.
+	<button1>YA
+	<button2>TIDAK
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Ubah
+	<info1>{FF8800}Duplikat
+	<info2>{FF8800}Ganti layer
+	<info3>{FF8800}Ganti nama variabel
+	<info4>{FF0000}Hapus
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Project
+	<info0>{FFFFFF}Load
+	<info1>{FFFFFF}Ganti nama
+	<info2>{FF0000}Hapus
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Preview Model
+	<info0>{FFFFFF}Masukkan ID model karakter, model kendaraan atau model object.
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Ganti nama variabel
+	<info0>{FFFFFF}Masukkan nama variabel baru
+	<info1>{FFFFFF}Biarkan kosong untuk menghapus nama khusus
+	<info2>{FFFFFF}Nama variabel saat ini: {F5D742}#1
+	<info3>{FFFFFF}TextDraw text: {F5D742}#2
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Ganti warna
+	<info0>{FFFFFF}Berikan Warna dalam format yang diberikan:#n
+	<info1>{FFFFFF}Contoh untuk RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Contoh untuk HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}RGBA saat ini: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}HEX/HTM saat iniL: {F5D742}#5
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Menghapus
+	<info0>{FFFFFF}Apakah kamu yakin ingin menghapus TextDraw ini?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>YA
+	<button2>TIDAK
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Gunakan template
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Ganti warna
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="textchange">
+	<caption>Ganti text
+	<info0>{FFFFFF}Masukkan text untuk di ganti
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Ganti Sprite 
+	<info0>{FF8800}Masukkan secara manual
+	<info1>{FF8800}Pilih dari Library
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Ganti ukuran
+	<info0>{FF8800}Text/Box (Ukuran)
+	<info1>{FF8800}Box (Lebar)
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Preview model
+	<info0>{FF8800}Ganti model ID
+	<info1>{FF8800}Ganti rotasi
+	<info2>{FF8800}Ganti zoom
+	<info3>{FF8800}Ganti warna model kendaraan
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Menghapus
+	<info0>{FFFFFF}Apakah kamu yakin ingin menghapus project ini?
+	<button1>YA
+	<button2>TIDAK
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Ganti nama project
+	<info0>{FFFFFF}Masukkan nama baru project ini.
+	<info1>{FFFFFF}Nama saat ini: {F5D742}"#1"
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Change color
+	<info0>{FF8800}Text color
+	<info1>{FF8800}Background / border color
+	<info2>{FF8800}Box color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Ganti warna
+	<info0>{FF8800}Premade warna
+	<info1>{FF8800}Kustom
+	<info2>{FF8800}Ganti transparansi
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Ekspor project
+	<info0>{FFFFFF}Apakah kamu mau ekspor project ini dengan mengaktifkan array mode?
+	<info1>{FFFFFF}Textdraws dengan nama variabel default akan ditambahkan ke array guna mengurangi jumlah kode.
+	<button1>Ya
+	<button2>Tidak
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Mengganti nilai manual
+	<info0>{FFFFFF}Variabel#t{FFFFFF}Nilai saat ini
+	<info1>{FFFFFF}Nilai {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Nilai {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Nilai {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Nilai {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Nilai {F5D742}Color 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Nilai {F5D742}Color 2#t{FFFFFF}#6
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Mengganti nilai manual
+	<info0>{FFFFFF}Masukkan nilai baru untuk {F5D742}#1#n{FFFFFF}Nilai saat ini: {F5D742}#2
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Ubah maks. Nilai bilah kemajuan
+	<info0>{FFFFFF}Masukkan nilai baru untuk nilai maksimum bilah kemajuan.
+	<info1>{FFFFFF}Nilai maksimum saat ini: {F5D742}#1%
+	<button1>Confirm
+	<button2>Kembali
+</dialog>
+

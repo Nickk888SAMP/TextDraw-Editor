@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: English
+# Author: Nickk888
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}You are not allowed to use that command. Log in on RCON account.
+<editordisabled>{FFFFFF}Editor exited.
+<editorinuse>{FFFFFF}Editor is being used by another player!
+<infodialogcaption>Information
+<infoeditorleave>{FFFFFF}To exit editor, use command {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Script has been blocked! #n{FFFFFF}Check server LOGs for more informations!
+<infoeditorreset>{FFFFFF}Settings have been restored!
+<infoeditorkeyswiched>{FFFFFF}Keys has been switched!
+<infoeditorfastselectdisabled>{FFFFFF}Quick Select: {FF0000}OFF
+<infoeditorfastselectenabled>{FFFFFF}Quick Select: {00FF00}ON
+<infoeditortdvisibility>{FFFFFF}The display of TextDraws has been changed!
+<infoinvalidmodelid>{FFFFFF}Model ID is incorrect!
+<languagefilenotfound>{FFFFFF}Language file not found!
+<infoprojectexported>{FFFFFF}The project has been successfully exported! #n{FFFFFF}Project exported to
+<infoprojectexporterror>{FFFFFF}An error occurred while exporting...
+<infoparamnamechange>{FFFFFF}The variable name has been changed!#nNew variable name: {F5D742}#1#n{FFFFFF}TextDraw text: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}This variable name has already been used!
+<infoparamnamechangecharserr>{FFFFFF}Variable names cannot contain special characters or spaces!
+<infoparamnamechangeammerr>{FFFFFF}Variable name cannot exceed 35 characters!
+<infomaxtextdrawsreached>{FFFFFF}The maximum number of textdraws has been reached!
+<infolanguagechanged>{FFFFFF}The language has been changed.
+<fsenabled>{00FF00}ON{FFFFFF}
+<fsdisabled>{FF0000}OFF{FFFFFF}
+<tdvforme>{F5D742}ONLY ME{FFFFFF}
+<tdvforall>{0080C0}ALL{FFFFFF}
+<keysinverted>{FFFF00}SWITCHED{FFFFFF}
+<infoprojectlimit>{FFFFFF}The maximum number of projects has been reached!
+<infoprojectinvalidname>{FFFFFF}The name is too short, too long or has invalid characters!
+<infoprojectexists>{FFFFFF}This project already exists!
+<infoprojectcreated>{FFFFFF}The project "{F5D742}#1{FFFFFF}" was successfully created!
+<infoprojectclosed>{FFFFFF}The project has been successfully saved and closed.
+<infoprojectsaveerror>{FFFFFF}An error occurred while saving the project.
+<infoprojectloaded>{FFFFFF}Project "{F5D742}#1{FFFFFF}" has been successfully loaded!
+<previewmodelidinvalid>{FFFFFF}Model ID is wrong!
+<projectrenamed>{FFFFFF}The project name has been successfully changed. #n{FFFFFF}Old project name:"{F5D742}#1{FFFFFF}"#n{FFFFFF}New project name: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}The name is too short, too long or has invalid characters.
+<projectnameexists>{FFFFFF}This project already exists!
+<projectnamechangeerror>{FFFFFF}An error occurred while renaming the project.
+<projectloaderror>{FFFFFF}An error occurred while loading the project.
+<projectdeleteerror>{FFFFFF}An error occurred while deleting the project.
+<projectdeleted>{FFFFFF}Project "{F5D742}#1{FFFFFF}" has been deleted.
+<modelpreviewinvalidfont>{FFFFFF}To use this option, change the font to 5!
+<noprojectsfound>{FFFFFF}You currently don't have any projects.
+<modeltexterror>{FFFFFF}Cannot change model preview text
+<infocompmodedisabled>{FFFFFF}Compact mode: {FF0000}OFF
+<infocompmodeenabled>{FFFFFF}Compact mode: {00FF00}ON
+<compmodeenabled>{00FF00}ON{FFFFFF}
+<compmodedisabled>{FF0000}OFF{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Color 1
+<manualchangetypemcolor2>Color 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~CLONNED_ID_~r~#1
+<tddeletedinfo>~r~DELETED_ID_#1
+<tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
+<tdselectedinfo>~g~SELECTED_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~~p~ALT=Manual~n~~p~SPACEBAR=End
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=End
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPACEBAR=END
+<tdpublic>~g~Public
+<tdperplayer>~b~For Player
+<tdclickable>~w~Clickable: ~g~YES
+<tdnotclickable>~w~Clickable: ~r~NO
+<tdshadowsize>~w~Shadow Size~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Outline Size~n~~y~#1
+<tdproportionality_true>~g~Proportional
+<tdproportionality_false>~r~Non-Proportional
+<tdalignment_left>~w~Alignment~n~~y~LEFT
+<tdalignment_center>~w~Alignment~n~~g~CENTER
+<tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Player Progress Bar
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Editor Settings
+	<info0>{FFFFFF}Change editor position
+	<info1>{FFFFFF}Change highlight color
+	<info2>{FFFFFF}Change buttons color
+	<info3>{FFFFFF}Switch SHIFT with SPACEBAR #1
+	<info4>{FFFFFF}Quick Select: [#2]
+	<info5>{FFFFFF}TextDraw display: [#3]
+	<info6>{FFFFFF}Compact mode: [#4]
+	<info7>{FFFFFF}Change language
+	<info8>{FF0000}Restore default settings
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Sprite change
+	<info0>{FFFFFF}Enter the library name and sprite name.
+	<info1>{FFFFFF}Example: {FF8040}hud:radar_impound
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Change highlight color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Change keys color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Another version detected
+	<info0>{FFFFFF}The script version differs from the configuration file version.
+	<info1>{FFFFFF}Would you like to restore the settings so that the script can work properly?
+	<button1>Yes
+	<button2>No
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Restoring default settings
+	<info0>{FFFFFF}Are you sure you want to restore the default settings?
+	<button1>Yes
+	<button2>No
+</dialog>
+
+<dialog name="newproject">
+	<caption>New project
+	<info0>{FFFFFF}Enter the name of new project.
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>My TextDraws (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Variable name
+	<info1>{FF8800}Create new TextDraw#t
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="projectslist">
+	<caption>My Projects (#1/#2)
+	<info0>{FF8800}Name#t{FF8800}TextDraw Quantity#t{FF8800}Last changed#n
+	<button1>Select
+	<button2>Back
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Export as...
+	<info0>{FF8800}Normal export
+	<info1>{FF8800}Functional filterscript
+	<button1>Export
+	<button2>Back
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>New TextDraw
+	<info0>{FF8800}Simple
+	<info1>{FF8800}Use template
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Exit
+	<info0>{FFFFFF}Are you sure you want to exit the editor?
+	<info1>{FFFFFF}Open projects will be automatically saved.
+	<button1>YES
+	<button2>NO
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Modify
+	<info1>{FF8800}Clone
+	<info2>{FF8800}Change layer
+	<info3>{FF8800}Change variable name
+	<info4>{FF0000}Delete
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Project
+	<info0>{FFFFFF}Load
+	<info1>{FFFFFF}Change name
+	<info2>{FF0000}Delete
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Enter the character model ID, vehicle model or object model.
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Change variable name
+	<info0>{FFFFFF}Enter new variable name
+	<info1>{FFFFFF}Leave blank to delete custom name
+	<info2>{FFFFFF}Current variable name: {F5D742}#1
+	<info3>{FFFFFF}TextDraw text: {F5D742}#2
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Color change
+	<info0>{FFFFFF}Provide Color in the given formats:#n
+	<info1>{FFFFFF}Example for RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Example for HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Current RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Current HEX/HTML: {F5D742}#5
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Deleting
+	<info0>{FFFFFF}Are you sure you want to delete this TextDraw?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>YES
+	<button2>NO
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Use template
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Change color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="textchange">
+	<caption>Change text
+	<info0>{FFFFFF}Enter the text to be set
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Change Sprite 
+	<info0>{FF8800}Enter manualy
+	<info1>{FF8800}Choose from library
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Change size
+	<info0>{FF8800}Text/Box (Size)
+	<info1>{FF8800}Box (Width)
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model preview
+	<info0>{FF8800}Change model ID
+	<info1>{FF8800}Change rotation
+	<info2>{FF8800}Change zoom
+	<info3>{FF8800}Change color of vehicle model
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Deleting
+	<info0>{FFFFFF}Are you sure you want to delete this project?
+	<button1>YES
+	<button2>NO
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Change project name
+	<info0>{FFFFFF}Enter new name of project.
+	<info1>{FFFFFF}Current name: {F5D742}"#1"
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Change color
+	<info0>{FF8800}Text color
+	<info1>{FF8800}Background / border color
+	<info2>{FF8800}Box color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Change color
+	<info0>{FF8800}Premade colors
+	<info1>{FF8800}Custom
+	<info2>{FF8800}Change transparency
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Project export
+	<info0>{FFFFFF}Would you like to export this project with array mode enabled?
+	<info1>{FFFFFF}Textdraws with the default variable name will be added to the array to reduce the amount of code.
+	<button1>Yes
+	<button2>No
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Manual change of value
+	<info0>{FFFFFF}Variable#t{FFFFFF}Current Value
+	<info1>{FFFFFF}Value {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Value {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Value {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Value {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Value {F5D742}Color 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Value {F5D742}Color 2#t{FFFFFF}#6
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Manual change of value
+	<info0>{FFFFFF}Enter a new value for {F5D742}#1#n{FFFFFF}Current value: {F5D742}#2
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Change max. Progress bar value
+	<info0>{FFFFFF}Enter a new value for the maximum value of the progress bar.
+	<info1>{FFFFFF}Current maximum value: {F5D742}#1%
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+

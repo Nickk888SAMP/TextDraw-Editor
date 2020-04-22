@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Polish
+# Author: Nickk888
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Nie jesteœ uprawniony by skorzystaæ z tej komendy! Zaloguj siê na konto RCON.
+<editordisabled>{FFFFFF}Edytor zosta³ wy³¹czony.
+<editorinuse>{FFFFFF}Inny gracz aktualnie korzysta z edytora!
+<infodialogcaption>Informacja
+<infoeditorleave>{FFFFFF}Aby wyjœæ z edytora, u¿yj komendy {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Skrypt zosta³ zablokowany! #n{FFFFFF}SprawdŸ Log serwera, aby otrzymaæ wiêcej informacji!
+<infoeditorreset>{FFFFFF}Ustawienia zosta³y przywrócone!
+<infoeditorkeyswiched>{FFFFFF}Przyciski zosta³y zamienione!
+<infoeditorfastselectdisabled>{FFFFFF}Szybki wybór: {FF0000}wy³¹czony
+<infoeditorfastselectenabled>{FFFFFF}Szybki wybór: {00FF00}w³¹czony
+<infoeditortdvisibility>{FFFFFF}Wyœwietlanie TextDrawów zosta³o zmienione!
+<infoinvalidmodelid>{FFFFFF}ID modelu jest b³êdne!
+<languagefilenotfound>{FFFFFF}Plik jêzykowy nie zosta³ znaleziony!
+<infoprojectexported>{FFFFFF}Projekt zosta³ pomyœlnie wyeksportowany! #n{FFFFFF}Projekt wyeksportowany do
+<infoprojectexporterror>{FFFFFF}Podczas eksportowania wyst¹pi³ b³¹d...
+<infoparamnamechange>{FFFFFF}Nazwa zmiennej zosta³a zmieniona!#nNowa nazwa zmiennej: {F5D742}#1#n{FFFFFF}Tekst TextDrawa: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Taka nazwa zmiennej zosta³a ju¿ u¿ywana!
+<infoparamnamechangecharserr>{FFFFFF}Nazwa zmiennej nie mo¿e zawieraæ znaków specjalnych oraz przerw!
+<infoparamnamechangeammerr>{FFFFFF}Nazwa zmiennej nie mo¿e przekraczaæ 35 znaków!
+<infomaxtextdrawsreached>{FFFFFF}Osi¹gniêto maksymaln¹ liczbê tekstdrawów!
+<infolanguagechanged>{FFFFFF}Jêzyk zosta³ zmieniony.
+<fsenabled>{00FF00}W£¥CZONY{FFFFFF}
+<fsdisabled>{FF0000}WY£¥CZONY{FFFFFF}
+<tdvforme>{F5D742}TYLKO DLA MNIE{FFFFFF}
+<tdvforall>{0080C0}DLA WSZYSTKICH{FFFFFF}
+<keysinverted>{FFFF00}ZAMIENIONE{FFFFFF}
+<infoprojectlimit>{FFFFFF}Osi¹gniêto maksymaln¹ liczbê projektów!
+<infoprojectinvalidname>{FFFFFF}Nazwa jest za krótka, za d³uga lub posiada niepoprawne znaki!
+<infoprojectexists>{FFFFFF}Taki projekt juz istnieje!
+<infoprojectcreated>{FFFFFF}Projekt "{F5D742}#1{FFFFFF}" zosta³ pomyœlnie stworzony!
+<infoprojectclosed>{FFFFFF}Projekt zosta³ pomyœlnie zapisany i zamkniêty.
+<infoprojectsaveerror>{FFFFFF}Podczas zapisywania projektu wyst¹pi³ b³¹d.
+<infoprojectloaded>{FFFFFF}Projekt "{F5D742}#1{FFFFFF}" zosta³ pomyœlnie wczytany!
+<previewmodelidinvalid>{FFFFFF}ID modelu jest b³êdne!
+<projectrenamed>{FFFFFF}Nazwa projektu zosta³a pomyœlnie zmieniona.#nStara nazwa projektu: "{F5D742}#1{FFFFFF}"#n{FFFFFF}Nowa nazwa projektu: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Nazwa jest za krótka, za d³uga lub posiada niepoprawne znaki.
+<projectnameexists>{FFFFFF}Taki projekt ju¿ istnieje!
+<projectnamechangeerror>{FFFFFF}Podczas zmiany nazwy projektu wyst¹pi³ b³¹d.
+<projectloaderror>{FFFFFF}Podczas ³adowania projektu wyst¹pi³ b³¹d.
+<projectdeleteerror>{FFFFFF}Podczas usuwania projektu wyst¹pi³ b³¹d.
+<projectdeleted>{FFFFFF}Projekt "{F5D742}#1{FFFFFF}" zosta³ usuniêty.
+<modelpreviewinvalidfont>{FFFFFF}Aby u¿yæ tej opcji, zmieñ czcionkê na 5!
+<noprojectsfound>{FFFFFF}Aktualnie nie posiadasz ¿adnych projektów.
+<modeltexterror>{FFFFFF}Nie mo¿na zmieniæ tekstu podgl¹du modeli
+<infocompmodedisabled>{FFFFFF}Tryb kompaktowy: {FF0000}wy³¹czony
+<infocompmodeenabled>{FFFFFF}Tryb kompaktowy: {00FF00}w³¹czony
+<compmodeenabled>{00FF00}W£¥CZONY{FFFFFF}
+<compmodedisabled>{FF0000}WY£¥CZONY{FFFFFF}
+<manualchangetypemzoom>Zbli¿enie
+<manualchangetypemcolor1>Kolor 1
+<manualchangetypemcolor2>Kolor 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~SKLONOWANO_ID_~r~#1
+<tddeletedinfo>~r~USUNIETO_ID_#1
+<tdcreatedinfo>~g~STWORZONO_NOWY_TEXTDRAW_~r~#1
+<tdselectedinfo>~g~WYBRANO_ID_~r~#1
+<tdfontinfo>~w~Czcionka~n~~y~#1
+<tdcoloralpha>~w~Przezroczystosc:~y~#1~n~~p~SHIFT=Szybciej~n~SPACJA=Zakoncz
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Szybciej~n~SPACJA=Zakoncz
+<tdprevmodelcolor>~w~Kolor 1:~y~#1 ~w~Kolor 2:~y~#2 ~n~~p~SHIFT=Kolor 2~n~ALT=Manualnie~n~SPACJA=Zakoncz
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Szybciej~n~ALT=Manualnie~n~SPACJA=Zakoncz
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Wartosc Y~n~ALT=Manualnie~n~SPACJA=Zakoncz
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Szybciej~n~~p~ALT=Manualnie~n~SPACJA=Zakoncz
+<tdpremodelzoom>~w~Zbli¿enie:~y~#1~n~~p~SHIFT=Szybciej~n~~p~ALT=Manualnie~n~SPACJA=Zakoncz
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACJA=Zakoncz
+<tdlayer>~w~Warstwa: ~y~#1~n~~p~SPACJA=Zakoncz
+<tdpublic>~g~Publiczny
+<tdperplayer>~b~Dla gracza
+<tdclickable>~w~Klikalny: ~g~Tak
+<tdnotclickable>~w~Klikalny: ~r~Nie
+<tdshadowsize>~w~Wielkosc cienia~n~~y~#1
+<tdboxenabled>~w~Box: ~g~Wlaczony
+<tdboxdisabled>~w~Box: ~r~Wylaczony
+<tdoutlinesize>~w~Grubosc obramowania~n~~y~#1
+<tdproportionality_true>~g~PROPORCJONALNY
+<tdproportionality_false>~r~NIE PROPORCJONALNY
+<tdalignment_left>~w~Wyrownywanie~n~~y~Do lewej
+<tdalignment_center>~w~Wyrownywanie~n~~g~Do srodka
+<tdalignment_right>~w~Wyrownywanie~n~~r~Do prawej
+<tdalignment_up>~w~Wyrownywanie~n~~b~Do gory
+<tdalignment_down>~w~Wyrownywanie~n~~p~Do dolu
+<tdfontplayerprogressbar>~w~Czcionka~n~~r~Pasek postepu gracza
+<tdfontspriteinfo>~w~Czcionka~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Czcionka~n~~b~Podglad Modeli
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Ustawienia edytora
+	<info0>{FFFFFF}Zmieñ pozycjê edytora
+	<info1>{FFFFFF}Zmieñ kolor podœwietlenia
+	<info2>{FFFFFF}Zmieñ kolor przycisków
+	<info3>{FFFFFF}Zamieñ Shift ze Spacj¹ #1
+	<info4>{FFFFFF}Szybki wybór: [#2]
+	<info5>{FFFFFF}Wyœwietlanie TextDrawów: [#3]
+	<info6>{FFFFFF}Tryb kompaktowy: [#4]
+	<info7>{FFFFFF}Zmieñ Jêzyk
+	<info8>{FF0000}Przywróæ ustawienia domyœlne
+	<button1>Wybierz
+	<button2>Wróæ
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Zmiana Spritea
+	<info0>{FFFFFF}Podaj nazwê biblioteki i nazwê spritea.
+	<info1>{FFFFFF}Przyk³ad: {FF8040}hud:radar_impound
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Zmiana koloru podœwietlenia
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Zmiana koloru przycisków
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Wykryto inn¹ wersjê
+	<info0>{FFFFFF}Wersja skryptu ró¿ni siê od wersji pliku konfiguracyjnego.
+	<info1>{FFFFFF}Czy chcia³byœ przywróciæ ustawienia, aby skrypt móg³ poprawnie dzia³aæ?
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Przywracanie ustawieñ domyœlnych
+	<info0>{FFFFFF}Czy jesteœ pewny ¿e chcesz przywróciæ ustawienia domyœlne?
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="newproject">
+	<caption>Nowy Projekt
+	<info0>{FFFFFF}Wpisz nazwê swojego nowego projektu.
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>Moje TextDrawy (#1/#2)
+	<info0>{FFFFFF}ID/Tekst#t{FFFFFF}Nazwa zmiennej
+	<info1>{FF8800}Stwórz nowy TextDraw#t
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Moje Projekty (#1/#2)
+	<info0>{FF8800}Nazwa#t{FF8800}Iloœæ TextDrawów#t{FF8800}Ostatnio zmodyfikowano#n
+	<button1>Wybierz
+	<button2>Wróæ
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Eksportuj jako...
+	<info0>{FF8800}Zwyk³y Eksport
+	<info1>{FF8800}Gotowy Filterskrypt
+	<button1>Eksportuj
+	<button2>Wróæ
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Nowy TextDraw
+	<info0>{FF8800}Zwyk³y
+	<info1>{FF8800}U¿yj szablonu
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Wyjœcie
+	<info0>{FFFFFF}Czy jesteœ pewny ¿e chcesz wyjœæ z edytora?
+	<info1>{FFFFFF}Otwarte projekty zostan¹ automatycznie zapisane.
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Modyfikuj
+	<info1>{FF8800}Sklonuj
+	<info2>{FF8800}Zmieñ warstwê
+	<info3>{FF8800}Zmieñ nazwê zmiennej
+	<info4>{FF0000}Usuñ
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Projekt
+	<info0>{FFFFFF}Wczytaj
+	<info1>{FFFFFF}Zmieñ nazwê
+	<info2>{FF0000}Usuñ
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Podgl¹d Modeli
+	<info0>{FFFFFF}Podaj ID modelu postaci, modelu pojazdu lub modelu obiektu.
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Zmieñ nazwê zmiennej
+	<info0>{FFFFFF}Podaj now¹ nazwê zmiennej
+	<info1>{FFFFFF}Pozostaw pole puste, aby usun¹æ niestandardow¹ nazwê
+	<info2>{FFFFFF}Aktualna nazwa zmiennej: {F5D742}#1
+	<info3>{FFFFFF}Tekst TextDrawa: {F5D742}#2
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Zmiana koloru
+	<info0>{FFFFFF}Podaj kolor w podanych formatach:#n
+	<info1>{FFFFFF}Przyk³ad na RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Przyk³ad na HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Aktualny RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Aktualny HEX/HTML: {F5D742}#5
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Usuwanie
+	<info0>{FFFFFF}Czy jesteœ pewny ¿e chcesz usun¹æ ten TextDraw?
+	<info1>{FFFFFF}Tekst: {F5D742}"#1"
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>U¿yj szablonu
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Zmiana koloru
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="textchange">
+	<caption>Zmiana tekstu
+	<info0>{FFFFFF}Wpisz tekst który ma zostaæ ustawiony
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Zmiana spritea
+	<info0>{FF8800}Wpisz rêcznie
+	<info1>{FF8800}Wybierz z biblioteki
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Zmiana wielkoœci
+	<info0>{FF8800}Tekstu/Boxu (Wysokoœæ)
+	<info1>{FF8800}Boxu (Szerokoœæ)
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Podgl¹d modeli
+	<info0>{FF8800}Zmieñ ID Modelu
+	<info1>{FF8800}Zmieñ Rotacjê
+	<info2>{FF8800}Zmieñ Przybli¿enie
+	<info3>{FF8800}Zmieñ kolor modelu pojazdu
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Usuwanie
+	<info0>{FFFFFF}Czy jesteœ pewny ¿e chcesz usun¹æ ten projekt?
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Zmiana nazwy projektu
+	<info0>{FFFFFF}Wpisz now¹ nazwê projektu.
+	<info1>{FFFFFF}Aktualna nazwa: {F5D742}"#1"
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Zmiana koloru
+	<info0>{FF8800}Kolor tekstu
+	<info1>{FF8800}Kolor t³a/obramowania
+	<info2>{FF8800}Kolor boxu
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Zmiana koloru
+	<info0>{FF8800}Gotowe kolory
+	<info1>{FF8800}Niestandardowe
+	<info2>{FF8800}Zmieñ przezroczystoœæ
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Eksport projektu
+	<info0>{FFFFFF}Czy chcia³byœ wyeksportowaæ ten projekt z trybem tablicy(Array)?
+	<info1>{FFFFFF}Textdrawy z domyœln¹ nazw¹ zmiennej bêd¹ dodane do tablicy(Array), aby zmiejszyc iloœæ kodu.
+	<button1>Tak
+	<button2>Nie
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Manualna zmiana wartoœci
+	<info0>{FFFFFF}Zmienna#t{FFFFFF}Aktualna wartoœæ
+	<info1>{FFFFFF}Wartoœæ {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Wartoœæ {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Wartoœæ {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Wartoœæ {F5D742}Zbli¿enie#t{FFFFFF}#4
+	<info5>{FFFFFF}Wartoœæ {F5D742}Kolor 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Wartoœæ {F5D742}Kolor 2#t{FFFFFF}#6
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Manualna zmiana wartoœci
+	<info0>{FFFFFF}Podaj now¹ wartoœæ dla {F5D742}#1#n{FFFFFF}Aktualna wartoœæ: {F5D742}#2
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Zmiana maks. wartoœci paska postêpu
+	<info0>{FFFFFF}Podaj now¹ wartoœæ dla maksymalnej wartoœci paska postêpu.
+	<info1>{FFFFFF}Aktualna maksymalna wartoœæ: {F5D742}#1%
+	<button1>PotwierdŸ
+	<button2>Wróæ
+</dialog>
+
+

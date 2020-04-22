@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Vietnamese
+# Author: Dawkin Nguyen
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Ban khong co quyen su dung lenh nay. Dang nhap nhap vao RCON de co the su dung.
+<editordisabled>{FFFFFF}Editor da ton tai.
+<editorinuse>{FFFFFF}Editor dang duoc su dung boi nguoi khac!
+<infodialogcaption>Thong tin
+<infoeditorleave>{FFFFFF}De thoat khoi editor su dung lenh {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Script da bi khoa! #n{FFFFFF}Kiem tra server log de biet them chi tiet!
+<infoeditorreset>{FFFFFF}Thiet lap da duoc cai dat lai!
+<infoeditorkeyswiched>{FFFFFF}Keys da duoc thay doi!
+<infoeditorfastselectdisabled>{FFFFFF}Chon nhanh: {FF0000}OFF
+<infoeditorfastselectenabled>{FFFFFF}Chon nhanh: {00FF00}ON
+<infoeditortdvisibility>{FFFFFF}Man hinh hien thi TextDraw da duoc thay doi!
+<infoinvalidmodelid>{FFFFFF}Model ID khong dung!
+<languagefilenotfound>{FFFFFF}Khong tim thay file ngon ngu!
+<infoprojectexported>{FFFFFF}Project da duoc xuat thanh cong! #n{FFFFFF}Project duoc xuat tai
+<infoprojectexporterror>{FFFFFF}Co loi xay ra khi xuat du lieu...
+<infoparamnamechange>{FFFFFF}Ten bien da duoc thay doi!#nTen moi: {F5D742}#1#n{FFFFFF}TextDraw text: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Ten bien nay da duoc su dung!
+<infoparamnamechangecharserr>{FFFFFF}Ten bien khong the chua ky tu dac biet hoac dau cach!
+<infoparamnamechangeammerr>{FFFFFF}Ten bien khong the vuot qua 35 ky tu!
+<infomaxtextdrawsreached>{FFFFFF}Da dat den so luong toi da cua TextDraw!
+<infolanguagechanged>{FFFFFF}Ngon ngu da duoc thay doi.
+<fsenabled>{00FF00}ON{FFFFFF}
+<fsdisabled>{FF0000}OFF{FFFFFF}
+<tdvforme>{F5D742}CHI MINH TOI{FFFFFF}
+<tdvforall>{0080C0}TAT CA{FFFFFF}
+<keysinverted>{FFFF00}CHUYEN DOI{FFFFFF}
+<infoprojectlimit>{FFFFFF}Da dat den so luong toi da cua Project!
+<infoprojectinvalidname>{FFFFFF}Ten qua ngan, qua dai hoac khong phu hop!
+<infoprojectexists>{FFFFFF}Project nay da ton tai!
+<infoprojectcreated>{FFFFFF}The project "{F5D742}#1{FFFFFF}" da duoc tao thanh cong!
+<infoprojectclosed>{FFFFFF}The project da duoc luu va dong lai.
+<infoprojectsaveerror>{FFFFFF}Co mot loi xay ra khi luu project.
+<infoprojectloaded>{FFFFFF}Project "{F5D742}#1{FFFFFF}" da load thanh cong!
+<previewmodelidinvalid>{FFFFFF}Model ID khong dung!
+<projectrenamed>{FFFFFF}Ten project da duoc thay doi thanh cong. #n{FFFFFF}Ten cu:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Ten moi: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Ten qua ngan, qua dai hoac khong phu hop.
+<projectnameexists>{FFFFFF}Project nay da ton tai!
+<projectnamechangeerror>{FFFFFF}Co mot loi da xay ra khi doi ten project.
+<projectloaderror>{FFFFFF}Mot loi da xay ra khi load project.
+<projectdeleteerror>{FFFFFF}Mot loi da xay ra khi xoa project.
+<projectdeleted>{FFFFFF}Project "{F5D742}#1{FFFFFF}" da bi xoa.
+<modelpreviewinvalidfont>{FFFFFF}De su dung tinh nang nay, chon Font so 5!
+<noprojectsfound>{FFFFFF}Hien tai ban khong co project nao ca.
+<modeltexterror>{FFFFFF}Khong the thay doi model preview text
+<infocompmodedisabled>{FFFFFF}Che do thu gon: {FF0000}OFF
+<infocompmodeenabled>{FFFFFF}Che do thu gon: {00FF00}ON
+<compmodeenabled>{00FF00}ON{FFFFFF}
+<compmodedisabled>{FF0000}OFF{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Color 1
+<manualchangetypemcolor2>Color 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~CLONNED_ID_~r~#1
+<tddeletedinfo>~r~DELETED_ID_#1
+<tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
+<tdselectedinfo>~g~SELECTED_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~~p~ALT=Manual~n~~p~SPACEBAR=End
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=End
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPACEBAR=END
+<tdpublic>~g~Public
+<tdperplayer>~b~For Player
+<tdclickable>~w~Clickable: ~g~YES
+<tdnotclickable>~w~Clickable: ~r~NO
+<tdshadowsize>~w~Shadow Size~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Outline Size~n~~y~#1
+<tdproportionality_true>~g~Proportional
+<tdproportionality_false>~r~Non-Proportional
+<tdalignment_left>~w~Alignment~n~~y~LEFT
+<tdalignment_center>~w~Alignment~n~~g~CENTER
+<tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Thanh tien trinh nguoi choi
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Editor Settings
+	<info0>{FFFFFF}Thay doi vi tri editor
+	<info1>{FFFFFF}Thay doi mau sac noi bat
+	<info2>{FFFFFF}Thay doi mau sac button
+	<info3>{FFFFFF}Chuyen doi SHIFT thanh SPACEBAR #1
+	<info4>{FFFFFF}Chon nhanh: [#2]
+	<info5>{FFFFFF}Hien thi TextDraw: [#3]
+	<info6>{FFFFFF}Che do thu gon: [#4]
+	<info7>{FFFFFF}Thay doi ngon ngu
+	<info8>{FF0000}Khoi phuc thiet lap mac dinh
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Sprite change
+	<info0>{FFFFFF}Nhap library va sprite.
+	<info1>{FFFFFF}Vi du: {FF8040}hud:radar_impound
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Thay doi mau sac noi bat
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Thay doi mau sac cua key
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Mot phien ban khac da duoc phat hien
+	<info0>{FFFFFF}Phien ban script khac voi phien ban cua file cau hinh.
+	<info1>{FFFFFF}Ban co muon khoi phuc cai dat de script hoat dong tot nhat?
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Khoi phuc cai dat goc
+	<info0>{FFFFFF}Ban co chac rang muon khoi phuc cai dat goc?
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="newproject">
+	<caption>Project moi
+	<info0>{FFFFFF}Nhap ten cua project.
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>TextDraw cua toi (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Ten bien
+	<info1>{FF8800}Tao TextDraw moi#t
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Project cua toi (#1/#2)
+	<info0>{FF8800}Ten#t{FF8800}So luong TextDraw#t{FF8800}Thay doi cuoi#n
+	<button1>Lua chon
+	<button2>Quay lai
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Xuat duoi dang...
+	<info0>{FF8800}Binh thuong
+	<info1>{FF8800}Mot filterscript
+	<button1>Xuat
+	<button2>Quay lai
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>TextDraw moi
+	<info0>{FF8800}Don gian
+	<info1>{FF8800}Su dung mau co san
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Thoat
+	<info0>{FFFFFF}Ban co chac rang muon thoat khoi trinh editor?
+	<info1>{FFFFFF}Project dang mo se duoc tu dong luu lai.
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Chinh sua
+	<info1>{FF8800}Clone
+	<info2>{FF8800}Thay doi layer
+	<info3>{FF8800}Thay doi ten bien
+	<info4>{FF0000}Xoa
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Project
+	<info0>{FFFFFF}Load
+	<info1>{FFFFFF}Doi ten
+	<info2>{FF0000}Xoa
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Nhap model ID.
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Thay doi ten bien
+	<info0>{FFFFFF}Nhap ten bien moi
+	<info1>{FFFFFF}De trong neu muon xoa ten custom
+	<info2>{FFFFFF}Ten bien hie ntai: {F5D742}#1
+	<info3>{FFFFFF}TextDraw text: {F5D742}#2
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Thay doi mau
+	<info0>{FFFFFF}Nhap mau voi cac dinh dang sau:#n
+	<info1>{FFFFFF}Vi du cho RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Vi du cho HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}RGBA hien tai: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}HEX/HTML hie ntai: {F5D742}#5
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Xoa
+	<info0>{FFFFFF}Ban co chac la muon xoa TextDraw nay?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Su dung mau co san
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Thay doi mau sac
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="textchange">
+	<caption>Thay doi noi dung
+	<info0>{FFFFFF}Nhap noi dung
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Thay doi Sprite 
+	<info0>{FF8800}Nhap thu cong
+	<info1>{FF8800}Chon tu thu vien
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Thay doi kich co
+	<info0>{FF8800}Text/Box (Kich co)
+	<info1>{FF8800}Box (Chieu rong)
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model preview
+	<info0>{FF8800}Thay doi Model ID
+	<info1>{FF8800}Thay doi goc (rotation)
+	<info2>{FF8800}Thay doi do thu phong (zoom)
+	<info3>{FF8800}Thay doi mau cua model phuong tien
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Xoa
+	<info0>{FFFFFF}Ban co chac la muon xoa project nay?
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Thay doi ten project
+	<info0>{FFFFFF}Nhap ten moi cua project.
+	<info1>{FFFFFF}Ten hien tai: {F5D742}"#1"
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Thay doi mau sac
+	<info0>{FF8800}Text color
+	<info1>{FF8800}Background / border color
+	<info2>{FF8800}Box color
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Thay doi mau sac
+	<info0>{FF8800}Premade colors
+	<info1>{FF8800}Custom
+	<info2>{FF8800}Thay doi do trong suot
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Xuat project
+	<info0>{FFFFFF}Ban co muon xuat du an nay voi array mode dang kich hoat?
+	<info1>{FFFFFF}TextDraw voi ten bien mac dinh se duoc them vao mang de giam so luong code.
+	<button1>Co
+	<button2>Khong
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Thay doi gia tri thu cong
+	<info0>{FFFFFF}Bien#t{FFFFFF}Gia tri hien tai
+	<info1>{FFFFFF}Gia tri {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Gia tri {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Gia tri {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Gia tri {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Gia tri {F5D742}Color 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Gia tri {F5D742}Color 2#t{FFFFFF}#6
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Thay doi gia tri thu cong
+	<info0>{FFFFFF}Nhap gia tri moi cho {F5D742}#1#n{FFFFFF}Gia tri hien tai: {F5D742}#2
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Thay doi toi da Gia tri thanh tien trinh
+	<info0>{FFFFFF}Nhap mot gia tri moi cho gia tri toidða cua thanh tien trinh.
+	<info1>{FFFFFF}Gia tri toi da hien tai: {F5D742}#1%
+	<button1>Xac nhan
+	<button2>Quay lai
+</dialog>
+
+

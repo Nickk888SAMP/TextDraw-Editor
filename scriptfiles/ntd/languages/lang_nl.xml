@@ -1,0 +1,361 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Nederlands
+# Author: Jasperschellekens
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}U heeft geen autorisatie om dat commando te gebruiken, log eerst in via de RCON.
+<editordisabled>{FFFFFF}Bewerker gesloten.
+<editorinuse>{FFFFFF}De bewerker is op dit moment in gebruik door een andere speler!
+<infodialogcaption>Informatie
+<infoeditorleave>{FFFFFF}Om de bewerker te verlaten, gebruik het commando {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Het script is geblokkeerd! #n{FFFFFF}Bekijk de server logs voor meer informatie!
+<infoeditorreset>{FFFFFF}Instellingen zijn hersteld!
+<infoeditorkeyswiched>{FFFFFF}Keys zijn verwisseld!
+<infoeditorfastselectdisabled>{FFFFFF}Snel Selecteren: {FF0000}UIT
+<infoeditorfastselectenabled>{FFFFFF}Snel Selecteren: {00FF00}AAN
+<infoeditortdvisibility>{FFFFFF}De weergave van de TextDraws zijn veranderd!
+<infoinvalidmodelid>{FFFFFF}Model ID is niet correct!
+<languagefilenotfound>{FFFFFF}Taal bestand niet gevonden!
+<infoprojectexported>{FFFFFF}Het project is succesvol geexporteerd! #n{FFFFFF}Project geexporteerd naar
+<infoprojectexporterror>{FFFFFF}Er is een fout opgetreden tijdens het exporteren...
+<infoparamnamechange>{FFFFFF}De naam van de variabel is veranderd!#nNieuwe variabel naam: {F5D742}#1#n{FFFFFF}TextDraw tekst: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Deze variabel naam is al in gebruik!
+<infoparamnamechangecharserr>{FFFFFF}Variabel namen mogen geen spaties of speciale symbolen bevatten!
+<infoparamnamechangeammerr>{FFFFFF}Variabel naam mag niet langer zijn dan 35 letters of cijfers!
+<infomaxtextdrawsreached>{FFFFFF}Het maximale aantal Textdraws is bereikt!
+<infolanguagechanged>{FFFFFF}De taal is veranderd.
+<fsenabled>{00FF00}AAN{FFFFFF}
+<fsdisabled>{FF0000}UIT{FFFFFF}
+<tdvforme>{F5D742}ALLEEN IK{FFFFFF}
+<tdvforall>{0080C0}IEDEREEN{FFFFFF}
+<keysinverted>{FFFF00}VERWISSELD{FFFFFF}
+<infoprojectlimit>{FFFFFF}Het maximale aantal projecten is bereikt!
+<infoprojectinvalidname>{FFFFFF}De naam is te kort, te lang of bevat niet toegestane letters of cijfers.
+<infoprojectexists>{FFFFFF}Dit project bestaat al!
+<infoprojectcreated>{FFFFFF}Het project "{F5D742}#1{FFFFFF}" was succesvol aangemaakt!
+<infoprojectclosed>{FFFFFF}Het project was succesvol opgeslagen en gesloten.
+<infoprojectsaveerror>{FFFFFF}Er is een fout opgetreden tijdens het opslaan van het project.
+<infoprojectloaded>{FFFFFF}Project "{F5D742}#1{FFFFFF}" succesvol geladen!
+<previewmodelidinvalid>{FFFFFF}Model ID klopt niet!
+<projectrenamed>{FFFFFF}De naam van het project is succesvol veranderd. #n{FFFFFF}Oude project naam:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Nieuwe project naam: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}De naam is te kort, te lang of bevat niet toegestane letters of cijfers.
+<projectnameexists>{FFFFFF}Dit project bestaat al!
+<projectnamechangeerror>{FFFFFF}Er is een fout opgetreden tijdens het hernoemen van het project.
+<projectloaderror>{FFFFFF}Er is een fout opgetreden tijdens het laden van het project.
+<projectdeleteerror>{FFFFFF}Er is een fout opgetreden tijdens het verwijderen van het project.
+<projectdeleted>{FFFFFF}Project "{F5D742}#1{FFFFFF}" is verwijderd.
+<modelpreviewinvalidfont>{FFFFFF}Om deze optie te gebruiken, verander de font naar 5!
+<noprojectsfound>{FFFFFF}U heeft geen projecten op dit moment.
+<modeltexterror>{FFFFFF}Kan preview tekst van model niet veranderen.
+<infocompmodedisabled>{FFFFFF}Compact mode: {FF0000}UIT
+<infocompmodeenabled>{FFFFFF}Compact mode: {00FF00}AAN
+<compmodeenabled>{00FF00}AAN{FFFFFF}
+<compmodedisabled>{FF0000}UIT{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Kleur 1
+<manualchangetypemcolor2>Kleur 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~GECLONNED_ID_~r~#1
+<tddeletedinfo>~r~VERWIJDERD_ID_#1
+<tdcreatedinfo>~g~NIEUWE_TEXDRAW_AANGEMAAKT_~r~#1
+<tdselectedinfo>~g~GESELECTEERDE_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Doorzichtigheid:~y~#1~n~~p~SHIFT=Sneller~n~SPATIE=Eindigen
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Sneller~n~SPATIE=Eindigen
+<tdprevmodelcolor>~w~Kleur 1:~y~#1 ~w~Kleur 2:~y~#2 ~n~~p~SHIFT=Kleur 2~n~ALT=Handmatig~n~SPATIE=Eindigen
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Sneller~n~~p~ALT=Handmatig~n~~p~SPATIE=End
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Waarde Y~n~ALT=Handmatig~n~SPATIE=Eindigen
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Sneller~n~ALT=Handmatig~n~SPATIE=Eindigen
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Sneller~n~ALT=Handmatig~n~SPATIE=Eindigen
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPATIE=Eindigen
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPATIE=Eindigen
+<tdpublic>~g~Publiek
+<tdperplayer>~b~Voor Speler
+<tdclickable>~w~Klikbaar: ~g~JA
+<tdnotclickable>~w~Klikbaar: ~r~NEE
+<tdshadowsize>~w~Schaduw grootte~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Omleining Groote~n~~y~#1
+<tdproportionality_true>~g~Proportioneel
+<tdproportionality_false>~r~Non-Proportioneel
+<tdalignment_left>~w~Uitlijning~n~~y~LINKS
+<tdalignment_center>~w~Uitlijning~n~~g~MIDDEN
+<tdalignment_right>~w~Uitlijning~n~~r~RECHTS
+<tdalignment_up>~w~Alignment~n~~b~OP
+<tdalignment_down>~w~Alignment~n~~p~NEER
+<tdfontplayerprogressbar>~w~Font~n~~r~Voortgangsbalk speler
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Bewerker Instellingen
+	<info0>{FFFFFF}Verander bewerker positie
+	<info1>{FFFFFF}Verander bewerker kleur
+	<info2>{FFFFFF}Verander knoppen kleur 
+	<info3>{FFFFFF}Verwissel SHIFT met SPATIE #1
+	<info4>{FFFFFF}Snel Selecteren: [#2]
+	<info5>{FFFFFF}TextDraw weergave: [#3]
+	<info6>{FFFFFF}Compact mode: [#4]
+	<info7>{FFFFFF}Verander taal
+	<info8>{FF0000}Herstel standaard instellingen
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Sprite veranding
+	<info0>{FFFFFF}Voer de library en de sprite naam in.
+	<info1>{FFFFFF}Voorbeeld: {FF8040}hud:radar_impound
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Verander highlight kleur
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Verander keys kleur
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Andere versie gedetecteerd
+	<info0>{FFFFFF}Het configuratie bestand komt niet overeen met het script bestand.
+	<info1>{FFFFFF}Wilt u de instellingen herstellen zodat het script correct kan werken?
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Standaard instellingen herstellen
+	<info0>{FFFFFF}Weet u zeker dat u de standaard instellingen wilt herstellen?
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="newproject">
+	<caption>Nieuw project
+	<info0>{FFFFFF}Vul de naam van het nieuwe project in.
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>Mijn TextDraws (#1/#2)
+	<info0>{FFFFFF}ID/Tekst#t{FFFFFF}Variabel naam
+	<info1>{FF8800}Maak nieuwe TextDraw#t
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Mijn Projecten (#1/#2)
+	<info0>{FF8800}Naan#t{FF8800}TextDraw Hoeveelheid#t{FF8800}Laatst gewijzigd#n
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Exporteren als...
+	<info0>{FF8800}Normale export
+	<info1>{FF8800}Functioneel filterscript
+	<button1>Exporteren
+	<button2>Terug
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Nieuwe TextDraw
+	<info0>{FF8800}Simpel
+	<info1>{FF8800}Gebruik template
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Sluiten
+	<info0>{FFFFFF}Weet u zeker dat u de bewerker wilt sluiten?
+	<info1>{FFFFFF}Open projecten worden automatisch opgeslagen.
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Aanpassen
+	<info1>{FF8800}Klonen
+	<info2>{FF8800}Laag veranderen
+	<info3>{FF8800}Variabel naam veranderen
+	<info4>{FF0000}Verwijderen
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Project
+	<info0>{FFFFFF}Laden
+	<info1>{FFFFFF}Naam wijzigen
+	<info2>{FF0000}Verwijderen
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Voer het model ID, voertuig model of object model in.
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Verander variabel naan
+	<info0>{FFFFFF}Voer een nieuwe variabel naam in
+	<info1>{FFFFFF}Vul niets in om de custom variabel naam te verwijderen
+	<info2>{FFFFFF}Huidige variabel naam: {F5D742}#1
+	<info3>{FFFFFF}TextDraw tekst: {F5D742}#2
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Verander kleur
+	<info0>{FFFFFF}Geef kleur in volgende formaten:#n
+	<info1>{FFFFFF}Voorbeeld voor RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Voorbeeld voor HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Huidige RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Huidige HEX/HTML: {F5D742}#5
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Verwijderen
+	<info0>{FFFFFF}Weet u zeker dat u deze TextDraw wilt verwijderen?
+	<info1>{FFFFFF}Tekst: {F5D742}"#1"
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Gebruik template
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Verander kleur
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="textchange">
+	<caption>Verander tekst
+	<info0>{FFFFFF}Voer de tekst in
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Verander Sprite 
+	<info0>{FF8800}Handmatig
+	<info1>{FF8800}Kiezen uit library
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Verander grootte
+	<info0>{FF8800}Text/Box (Grootte)
+	<info1>{FF8800}Box (Breedte)
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model preview
+	<info0>{FF8800}Verander model ID
+	<info1>{FF8800}Verander rotation
+	<info2>{FF8800}Verander zoom
+	<info3>{FF8800}Verander kleur van voertuig model
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Verwijderen
+	<info0>{FFFFFF}Weet u zeker dat u dit project wilt verwijderen?
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Verander project naam
+	<info0>{FFFFFF}Voer een nieuwe naam voor het project in.
+	<info1>{FFFFFF}Huidige naam: {F5D742}"#1"
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Verander kleur
+	<info0>{FF8800}Tekst kleur
+	<info1>{FF8800}Achtergrond / rand kleur
+	<info2>{FF8800}Box kleur
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Verander kleur
+	<info0>{FF8800}Selecteren
+	<info1>{FF8800}Handmatig
+	<info2>{FF8800}Verander doorzichtigheid
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Project exporteren
+	<info0>{FFFFFF}Wilt u dit project exporteren met array mode ingeschakeld?
+	<info1>{FFFFFF}Textdraws met de standaard variabel naam worden toegevoegd aan de array om de hoeveelheid code te beperken.
+	<button1>Ja
+	<button2>Nee
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Handmatig aanpassen van waarde
+	<info0>{FFFFFF}Variabel#t{FFFFFF}Huidige Waarde
+	<info1>{FFFFFF}Waarde {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Waarde {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Waarde {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Waarde {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Waarde {F5D742}Kleur 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Waarde {F5D742}Kleur 2#t{FFFFFF}#6
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Handmatig aanpassen van waarde
+	<info0>{FFFFFF}Voer een nieuwe waarde in voor {F5D742}#1#n{FFFFFF}Huidige waarde: {F5D742}#2
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Max. Wijziging Waarde voortgangsbalk
+	<info0>{FFFFFF}Voer een nieuwe waarde in voor de maximale waarde van de voortgangsbalk.
+	<info1>{FFFFFF}Huidige maximale waarde: {F5D742}#1%
+	<button1>Bevestigen
+	<button2>Terug
+</dialog>
