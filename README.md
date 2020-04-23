@@ -32,5 +32,7 @@ Credits:
 - a_samp: SAMP Team
 - ZCMD: Zeex
 - DFILE: DrAkE
-- rgb: Abyss Morgan
-- sscanf: Y-Less
+- YSI: Y-Less
+- sscanf: maddinat0r
+- ndialogpages: Nickk888
+- Progress2: Southclaws
