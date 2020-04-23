@@ -11,8 +11,7 @@
 *	a_samp: SAMP Team												*
 *	zcmd: ZeeX														*
 *	dfile: DrAkE													*
-*	rgb: Abyss Morgan												*
-*	sscanf: Y_Less													*
+*	sscanf2: maddinat0r												*
 *	YSI: Y_Less														*
 *	ndialogpages: Nickk888 											*
 *	progress2: Southclaws 											*
@@ -34,12 +33,11 @@
 #include <a_samp>
 #include <zcmd>
 #include <dfile>
-#include <rgb>
+#include <sscanf2>
 #include <YSI_Data\y_iterate>
 #include <YSI_Coding\y_stringhash>
 #include <ndialog-pages>
 #include <progress2>
-#include <sscanf2>
 
 //SETTINGS
 #define SCRIPT_VERSION 					"v6.0"
@@ -1339,7 +1337,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							for(new i = 1; i < sizeof Premade_Colors; i++)
 							{
-								format(EditorString, sizeof EditorString, "%s############################\n", GetColorRGBA(Premade_Colors[i][0]));
+								format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
 								strcat(EditorLString, EditorString);
 							}
 							CreateDialogCaptionOnLangData(DL_OVERRIDECOLORCHANGE);
@@ -1349,7 +1347,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							for(new i = 1; i < sizeof Premade_Colors; i++)
 							{
-								format(EditorString, sizeof EditorString, "%s############################\n", GetColorRGBA(Premade_Colors[i][0]));
+								format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
 								strcat(EditorLString, EditorString);
 							}
 							CreateDialogCaptionOnLangData(DL_BUTTONSCOLORCHANGE);
@@ -1533,25 +1531,22 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					new red, green, blue, alpha, color;
-					RGBAToHex(Premade_Colors[listitem][0],red,green,blue, alpha); 
+					new red, green, blue, alpha;
+					SplitRGBA(Premade_Colors[listitem][0],red,green,blue, alpha); 
 					#pragma unused alpha
 					switch(NTD_User[User_ChangingMColorState])
 					{
 						case 0: //Tekst TD_Color
 						{
-							HexToRGBA(color,red,green,blue,NTD_TD[tdid][TD_ColorAlpha]);
-							NTD_TD[tdid][TD_Color] = color;
+							NTD_TD[tdid][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_ColorAlpha]);
 						}
 						case 1: //BG TD_Color
 						{
-							HexToRGBA(color,red,green,blue,NTD_TD[tdid][TD_BGColorAlpha]);
-							NTD_TD[tdid][TD_BGColor] = color;
+							NTD_TD[tdid][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_BGColorAlpha]);
 						}
 						case 2: //Box TD_Color
 						{
-							HexToRGBA(color,red,green,blue,NTD_TD[tdid][TD_BoxColorAlpha]);
-							NTD_TD[tdid][TD_BoxColor] = color;
+							NTD_TD[tdid][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_BoxColorAlpha]);
 						}
 					}
 					UpdateTD(playerid, tdid);
@@ -1569,7 +1564,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new color[4];
 						if(sscanf(inputtext, "iiii", color[0], color[1], color[2], color[3]) == 0) //RGBA
 						{
-							HexToRGBA(color[0], color[0], color[1], color[2], color[3]);
+							color[0] = CreateRGBA(color[0], color[1], color[2], color[3]);
 						}
 						else if(strlen(inputtext) == 8) //HEX
 						{
@@ -1580,17 +1575,17 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							case 0: //Tekst TD_Color
 							{
 								NTD_TD[tdid][TD_Color] = color[0];
-								NTD_TD[tdid][TD_ColorAlpha] = GetAFromRGBA(color[0]);
+								NTD_TD[tdid][TD_ColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 							case 1: //BG TD_Color
 							{
 								NTD_TD[tdid][TD_BGColor] = color[0];
-								NTD_TD[tdid][TD_BGColorAlpha] = GetAFromRGBA(color[0]);
+								NTD_TD[tdid][TD_BGColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 							case 2: //Box TD_Color
 							{
 								NTD_TD[tdid][TD_BoxColor] = color[0];
-								NTD_TD[tdid][TD_BoxColorAlpha] = GetAFromRGBA(color[0]);
+								NTD_TD[tdid][TD_BoxColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 						}
 						UpdateTD(playerid, tdid);
@@ -1608,7 +1603,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						for(new i; i < sizeof Premade_Colors; i++)
 						{
-							format(EditorString, sizeof EditorString, "%s############################\n", GetColorRGBA(Premade_Colors[i][0]));
+							format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
 							strcat(EditorLString, EditorString);
 						}
 						CreateDialogCaptionOnLangData(DL_PREMADECOLORS);
@@ -1619,9 +1614,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new color[4], tmp_str[12];
 						switch(NTD_User[User_ChangingMColorState])
 						{
-							case 0: RGBAToHex(NTD_TD[tdid][TD_Color],color[0],color[1],color[2],color[3]);
-							case 1: RGBAToHex(NTD_TD[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
-							case 2: RGBAToHex(NTD_TD[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
+							case 0: SplitRGBA(NTD_TD[tdid][TD_Color],color[0],color[1],color[2],color[3]);
+							case 1: SplitRGBA(NTD_TD[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
+							case 2: SplitRGBA(NTD_TD[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
 						}
 						CreateDialogOnLanguageData(DL_COLORCHANGE);
 						CreateDialogCaptionOnLangData(DL_COLORCHANGE);
@@ -2922,6 +2917,24 @@ CMD:ntd(playerid, params[])
 
 //FUNCTIONS
 
+stock CreateRGBAWithAlpha(color, a)
+	return ((color) << 8) | (a);
+
+stock CreateAFromRGBA(color)
+	return (color & 0x000000FF);
+
+stock CreateRGBA(r, g, b, a)
+	return ((a) & 0xFF) | (((b) & 0xFF) << 8) | (((g) & 0xFF) << 16) | ((r) << 24);
+
+stock SplitRGBA(color, &r, &g, &b, &a)
+{
+	r = (color & 0xFF000000) >> 24;
+	g = (color & 0x00FF0000) >> 16;
+	b = (color & 0x0000FF00) >> 8;
+	a = (color & 0x000000FF);
+	return 1;
+}
+
 stock CallNTDCommand(playerid)
 	return CallLocalFunction("cmd_ntd", "i", playerid);
 
@@ -3137,7 +3150,7 @@ stock RenameProject(projectname[], newprojectname[])
 			new hour, minute, year, month, day, tda;
 			while(fread(file, string1))
 			{
-				if(sscanf(string1, "siiiiii", string2, tda, hour, minute, day, month, year) == 0)
+				if(sscanf(string1, "s[128]iiiiii", string2, tda, hour, minute, day, month, year) == 0)
 				{
 					if(strcmp(string2, projectname, true) == 0)
 					{
@@ -3164,7 +3177,7 @@ stock bool:VariableExists(const string[])
 
 stock IsValidString(const string[])
 {
-	new un[][] = {" ", "!", "?", "=", "$", "ï¿½", "'", "ï¿½", "^", "ï¿½", "/", "*", "+", "~", ".", ","};
+	new un[][] = {" ", "!", "?", "=", "$", "§", "'", "´", "^", "°", "/", "*", "+", "~", ".", ","};
 	for(new i; i < sizeof un; i++)
 		if(strfind(string, un[i][0], true) != -1) return false;
 	return true;
@@ -3207,14 +3220,14 @@ stock UpdateTD(playerid, td)
 		TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
 		TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
 		TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
-		RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+		NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-		RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-		HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+		NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
 		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-		RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+		NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
 		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
 		TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
 		TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
@@ -3236,8 +3249,8 @@ stock UpdateTD(playerid, td)
 		}
 		if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
 		{
-			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 			NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
 			NTD_TD[td][TD_PosX], 
 			NTD_TD[td][TD_PosY], 
@@ -3249,8 +3262,8 @@ stock UpdateTD(playerid, td)
 		}
 		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 		{
-			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 			SetPlayerProgressBarDirection(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BarDirectory]);
 			SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_Color]);
 			SetPlayerProgressBarWidth(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BoxSizeX]);
@@ -4425,7 +4438,7 @@ stock GetAllProjects()
 				index = Iter_Free(I_PROJECTS);
 				if(index != ITER_NONE)
 				{
-					if(sscanf(line, "siiiiii", 
+					if(sscanf(line, "s[128]iiiiii", 
 					NTD_Projects[index][Pro_Name], 
 					NTD_Projects[index][Pro_TDA], 
 					NTD_Projects[index][Pro_LastHour],
@@ -4616,7 +4629,7 @@ stock LoadConfigurations()
 				free = Iter_Free(I_LANGUAGES);
 				if(free != ITER_NONE)
 				{
-					if(sscanf(EditorString, "p=ss", Language[free][l_name], Language[free][l_file]) == 0)
+					if(sscanf(EditorString, "p<=>s[32]s[32]", Language[free][l_name], Language[free][l_file]) == 0)
 					{
 						Iter_Add(I_LANGUAGES, free);
 						strdel(Language[free][l_file], strlen(Language[free][l_file]) - 2, strlen(Language[free][l_file]));
@@ -4709,7 +4722,7 @@ stock ProjectFileLineReplace(const filename[], const find[], const replace[])
     new line[256], pname[32], timedata[6];
     while(fread(handle, line))
     {
-		if(sscanf(line, "siiiiii", pname, timedata[0], timedata[1], timedata[2], timedata[3], timedata[4], timedata[5]) == 0)
+		if(sscanf(line, "s[32]iiiiii", pname, timedata[0], timedata[1], timedata[2], timedata[3], timedata[4], timedata[5]) == 0)
 		{
 			if(strcmp(pname, find, true) == 0)
 			{
@@ -4840,7 +4853,7 @@ stock LoadProject(projectname[])
 					format(EditorString, sizeof EditorString, "td_%i_data", i);
 					format(EditorLString, sizeof EditorLString, dfile_ReadString(EditorString)); 
 					
-					sscanf(EditorLString, "ffiiiiffiiiiffiiiiiiffffiiis",
+					sscanf(EditorLString, "ffiiiiffiiiiffiiiiiiffffiiis[35]",
 					NTD_TD[index][TD_PosX], NTD_TD[index][TD_PosY], NTD_TD[index][TD_Font], NTD_TD[index][TD_IsPublic],
 					NTD_TD[index][TD_OutlineSize], NTD_TD[index][TD_ShadowSize], NTD_TD[index][TD_LetterSizeX], NTD_TD[index][TD_LetterSizeY],
 					NTD_TD[index][TD_Color], NTD_TD[index][TD_BGColor], NTD_TD[index][TD_BoxColor], NTD_TD[index][TD_UseBox], NTD_TD[index][TD_BoxSizeX], NTD_TD[index][TD_BoxSizeY],
@@ -4879,7 +4892,7 @@ stock CreateNewTDFromTemplate(templateid)
 	bool:TProportional, TPrevModel, TPrevModelC1, TPrevModelC2, Float:TPrevRotX, Float:TPrevRotY,
 	Float:TPrevRotZ, Float:TPrevRotZoom, TColorA, TBGColorA, TBoxColorA;
 	
-	sscanf(Template[templateid][Template_Data], "sffiiiiffiiiiffiiiiiiffffiii",
+	sscanf(Template[templateid][Template_Data], "s[300]ffiiiiffiiiiffiiiiiiffffiii",
 		Tstring, TPosX, TPosY, TFont, TisPublic, TOutlineSize, 
 		TShadowSize, TLetterSizeX, TLetterSizeY, TColor, TBGColor, TBoxColor, 
 		ZUseBox, TBoxSizeX, TBoxSizeY, TSelectable, TAlignment, 
@@ -4991,14 +5004,14 @@ public HLTD(playerid, td)
 	#pragma unused alpha
 	if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 	{
-		RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+		NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-		RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-		HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+		NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
 		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-		RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-		HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+		SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+		NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
 		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
 		TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
 	}
@@ -5045,15 +5058,19 @@ stock DrawTD(td)
 			TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
 			TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
 			TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
-			RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+			//
+			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 			TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-			RGBAToHex(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-			HexToRGBA(NTD_TD[td][TD_BGColor],red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
+			//
+			SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
+			NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
 			TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-			RGBAToHex(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-			HexToRGBA(NTD_TD[td][TD_BoxColor],red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
+			//
+			SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
+			NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
 			TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
+			//
 			TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
 			TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
 			TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
@@ -5071,8 +5088,8 @@ stock DrawTD(td)
 		{
 			if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
 			{
-				RGBAToHex(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-				HexToRGBA(NTD_TD[td][TD_Color],red,green,blue,NTD_TD[td][TD_ColorAlpha]);
+				SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
+				NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
 				NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
 				NTD_TD[td][TD_PosX], 
 				NTD_TD[td][TD_PosY], 
@@ -5284,8 +5301,8 @@ stock ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:
 	
 	new red,green,blue, alpha, unsetcolor;
 	#pragma unused alpha
-	RGBAToHex(EditorButtonsColor,red,green,blue, alpha); 
-	HexToRGBA(unsetcolor,red,green,blue,35);
+	SplitRGBA(EditorButtonsColor,red,green,blue, alpha); 
+	unsetcolor = CreateRGBA(red,green,blue,35);
 	TextDrawColor(B_NewProject, unsetcolor);
 	TextDrawColor(B_OpenProject, unsetcolor);
 	TextDrawColor(B_CloseProject, unsetcolor);
@@ -5511,7 +5528,7 @@ public FadeTimer(bool:fadein)
 		if(NTD_User[User_WelcomeScreenAlpha] < 254)
 		{
 			NTD_User[User_WelcomeScreenAlpha] += 3;
-			NTD_User[User_WelcomeScreenColor] = ShiftRGBToRGBA(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
+			NTD_User[User_WelcomeScreenColor] = CreateRGBAWithAlpha(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
 			TextDrawColor(WelcomeScreen, NTD_User[User_WelcomeScreenColor]);
 			TextDrawShowForPlayer(NTD_User[User_PlayerIDInEditor], WelcomeScreen);
 		}
@@ -5528,7 +5545,7 @@ public FadeTimer(bool:fadein)
 		if(NTD_User[User_WelcomeScreenAlpha] > 0)
 		{
 			NTD_User[User_WelcomeScreenAlpha] -= 3;
-			NTD_User[User_WelcomeScreenColor] = ShiftRGBToRGBA(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
+			NTD_User[User_WelcomeScreenColor] = CreateRGBAWithAlpha(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
 			TextDrawColor(WelcomeScreen, NTD_User[User_WelcomeScreenColor]);
 			TextDrawShowForPlayer(NTD_User[User_PlayerIDInEditor], WelcomeScreen);
 		}
@@ -5551,7 +5568,7 @@ stock ShowWelcomeScreen(bool:show)
 		{
 			NTD_User[User_WelcomeScreenAlpha] = 0;
 			NTD_User[User_WelcomeScreenColor] = 0xFFFFFFFF;
-			NTD_User[User_WelcomeScreenColor] = ShiftRGBToRGBA(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
+			NTD_User[User_WelcomeScreenColor] = CreateRGBAWithAlpha(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
 			WelcomeScreen = TextDrawCreate(121.000000, 81.000000, WELCOME_SCREEN);
 			TextDrawFont(WelcomeScreen, 4);
 			TextDrawTextSize(WelcomeScreen, 397.500000, 244.000000);
@@ -6229,3 +6246,5 @@ stock HexToInt(const string[])
     }
     return res;
 }
+
+
