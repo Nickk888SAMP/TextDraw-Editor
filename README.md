@@ -1,8 +1,7 @@
 # TextDrawEditor
-NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few years ago, the goal was to make a Plugin free, easy to use, straight forward TextDraw editor, the script contains a lot of cool features, more then the original editor by iPLEOMAX!
+NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few years ago, the goal was to make a easy to use, straight forward TextDraw editor, the script contains a lot of cool features, more then the original editor by iPLEOMAX!
 
 - Clickable interface.
-- No Plugins needed!
 - Multilanguage support (English, Polish and German natively included)
 - Player Progress Bar Support(With Color and Max Percentage settings!)
 - Build-in Sprite selector(Over 300 sprites!).
