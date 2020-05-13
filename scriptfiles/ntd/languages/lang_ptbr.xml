@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: PortugueseBR
+# Author: PeterLinkson
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Você não tem permissão para usar este comando. Entre na RCON primeiro.
+<editordisabled>{FFFFFF}Editor fechado.
+<editorinuse>{FFFFFF}O editor está sendo usado por outro jogador!
+<infodialogcaption>Informação
+<infoeditorleave>{FFFFFF}Para sair do editor, use o comando {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}O Script está bloqueado! #n{FFFFFF}veja os LOGs do servidor para mais informações!
+<infoeditorreset>{FFFFFF}A configuração foi restabelecida!
+<infoeditorkeyswiched>{FFFFFF}As teclas foram alteradas!
+<infoeditorfastselectdisabled>{FFFFFF}Seleção rápida: {FF0000}Desligado
+<infoeditorfastselectenabled>{FFFFFF}Seleção rápida: {00FF00}Ligado
+<infoeditortdvisibility>{FFFFFF}A visão da TextDraws foi alterada!
+<infoinvalidmodelid>{FFFFFF}O ID do modelo está incorreto!
+<languagefilenotfound>{FFFFFF}Não foi encontrado o arquivo do idioma!
+<infoprojectexported>{FFFFFF}O projeto foi exportado com sucesso! #n{FFFFFF}Projeto exportado em
+<infoprojectexporterror>{FFFFFF}Aconteceu um erro ao exportar...
+<infoparamnamechange>{FFFFFF}O nome da variável foi alterado!#nO Novo nome da variável é: {F5D742}#1#n{FFFFFF}Texto da TextDraw: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}O nome da variável já está sendo utilizado!
+<infoparamnamechangecharserr>{FFFFFF}O nome da variável não pode conter caracteres especiais ou espaços!
+<infoparamnamechangeammerr>{FFFFFF}O nome da variável não pode exceder os 35 caracteres!
+<infomaxtextdrawsreached>{FFFFFF}O número máximo de TextDraws já foi alcançado!
+<infolanguagechanged>{FFFFFF}O idioma foi alterado.
+<fsenabled>{00FF00}Ligado{FFFFFF}
+<fsdisabled>{FF0000}Desligado{FFFFFF}
+<tdvforme>{F5D742}SOMENTE EU{FFFFFF}
+<tdvforall>{0080C0}TODOS{FFFFFF}
+<keysinverted>{FFFF00}ALTERADO{FFFFFF}
+<infoprojectlimit>{FFFFFF}O número máximo de projetos já foi alcançado!
+<infoprojectinvalidname>{FFFFFF}O nome é muito curto, muito grande ou tem caracteres inválidos!
+<infoprojectexists>{FFFFFF}O nome do projeto já existe!
+<infoprojectcreated>{FFFFFF}O projeto "{F5D742}#1{FFFFFF}" foi criado com sucesso!
+<infoprojectclosed>{FFFFFF}O projeto foi fechado e salvo com sucesso.
+<infoprojectsaveerror>{FFFFFF}Aconteceu um erro ao salvar o projeto.
+<infoprojectloaded>{FFFFFF}O projeto "{F5D742}#1{FFFFFF}" foi carregado com sucesso!
+<previewmodelidinvalid>{FFFFFF}O ID do modelo é incorreto!
+<projectrenamed>{FFFFFF}O nome do projeto foi alterado com sucesso. #n{FFFFFF}Nome do projeto antigo:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Nome do projeto novo: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}O nome é muito curto, muito grande ou tem caracteres inválidos.
+<projectnameexists>{FFFFFF}O nome do projeto já existe!
+<projectnamechangeerror>{FFFFFF}Aconteceu um erro ao renomear o projeto.
+<projectloaderror>{FFFFFF}Aconteceu um erro ao carregar o projeto.
+<projectdeleteerror>{FFFFFF}Aconteceu um erro ao apagar o projeto.
+<projectdeleted>{FFFFFF}O projeto "{F5D742}#1{FFFFFF}" foi excluido.
+<modelpreviewinvalidfont>{FFFFFF}Para usar esta opção, mude a fonte para 5!
+<noprojectsfound>{FFFFFF}Atualmente não tem nenhum projeto.
+<modeltexterror>{FFFFFF}Não pode alterar o texto de um Model Preview
+<infocompmodedisabled>{FFFFFF}Modo compacto: {FF0000}DESLIGADO
+<infocompmodeenabled>{FFFFFF}Modo compacto: {00FF00}LIGADO
+<compmodeenabled>{00FF00}LIGADO{FFFFFF}
+<compmodedisabled>{FF0000}DESLIGADO{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Cor 1
+<manualchangetypemcolor2>Cor 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~ID_COPIADO_~r~#1
+<tddeletedinfo>~r~ID_DELETADO_#1
+<tdcreatedinfo>~g~NOVO_TEXDRAW_CRIADO_~r~#1
+<tdselectedinfo>~g~ID_SELECIONADO_~r~#1
+<tdfontinfo>~w~Fonte~n~~y~#1
+<tdcoloralpha>~w~Transparencia:~y~#1~n~~p~SHIFT=Mais rápido~n~SPACEBAR=Salvar
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Mais rápido~n~SPACEBAR=Salvar
+<tdprevmodelcolor>~w~Cor 1:~y~#1 ~w~Cor 2:~y~#2 ~n~~p~SHIFT=Cor 2~n~ALT=Manual~n~SPACEBAR=Salvar
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Mais rápido~n~~p~ALT=Manual~n~~p~SPACEBAR=Salvar
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Valor Y~n~ALT=Manual~n~SPACEBAR=Salvar
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Mais rápido~n~ALT=Manual~n~SPACEBAR=Salvar
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Mais rápido~n~ALT=Manual~n~SPACEBAR=Salvar
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=Salvar
+<tdlayer>~w~Camada: ~y~#1~n~~p~SPACEBAR=Salvar
+<tdpublic>~g~Global Textdraw
+<tdperplayer>~b~Player Textdraw
+<tdclickable>~w~Clicavel: ~g~SIM
+<tdnotclickable>~w~Clicavel: ~r~NAO
+<tdshadowsize>~w~Tamanho da sombra~n~~y~#1
+<tdboxenabled>~w~Caixa: ~g~LIGADO
+<tdboxdisabled>~w~Caixa: ~r~DESLIGADO
+<tdoutlinesize>~w~Tamanho do contorno~n~~y~#1
+<tdproportionality_true>~g~Proporcional
+<tdproportionality_false>~r~Desproporcional
+<tdalignment_left>~w~Alinhamento~n~~y~Esquerda
+<tdalignment_center>~w~Alinhamento~n~~g~Centro
+<tdalignment_right>~w~Alinhamento~n~~r~Direita
+<tdalignment_up>~w~Alinhamento~n~~b~UP
+<tdalignment_down>~w~Alinhamento~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Fonte~n~~r~Barra de progresso
+<tdfontspriteinfo>~w~Fonte~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Fonte~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>configuração do editor
+	<info0>{FFFFFF}Alterar a posição do editor
+	<info1>{FFFFFF}Alterar a Cor de destaque
+	<info2>{FFFFFF}Alterar a Cor dos botões
+	<info3>{FFFFFF}Alterar SHIFT para SPACEBAR #1
+	<info4>{FFFFFF}Seleção rápida: [#2]
+	<info5>{FFFFFF}Exibição de TextDraw: [#3]
+	<info6>{FFFFFF}Modo compacto: [#4]
+	<info7>{FFFFFF}Alterar idioma
+	<info8>{FF0000}Restaurar as configurações originais
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Alterar Sprite
+	<info0>{FFFFFF}Introduza o nome da biblioteca e o nome do Sprite.
+	<info1>{FFFFFF}Exemplo: {FF8040}hud:radar_impound
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Alterar a Cor do destaque
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Alterar a Cor das teclas
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Outra versão detectada
+	<info0>{FFFFFF}A versão do script é diferente da versão do arquivo de configuração.
+	<info1>{FFFFFF}Quer restaurar as configuração originais para que o script funcione corretamente?
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Restaurar as configurações originais
+	<info0>{FFFFFF}Tem certeza que quer restaurar as configurações originais?
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="newproject">
+	<caption>Novo projeto
+	<info0>{FFFFFF}Escreva um nome para o novo projeto.
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>Meus TextDraws (#1/#2)
+	<info0>{FFFFFF}ID/Texto#t{FFFFFF}Nome variável
+	<info1>{FF8800}Criar novo TextDraw#t
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Meus Projetos (#1/#2)
+	<info0>{FF8800}Nome#t{FF8800}Quantidade de TextDraws#t{FF8800}Última alteração#n
+	<button1>Selecionar
+	<button2>Voltar
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Exportar como...
+	<info0>{FF8800}Exportação normal
+	<info1>{FF8800}Filterscript
+	<button1>Exportar
+	<button2>Voltar
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Novo TextDraw
+	<info0>{FF8800}Simples
+	<info1>{FF8800}Utilizar modelo
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Sair
+	<info0>{FFFFFF}Tem certeza que quer sair do editor?
+	<info1>{FFFFFF}O projeto aberto será salvo automáticamente.
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Modificar
+	<info1>{FF8800}Copiar
+	<info2>{FF8800}Alterar Camada
+	<info3>{FF8800}Alterar o nome da variável
+	<info4>{FF0000}Apagar
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Projeto
+	<info0>{FFFFFF}Carregar
+	<info1>{FFFFFF}Alterar o nome
+	<info2>{FF0000}Apagar
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Digite um ID de Skin, Veículo ou objeto.
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Alterar o nome da variável
+	<info0>{FFFFFF}Escreva o novo nome da variável
+	<info1>{FFFFFF}Deixe em branco para eliminar o nome personalizado
+	<info2>{FFFFFF}Nome atual da variável: {F5D742}#1
+	<info3>{FFFFFF}Texto da TextDraw: {F5D742}#2
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Alterar Cor
+	<info0>{FFFFFF}Fornecer a Cor nos formatos:#n
+	<info1>{FFFFFF}Exemplo de RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Exemplo de HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Atual RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Atual HEX/HTML: {F5D742}#5
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Apagar
+	<info0>{FFFFFF}Tem certeza que deseja apagar este TextDraw?
+	<info1>{FFFFFF}Texto: {F5D742}"#1"
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Utilizar modelo
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="premadecolores">
+	<caption>Alterar a cor
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="textchange">
+	<caption>Alterar o texto
+	<info0>{FFFFFF}Digite o texto a ser corrigido
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Alterar Sprite 
+	<info0>{FF8800}Escolha manualmente
+	<info1>{FF8800}Escolha a biblioteca
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Alterar o tamanho
+	<info0>{FF8800}Texto/Caixa (tamanho)
+	<info1>{FF8800}Caixa (Ancho)
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model Preview
+	<info0>{FF8800}Alterar o ID do modelo
+	<info1>{FF8800}Alterar a rotação
+	<info2>{FF8800}Alterar zoom
+	<info3>{FF8800}Alterar a Cor do modelo do veículo
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Apagar
+	<info0>{FFFFFF}Tem certeza que deseja apagar este projeto?
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Alterar o nome do projeto
+	<info0>{FFFFFF}Digite o novo nome do projeto.
+	<info1>{FFFFFF}Nome Atual: {F5D742}"#1"
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Alterar a Cor
+	<info0>{FF8800}Cor do texto
+	<info1>{FF8800}Cor do Sombra/Contorno
+	<info2>{FF8800}Cor da caixa
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Alterar a Cor
+	<info0>{FF8800}Cores predefinidas
+	<info1>{FF8800}Personalizado
+	<info2>{FF8800}Alterar a transparencia
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Exportação do projeto
+	<info0>{FFFFFF}Quer exportar este projeto em modo de Matriz?
+	<info1>{FFFFFF}As Textdraws serão adicionadas em matrizes para reduzir a quantidade do código.
+	<button1>SIM
+	<button2>NÃO
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Alterar valor manual
+	<info0>{FFFFFF}Variável#t{FFFFFF}Valor Atual
+	<info1>{FFFFFF}Valor {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Valor {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Valor {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Valor {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Valor {F5D742}Cor 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Valor {F5D742}Cor 2#t{FFFFFF}#6
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Alterar valor manual
+	<info0>{FFFFFF}Digite um novo valor para {F5D742}#1#n{FFFFFF}Valor atual: {F5D742}#2
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Alterar máximo. Valor da barra de progresso
+	<info0>{FFFFFF}Digite um Novo valor para o valor máximo da barra de progresso.
+	<info1>{FFFFFF}Valor máximo atual: {F5D742}#1%
+	<button1>Confirmar
+	<button2>Voltar
+</dialog>
+
+
