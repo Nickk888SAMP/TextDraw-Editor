@@ -1,6 +1,6 @@
 /********************************************************************
 *	Nickk's TextDraw editor											*
-*	Release: 6.0													*
+*	Release: 6.1													*
 *	All right reserved! C By: Nickk888								*
 *																	*
 *	! ! ! Compile with Zeex's Compiler ! ! !						*
@@ -28,8 +28,10 @@
 #if !defined isnull
     #define isnull(%1) ((!(%1[0])) || (((%1[0]) == '\1') && (!(%1[1]))))
 #endif
+#define MAX_DIALOG_ITEMS 				(512 + 1)
 
 //INCLUDES
+#tryinclude <crashdetect>
 #include <a_samp>
 #include <zcmd>
 #include <dfile>
@@ -45,40 +47,31 @@
 #define TD_PICKER_TEXT					"S"
 
 // Limits
-#define MAX_NTD_TEMPLATES				50
-#define MAX_NTD_PROJECTS 				(DIALOG_MAX_LINES - 1)
-#define MAX_NTD_TDS						(DIALOG_MAX_LINES - 2)
-#define MAX_NTD_LANGUAGES				20
-#define MAX_NTD_SPRITES 				100
-#define MAX_NTD_LANGUAGE_DIALOGS		40
-#define MAX_NTD_DIALOG_INFO				10
+#define MAX_NTD_TEMPLATES				50						//Max templates that can be loaded
+#define MAX_NTD_PROJECTS 				(124)					//Max projects that can be created and loaded
+#define MAX_NTD_TDS						(MAX_DIALOG_ITEMS - 1)	//Max TextDraws that can be created and loaded
+#define MAX_NTD_LANGUAGES				20						//Max languages that can be loaded
+#define MAX_NTD_SPRITES 				100						//Max sprites that can be loaded into library.
 //
-#define DEFAULT_LANG_STRING_SIZE		328
-#define BUTTON_TD_SIZE					35.5
-#define BUTTON_TD_SPACER				35.5
-#define BUTTON_MINHEIGHT				15
-#define BUTTON_MAXHEIGHT				412
-#define CHANGING_VAR_TIME 				35
-#define MAXFORMATEDTD 					28
-#define BLOCK_VARS_TIME 				100
-#define CURSOR_COLOR 					-8388353
-#define BUTTON_TD_COLOR 				-1
-#define DIALOG_DIALOG_ADDER				1000
-#define TDPICKER_COLOR_ACTIVE 			0xFFFF00FF
-#define TDPICKER_COLOR 					0xFFFFFF55
-#define CONFIRM_SOUNDID					1083
-#define TEXT_DRAW_FONT_PROGRESS_BAR		6 //Do NOT change!
+#define CHANGING_VAR_TIME 				35						//The Update time for the editor
+#define MAXFORMATEDTD 					32						//Clamps the TextDraw name in the Dialogs
+#define CURSOR_COLOR 					-8388353				//Default Cursor Color
+#define BUTTON_TD_COLOR 				-1						//Default Buttons Color
+#define DIALOG_DIALOG_ADDER				1000 					//If there are coliding Dialog ID's, change this to fix it!
+#define TDPICKER_COLOR_ACTIVE 			0xFFFF00FF				//Color of the TD Picker when active
+#define TDPICKER_COLOR 					0xFFFFFF55				//Color of the TD Picker when inactive
+#define CONFIRM_SOUNDID					1083					//Confirmation Sound
 #define DEFAULT_DIALOG_ITEMS_PER_PAGE	NDP_AUTO
 
 // File paths
-#define NTD_DIRECTORYPATH				"ntd"
-#define EXPORTS_DIRECTORYPATH			"ntd/exports"
-#define PROJECTS_DIRECTORYPATH			"ntd/projects"
-#define LANGUAGES_PATH					"ntd/languages"
-#define PROJECTLIST_FILEPATH 			"ntd/projects.list"
-#define LANGUAGESLIST_FILEPATH			"ntd/languages.list"
-#define TEMPLATESLIST_FILEPATH			"ntd/templates.xml"
-#define SETTINGS_FILEPATH 				"ntd/settings.ini"
+#define NTD_DIRECTORYPATH				"ntd"					//Directory
+#define EXPORTS_DIRECTORYPATH			"ntd/exports"			//Directory
+#define PROJECTS_DIRECTORYPATH			"ntd/projects"			//Directory
+#define LANGUAGES_PATH					"ntd/languages"			//Directory
+#define PROJECTLIST_FILEPATH 			"ntd/projects.list"		//File
+#define LANGUAGESLIST_FILEPATH			"ntd/languages.list"	//File
+#define TEMPLATESLIST_FILEPATH			"ntd/templates.xml"		//File
+#define SETTINGS_FILEPATH 				"ntd/settings.ini"		//File
 
 //DIALOG CAPTION TEXT
 #define CAPTION_TEXT 					"{FFFFFF}NTD "SCRIPT_VERSION" - {00FF00}"
@@ -106,6 +99,21 @@
 #define BUTTON_SELECTABLE 				"NTD_RESOURCES:Button_Selectable"
 #define BUTTON_PROPORTIONALITY 			"NTD_RESOURCES:Button_Proportionality"
 #define BUTTON_TDSETTINGS 				"NTD_RESOURCES:Button_TDSettings"
+
+/*
+INTERNALS >>> Please do NOT change these definitions! <<<
+You can brake something :D 
+Only change if you know what you are doing!
+*/
+#define MAX_NTD_LANGUAGE_DIALOGS		40						//Do NOT change!
+#define MAX_NTD_DIALOG_INFO				10						//Do NOT change!
+#define DEFAULT_LANG_STRING_SIZE		328						//Do NOT change!
+#define BUTTON_TD_SIZE					35.5					//Do NOT change!
+#define BUTTON_TD_SPACER				35.5					//Do NOT change!
+#define BUTTON_MINHEIGHT				15						//Do NOT change!
+#define BUTTON_MAXHEIGHT				412						//Do NOT change!
+#define BLOCK_VARS_TIME 				100						//Do NOT change!
+#define TEXT_DRAW_FONT_PROGRESS_BAR		6 						//Do NOT change!
 
 //LANGUAGES
 #define LANG_NONE 						-1
@@ -864,6 +872,7 @@ new EditorVersion[10];
 new EditorLString[5000];
 new EditorString[500];
 new EditorLanguageFile[32];
+new EditorMaxDialogItems;
 
 
 //CALLBACKS
@@ -905,6 +914,7 @@ public OnFilterScriptInit()
 		dfile_WriteBool("editor_compactmode", false);
 		dfile_WriteString("editor_scriptversion", SCRIPT_VERSION_CHECK);
 		dfile_WriteString("editor_languagefile", "");
+		dfile_WriteInt("editor_maxdialogitems", DEFAULT_DIALOG_ITEMS_PER_PAGE);
 		dfile_SaveFile();
 		dfile_CloseFile();
 		EditorPosY = BUTTON_MAXHEIGHT;
@@ -915,6 +925,7 @@ public OnFilterScriptInit()
 		EditorQuickSelect = true;
 		EditorTextDrawShowForAll = false;
 		EditorLanguage = LANG_NONE;
+		EditorMaxDialogItems = DEFAULT_DIALOG_ITEMS_PER_PAGE;
 		format(EditorVersion, sizeof EditorVersion, SCRIPT_VERSION_CHECK);
 	}
 	else LoadConfigurations();
@@ -1497,7 +1508,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(ExportProject(NTD_User[User_ProjectName], NTD_User[User_ExportType], bool:response))
 				{
 					format(EditorLString, sizeof EditorLString, Language_Strings[str_infoprojectexported]);
-					format(EditorString, sizeof EditorString, " {00FFFF}scriptfiles / NTD / Exports / %s.pwn", NTD_User[User_ProjectName]);
+					format(EditorString, sizeof EditorString, " {00FFFF}scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", NTD_User[User_ProjectName]);
 					strcat(EditorLString, EditorString);
 					strreplace(EditorLString, "#n", "\n");
 					ShowInfo(playerid, EditorLString);
@@ -1717,7 +1728,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						ShowEditorEx(playerid);
 					}
 				}
-				else ShowEditorEx(playerid);
+				else ShowEditorEx(playerid), ShowTDOptions(playerid, NTD_User[User_ChoosenTDID]);
 			}
 			case DIALOG_MANAGE2:
 			{
@@ -1781,8 +1792,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 					}
 					
-				}
-				else ShowEditorEx(playerid, true);
+				} 
+				else ShowEditorEx(playerid, true), OpenTDDialog(playerid);
 			}
 			case DIALOG_DELETETD:
 			{
@@ -1803,7 +1814,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					ShowEditorEx(playerid, true);
 				}
-				else ShowEditorEx(playerid);
+				else ShowEditorEx(playerid), ShowTDOptions(playerid, NTD_User[User_ChoosenTDID]);
 			}
 			case DIALOG_MANAGE4:
 			{
@@ -1911,7 +1922,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						case -1: ShowInfo(playerid, Language_Strings[str_projectnamechangeerror]);
 					}
 				}
-				else ShowEditorEx(playerid);
+				else ShowEditorEx(playerid), OpenProjectDialog(playerid);
 			}
 			case DIALOG_OPEN2:
 			{
@@ -1950,7 +1961,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 					}
 				}
-				else ShowEditorEx(playerid);
+				else ShowEditorEx(playerid), OpenProjectDialog(playerid);
 			}
 			case DIALOG_OPEN:
 			{
@@ -1979,7 +1990,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					else ShowInfo(playerid, Language_Strings[str_projectdeleteerror]);
 				}
-				else ShowEditorEx(playerid);
+				else ShowEditorEx(playerid), OpenProjectDialog(playerid);
 			}
 			case DIALOG_NEW:
 			{
@@ -3062,6 +3073,7 @@ stock ResetConfiguration(playerid)
 	ToggleTextDrawShowForAll(false);
 	QuickSelectionShow(playerid, true);
 	EditorQuickSelect = true;
+	EditorMaxDialogItems = DEFAULT_DIALOG_ITEMS_PER_PAGE;
 	return 1;
 }
 
@@ -3139,10 +3151,10 @@ stock ShowLanguageChangeDialog(playerid, ondialogid)
 stock RenameProject(projectname[], newprojectname[])
 {
 	new string1[128], string2[128];
-	format(string1, sizeof string1, "NTD/Projects/%s.ntdp", projectname);	
+	format(string1, sizeof string1, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);	
 	if(!dfile_FileExists(string1)) 	
 		return -1;
-	format(string2, sizeof string2, "NTD/Projects/%s.ntdp", newprojectname);	
+	format(string2, sizeof string2, PROJECTS_DIRECTORYPATH"/%s.ntdp", newprojectname);	
 	if(dfile_FileExists(string2)) 
 		return 3;
 	if(!IsValidString(newprojectname) || strlen(newprojectname) == 0 || strlen(newprojectname) > 40)
@@ -3182,7 +3194,7 @@ stock RenameProject(projectname[], newprojectname[])
 stock bool:VariableExists(const string[])
 {
 	foreach(new i : I_TEXTDRAWS)
-		if(!strcmp(NTD_TD[i][TD_VarName], string, false) && !isnull(NTD_TD[i][TD_VarName]) && NTD_TD[i][TD_Created]) return true;
+		if(!strcmp(NTD_TD[i][TD_VarName], string, true) && !isnull(NTD_TD[i][TD_VarName]) && NTD_TD[i][TD_Created]) return true;
 	return false;
 }
 
@@ -3335,13 +3347,13 @@ stock SelectTD(playerid, tdid)
 
 stock CreateProject(projectname[])
 {
-	format(EditorString, sizeof EditorString, "NTD/Projects/%s.ntdp", projectname);			
+	format(EditorString, sizeof EditorString, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);			
 	if(!dfile_FileExists(EditorString))
 	{
 		new pid = WriteIntoList(projectname);
 		if(pid == 1)
 		{
-			format(EditorString, sizeof EditorString, "NTD/Projects/%s.ntdp", projectname);	
+			format(EditorString, sizeof EditorString, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);	
 			dfile_Create(EditorString);
 			GetAllProjects();		
 			return pid;
@@ -3362,11 +3374,11 @@ stock ShowInfo(playerid, const text[])
 stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 {
 	new filename[128], bool:clickableTD, publiccount, nonpubliccount, barscount;
-	format(filename, 128, "/NTD/Exports/%s.pwn", projectname);
+	format(filename, 128, EXPORTS_DIRECTORYPATH"/%s.pwn", projectname);
 	if(dfile_FileExists(filename))
 		dfile_Delete(filename);
 	
-	if(dfile_FileExists("/NTD/Exports"))
+	if(dfile_FileExists(EXPORTS_DIRECTORYPATH))
 	{
 		if(dfile_Create(filename))
 		{
@@ -4430,7 +4442,7 @@ stock OpenTDDialog(playerid)
 	strreplace(EditorString, "#1", tmp_str[0]);
 	strreplace(EditorString, "#2", tmp_str[1]);
 	
-	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  EditorString, #, DLS[DL_TDLIST][d_s_button1], DLS[DL_TDLIST][d_s_button2], DEFAULT_DIALOG_ITEMS_PER_PAGE);
+	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  EditorString, #, DLS[DL_TDLIST][d_s_button1], DLS[DL_TDLIST][d_s_button2], EditorMaxDialogItems);
 	return 1;
 }
 
@@ -4480,7 +4492,9 @@ stock OpenProjectDialog(playerid)
 		{
 			if(count > 0)
 				strcat(EditorLString, "\n");
-			format(EditorString, sizeof EditorString, "%s\t%d\t%02d.%02d.%04d | %02d:%02d", 
+			format(EditorString, sizeof EditorString, PROJECTS_DIRECTORYPATH"/%s.ntdp", NTD_Projects[i][Pro_Name]);
+			format(EditorString, sizeof EditorString, "%s%s\t%d\t%02d.%02d.%04d | %02d:%02d", 
+			(dfile_FileExists(EditorString)) ? ("{FFFFFF}") : ("{FF0000}"),
 			NTD_Projects[i][Pro_Name], 
 			NTD_Projects[i][Pro_TDA], 
 			NTD_Projects[i][Pro_LastDay],
@@ -4498,7 +4512,7 @@ stock OpenProjectDialog(playerid)
 		format(tmp_str[1], 24, "%i", MAX_NTD_PROJECTS);
 		strreplace(EditorString, "#1", tmp_str[0]);
 		strreplace(EditorString, "#2", tmp_str[1]);
-		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, #, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], DEFAULT_DIALOG_ITEMS_PER_PAGE);
+		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, #, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], EditorMaxDialogItems);
 		PlayerSelectTD(playerid, false);
 	}
 	else 
@@ -4569,17 +4583,28 @@ stock ShowEditorEx(playerid, bool:showmouse = true)
 	return 1;
 }
 
-stock DeleteProject(projectname[])
+stock DeleteProject(projectname[], bool:force = true)
 {
-	format(EditorString, sizeof EditorString, "NTD/Projects/%s.ntdp", projectname);
-	if(dfile_FileExists(EditorString))
+	format(EditorString, sizeof EditorString, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);
+	if(!force)
 	{
-		dfile_Delete(EditorString);
-		if(fexist(PROJECTLIST_FILEPATH))
+		if(dfile_FileExists(EditorString))
 		{
-			ProjectFileLineReplace(PROJECTLIST_FILEPATH, projectname, "");
-			return 1;
+			dfile_Delete(EditorString);
+			if(fexist(PROJECTLIST_FILEPATH))
+			{
+				ProjectFileLineReplace(PROJECTLIST_FILEPATH, projectname, "");
+				return 1;
+			}
 		}
+	}
+	else
+	{
+		if(dfile_FileExists(EditorString))
+			dfile_Delete(EditorString);
+		if(fexist(PROJECTLIST_FILEPATH))
+			ProjectFileLineReplace(PROJECTLIST_FILEPATH, projectname, "");
+		return 1;
 	}
 	return 0;
 }
@@ -4625,6 +4650,8 @@ stock LoadConfigurations()
 		EditorCompactMode = dfile_ReadBool("editor_compactmode");
 		format(EditorVersion, sizeof EditorVersion, dfile_ReadString("editor_scriptversion"));
 		format(EditorLanguageFile, sizeof EditorLanguageFile, dfile_ReadString("editor_languagefile"));
+		EditorMaxDialogItems = dfile_ReadInt("editor_maxdialogitems");
+		EditorMaxDialogItems = clamp(EditorMaxDialogItems, 1, NDP_AUTO);
 		dfile_CloseFile();
 	}
 	if(dfile_FileExists(LANGUAGESLIST_FILEPATH))
@@ -4712,6 +4739,7 @@ stock SaveConfigurations()
 		dfile_WriteBool("editor_compactmode", EditorCompactMode);
 		dfile_WriteString("editor_scriptversion", EditorVersion);
 		dfile_WriteString("editor_languagefile", EditorLanguageFile);
+		dfile_WriteInt("editor_maxdialogitems", EditorMaxDialogItems);
 		dfile_SaveFile();
 		dfile_CloseFile();
 	}
@@ -4827,7 +4855,7 @@ stock SaveProject()
 
 stock LoadProject(projectname[])
 {
-	format(EditorString, sizeof EditorString, "NTD/Projects/%s.ntdp", projectname);
+	format(EditorString, sizeof EditorString, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);
 	if(dfile_FileExists(EditorString))
 	{
 		Iter_Clear(I_TEXTDRAWS);
