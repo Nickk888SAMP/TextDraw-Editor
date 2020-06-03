@@ -40,18 +40,18 @@
 #include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v6.0"
-#define SCRIPT_VERSION_CHECK 			"6.0"
+#define SCRIPT_VERSION 					"v6.1"
+#define SCRIPT_VERSION_CHECK 			"6.1"
 #define TD_PICKER_TEXT					"S"
 
 // Limits
-#define MAX_NTD_TEMPLATES					50
-#define MAX_NTD_PROJECTS 					50
-#define MAX_NTD_TDS							500
+#define MAX_NTD_TEMPLATES				50
+#define MAX_NTD_PROJECTS 				(DIALOG_MAX_LINES - 1)
+#define MAX_NTD_TDS						(DIALOG_MAX_LINES - 2)
 #define MAX_NTD_LANGUAGES				20
-#define MAX_NTD_SPRITES 					100
-#define MAX_NTD_LANGUAGE_DIALOGS			40
-#define MAX_NTD_DIALOG_INFO					10
+#define MAX_NTD_SPRITES 				100
+#define MAX_NTD_LANGUAGE_DIALOGS		40
+#define MAX_NTD_DIALOG_INFO				10
 //
 #define DEFAULT_LANG_STRING_SIZE		328
 #define BUTTON_TD_SIZE					35.5
@@ -68,6 +68,7 @@
 #define TDPICKER_COLOR 					0xFFFFFF55
 #define CONFIRM_SOUNDID					1083
 #define TEXT_DRAW_FONT_PROGRESS_BAR		6 //Do NOT change!
+#define DEFAULT_DIALOG_ITEMS_PER_PAGE	NDP_AUTO
 
 // File paths
 #define NTD_DIRECTORYPATH				"ntd"
@@ -1127,7 +1128,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					NTD_User[User_ManualChangeType] = listitem;
-					CreateDialogOnLanguageData(DL_MANUALVARCHANGE1);
+					CreateDialogOnLanguageData(playerid, DL_MANUALVARCHANGE1);
 					CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE1);
 					switch(NTD_User[User_ChangingState])
 					{
@@ -1250,7 +1251,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(listitem == 0) //Wpisz recznie
 					{
-						CreateDialogOnLanguageData(DL_SPRITECHANGE);
+						CreateDialogOnLanguageData(playerid, DL_SPRITECHANGE);
 						CreateDialogCaptionOnLangData(DL_SPRITECHANGE);
 						ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_SPRITECHANGE][d_s_button1], DLS[DL_SPRITECHANGE][d_s_button2]);
 					}
@@ -1405,7 +1406,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE_SETTINGS);
 						case 8: //Ustawienia fabryczne
 						{
-							CreateDialogOnLanguageData(DL_SETTINGSRESET);
+							CreateDialogOnLanguageData(playerid, DL_SETTINGSRESET);
 							CreateDialogCaptionOnLangData(DL_SETTINGSRESET);
 							ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_SETTINGSRESET][d_s_button1], DLS[DL_SETTINGSRESET][d_s_button2]);
 						}
@@ -1475,7 +1476,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(listitem == 0) //Zmien Model
 					{
-						CreateDialogOnLanguageData(DL_PREVIEWMODELID);
+						CreateDialogOnLanguageData(playerid, DL_PREVIEWMODELID);
 						CreateDialogCaptionOnLangData(DL_PREVIEWMODELID);
 						ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL1, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_PREVIEWMODELID][d_s_button1], DLS[DL_PREVIEWMODELID][d_s_button2]);
 					}
@@ -1509,7 +1510,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					NTD_User[User_ExportType] = listitem;
-					CreateDialogOnLanguageData(DL_EXPORTWITHARRAY);
+					CreateDialogOnLanguageData(playerid, DL_EXPORTWITHARRAY);
 					CreateDialogCaptionOnLangData(DL_EXPORTWITHARRAY);
 					ShowPlayerDialog(playerid, DIALOG_EXPORT2, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_EXPORTWITHARRAY][d_s_button1], DLS[DL_EXPORTWITHARRAY][d_s_button2]);
 				}
@@ -1618,7 +1619,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							case 1: SplitRGBA(NTD_TD[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
 							case 2: SplitRGBA(NTD_TD[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
 						}
-						CreateDialogOnLanguageData(DL_COLORCHANGE);
+						CreateDialogOnLanguageData(playerid, DL_COLORCHANGE);
 						CreateDialogCaptionOnLangData(DL_COLORCHANGE);
 						format(tmp_str, sizeof tmp_str, "%i", color[0]);
 						strreplace(EditorLString, "#1", tmp_str);
@@ -1758,7 +1759,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 3: //Zmien nazwe parametru
 						{
-							CreateDialogOnLanguageData(DL_VARIABLECHANGE);
+							CreateDialogOnLanguageData(playerid, DL_VARIABLECHANGE);
 							CreateDialogCaptionOnLangData(DL_VARIABLECHANGE);
 							strreplace(EditorLString, "#1", GetProcessedTDVarName(NTD_User[User_ChoosenTDID]));
 							strreplace(EditorLString, "#2", NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
@@ -1773,7 +1774,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 								strcat(formatedtd, "...");
 							}
-							CreateDialogOnLanguageData(DL_DELETECONFIRM);
+							CreateDialogOnLanguageData(playerid, DL_DELETECONFIRM);
 							CreateDialogCaptionOnLangData(DL_DELETECONFIRM);
 							strreplace(EditorLString, "#1", formatedtd);
 							ShowPlayerDialog(playerid, DIALOG_DELETETD, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_DELETECONFIRM][d_s_button1], DLS[DL_DELETECONFIRM][d_s_button2]);
@@ -1876,14 +1877,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						return 0;
 					if(listitem == 0) //Stworz nowy TD
 					{
-						CreateDialogOnLanguageData(DL_NEWTEXTDRAW);
+						CreateDialogOnLanguageData(playerid, DL_NEWTEXTDRAW);
 						CreateDialogCaptionOnLangData(DL_NEWTEXTDRAW);
 						ShowPlayerDialog(playerid, DIALOG_MANAGE3, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_NEWTEXTDRAW][d_s_button1], DLS[DL_NEWTEXTDRAW][d_s_button2]);
 					}
 					else //TDS
 					{
 						new index = Iter_Index(I_TEXTDRAWS, (listitem - 1));
-						ShowTDOptions(index);
+						ShowTDOptions(playerid, index);
 					}
 				}
 				else ShowEditorEx(playerid);
@@ -1935,7 +1936,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 1: //Zmien nazwe
 						{
-							CreateDialogOnLanguageData(DL_PROJECTNAMECHANGE);
+							CreateDialogOnLanguageData(playerid, DL_PROJECTNAMECHANGE);
 							CreateDialogCaptionOnLangData(DL_PROJECTNAMECHANGE);
 							strreplace(EditorLString, "#1", NTD_User[User_ProjectName]);
 							ShowPlayerDialog(playerid, DIALOG_RENAMEPROJECT, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_PROJECTNAMECHANGE][d_s_button1], DLS[DL_PROJECTNAMECHANGE][d_s_button2]);
@@ -1943,7 +1944,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 2: //Usun
 						{
-							CreateDialogOnLanguageData(DL_DELETEPROJECTCONFIRM);
+							CreateDialogOnLanguageData(playerid, DL_DELETEPROJECTCONFIRM);
 							CreateDialogCaptionOnLangData(DL_DELETEPROJECTCONFIRM);
 							ShowPlayerDialog(playerid, DIALOG_DELETEPROJECT, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_DELETEPROJECTCONFIRM][d_s_button1], DLS[DL_DELETEPROJECTCONFIRM][d_s_button2]);
 						}
@@ -1959,7 +1960,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						return 0;
 					new index = Iter_Index(I_PROJECTS, listitem);
 					format(NTD_User[User_ProjectName], 128, NTD_Projects[index][Pro_Name]);
-					CreateDialogOnLanguageData(DL_PROJECTSOPTIONS);
+					CreateDialogOnLanguageData(playerid, DL_PROJECTSOPTIONS);
 					CreateDialogCaptionOnLangData(DL_PROJECTSOPTIONS);
 					ShowPlayerDialog(playerid, DIALOG_OPEN2, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PROJECTSOPTIONS][d_s_button1], DLS[DL_PROJECTSOPTIONS][d_s_button2]);
 				}
@@ -2021,7 +2022,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				{
 					if(SelectTD(playerid, i) == 0)
 					{
-						ShowTDOptions(i);
+						ShowTDOptions(playerid, i);
 					}
 					return 1;
 				}
@@ -2030,7 +2031,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		if(clickedid == B_Exit)
 		{
-			CreateDialogOnLanguageData(DL_EXITCONFIRMATION);
+			CreateDialogOnLanguageData(playerid, DL_EXITCONFIRMATION);
 			CreateDialogCaptionOnLangData(DL_EXITCONFIRMATION);
 			ShowPlayerDialog(playerid, DIALOG_EXIT, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_EXITCONFIRMATION][d_s_button1], DLS[DL_EXITCONFIRMATION][d_s_button2]);
 			PlayerSelectTD(playerid, false);
@@ -2057,7 +2058,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			else 
 				format(compmodestr, sizeof compmodestr, Language_Strings[str_compmodedisabled]);
 			
-			CreateDialogOnLanguageData(DL_SETTINGS);
+			CreateDialogOnLanguageData(playerid, DL_SETTINGS);
 			strreplace(EditorLString, "#1", invertedstr);
 			strreplace(EditorLString, "#2", quickselectstr);
 			strreplace(EditorLString, "#3", tdvisistr);
@@ -2071,14 +2072,14 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 			{
-				CreateDialogOnLanguageData(DL_PREVIEWMODELCHANGELIST);
+				CreateDialogOnLanguageData(playerid, DL_PREVIEWMODELCHANGELIST);
 				CreateDialogCaptionOnLangData(DL_PREVIEWMODELCHANGELIST);
 				ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PREVIEWMODELCHANGELIST][d_s_button1], DLS[DL_PREVIEWMODELCHANGELIST][d_s_button2]);
 				PlayerSelectTD(playerid, false);
 			}
 			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				CreateDialogOnLanguageData(DL_MAXBARPERCCHANGE);
+				CreateDialogOnLanguageData(playerid, DL_MAXBARPERCCHANGE);
 				CreateDialogCaptionOnLangData(DL_MAXBARPERCCHANGE);
 				strreplace(EditorLString, "#1", "%f");
 				format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_BarMaxPercentage]);
@@ -2234,13 +2235,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			if(NTD_TD[tdid][TD_Font] != 4 && NTD_TD[tdid][TD_Font] != 5) 
 			{
-				CreateDialogOnLanguageData(DL_TEXTCHANGE);
+				CreateDialogOnLanguageData(playerid, DL_TEXTCHANGE);
 				CreateDialogCaptionOnLangData(DL_TEXTCHANGE);
 				ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_TEXTCHANGE][d_s_button1], DLS[DL_TEXTCHANGE][d_s_button2]);
 			}
 			else if(NTD_TD[tdid][TD_Font] == 4) 
 			{
-				CreateDialogOnLanguageData(DL_SPRITECHANGELIST);
+				CreateDialogOnLanguageData(playerid, DL_SPRITECHANGELIST);
 				CreateDialogCaptionOnLangData(DL_SPRITECHANGELIST);
 				ShowPlayerDialog(playerid, DIALOG_SPRITES1, DIALOG_STYLE_LIST,EditorString, EditorLString, DLS[DL_SPRITECHANGELIST][d_s_button1], DLS[DL_SPRITECHANGELIST][d_s_button2]);
 			}
@@ -2264,7 +2265,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				}
 				default:
 				{
-					CreateDialogOnLanguageData(DL_BOXSIZECHANGELIST);
+					CreateDialogOnLanguageData(playerid, DL_BOXSIZECHANGELIST);
 					CreateDialogCaptionOnLangData(DL_BOXSIZECHANGELIST);
 					ShowPlayerDialog(playerid, DIALOG_SIZE, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_BOXSIZECHANGELIST][d_s_button1], DLS[DL_BOXSIZECHANGELIST][d_s_button2]);
 				}
@@ -2309,7 +2310,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			if(Iter_Count(I_PROJECTS) < MAX_NTD_PROJECTS)
 			{
-				CreateDialogOnLanguageData(DL_NEWPROJECT);
+				CreateDialogOnLanguageData(playerid, DL_NEWPROJECT);
 				CreateDialogCaptionOnLangData(DL_NEWPROJECT);
 				ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_NEWPROJECT][d_s_button1], DLS[DL_NEWPROJECT][d_s_button2]);
 				PlayerSelectTD(playerid, false);
@@ -2345,7 +2346,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Export)
 		{
-			CreateDialogOnLanguageData(DL_EXPORTPROJECT);
+			CreateDialogOnLanguageData(playerid, DL_EXPORTPROJECT);
 			CreateDialogCaptionOnLangData(DL_EXPORTPROJECT);
 			ShowPlayerDialog(playerid, DIALOG_EXPORT, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_EXPORTPROJECT][d_s_button1], DLS[DL_EXPORTPROJECT][d_s_button2]);
 			PlayerSelectTD(playerid, false);
@@ -2829,7 +2830,7 @@ CMD:ntd(playerid, params[])
 				}
 				else if(strcmp(EditorVersion, SCRIPT_VERSION_CHECK, false) != 0)
 				{
-					CreateDialogOnLanguageData(DL_OLDVERSIONSETTINGSRESET);
+					CreateDialogOnLanguageData(playerid, DL_OLDVERSIONSETTINGSRESET);
 					CreateDialogCaptionOnLangData(DL_OLDVERSIONSETTINGSRESET);
 					ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button1], DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button2]);
 					return 1;
@@ -3096,20 +3097,30 @@ stock strreplace(sstring[], const search[], const replacement[], bool:ignorecase
     return count;
 }
 
-stock CreateDialogOnLanguageData(dialoglanguageid)
+stock CreateDialogOnLanguageData(playerid, dialoglanguageid)
 {
 	EditorLString = "";
 	for(new i; i < MAX_NTD_DIALOG_INFO; i++)
 	{
 		if(strlen(DLI[dialoglanguageid][i]) > 1)
 		{
-			if(i > 0) strcat(EditorLString, "\n");
 			strunpack(EditorString, DLI[dialoglanguageid][i]);
-			strcat(EditorLString, EditorString);
+			strreplace(EditorString, "#t", "\t");
+			strreplace(EditorString, "#n", "\n");
+			switch(dialoglanguageid)
+			{
+				case DL_TDLIST, DL_PROJECTSLIST:
+				{
+					AddDialogListitem(playerid, EditorString);
+				}
+				default:
+				{
+					if(i > 0) strcat(EditorLString, "\n");
+					strcat(EditorLString, EditorString);
+				}
+			}
 		}
 	}
-	strreplace(EditorLString, "#t", "\t");
-	strreplace(EditorLString, "#n", "\n");
 	return 1;
 }
 
@@ -3189,11 +3200,11 @@ stock Lang(lang)
 	return false;
 }
 
-stock ShowTDOptions(tdid)
+stock ShowTDOptions(playerid, tdid)
 {
 	new tmp_str[12];
 	NTD_User[User_ChoosenTDID] = tdid;
-	CreateDialogOnLanguageData(DL_TDOPTIONS);
+	CreateDialogOnLanguageData(playerid, DL_TDOPTIONS);
 	CreateDialogCaptionOnLangData(DL_TDOPTIONS);
 	format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
 	strreplace(EditorString, "#1", tmp_str);
@@ -4397,8 +4408,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 stock OpenTDDialog(playerid)
 {
 	new formatedtd[MAXFORMATEDTD];
-	CreateDialogOnLanguageData(DL_TDLIST);
-	
+	CreateDialogOnLanguageData(playerid, DL_TDLIST);
 	foreach(new i : I_TEXTDRAWS)
 	{
 		format(formatedtd, MAXFORMATEDTD, NTD_TD[i][TD_Text]);
@@ -4407,9 +4417,9 @@ stock OpenTDDialog(playerid)
 			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 			strcat(formatedtd, "...");
 		}
-		if(i != NTD_User[User_EditingTDID]) format(EditorString, sizeof EditorString, "\n{FFFFFF}%i. {76DCC0}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
-		else format(EditorString, sizeof EditorString, "\n{FFFFFF}%i. {FFFF00}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
-		strcat(EditorLString, EditorString);
+		if(i != NTD_User[User_EditingTDID]) format(EditorString, sizeof EditorString, "{FFFFFF}%i. {76DCC0}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
+		else format(EditorString, sizeof EditorString, "{FFFFFF}%i. {FFFF00}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
+		AddDialogListitem(playerid, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
 	//
@@ -4420,7 +4430,7 @@ stock OpenTDDialog(playerid)
 	strreplace(EditorString, "#1", tmp_str[0]);
 	strreplace(EditorString, "#2", tmp_str[1]);
 	
-	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  EditorString, EditorLString, DLS[DL_TDLIST][d_s_button1], DLS[DL_TDLIST][d_s_button2], 9);
+	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  EditorString, #, DLS[DL_TDLIST][d_s_button1], DLS[DL_TDLIST][d_s_button2], DEFAULT_DIALOG_ITEMS_PER_PAGE);
 	return 1;
 }
 
@@ -4465,7 +4475,7 @@ stock OpenProjectDialog(playerid)
 	new count;
 	if(Iter_Count(I_PROJECTS) > 0)
 	{
-		CreateDialogOnLanguageData(DL_PROJECTSLIST);
+		CreateDialogOnLanguageData(playerid, DL_PROJECTSLIST);
 		foreach(new i : I_PROJECTS)
 		{
 			if(count > 0)
@@ -4478,7 +4488,7 @@ stock OpenProjectDialog(playerid)
 			NTD_Projects[i][Pro_LastYear], 
 			NTD_Projects[i][Pro_LastHour], 
 			NTD_Projects[i][Pro_LastMin]);
-			strcat(EditorLString, EditorString);
+			AddDialogListitem(playerid, EditorString);
 			count++;
 		}
 		//
@@ -4488,7 +4498,7 @@ stock OpenProjectDialog(playerid)
 		format(tmp_str[1], 24, "%i", MAX_NTD_PROJECTS);
 		strreplace(EditorString, "#1", tmp_str[0]);
 		strreplace(EditorString, "#2", tmp_str[1]);
-		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, EditorLString, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], 10);
+		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, #, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], DEFAULT_DIALOG_ITEMS_PER_PAGE);
 		PlayerSelectTD(playerid, false);
 	}
 	else 
@@ -4502,7 +4512,7 @@ stock ColorDialog(playerid, cstate)
 {
 	if(cstate == 0)
 	{
-		CreateDialogOnLanguageData(DL_COLORCHANGELIST1);
+		CreateDialogOnLanguageData(playerid, DL_COLORCHANGELIST1);
 		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST1);
 		NTD_User[User_ChangingColorBar] = false;
 		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_COLORCHANGELIST1][d_s_button1], DLS[DL_COLORCHANGELIST1][d_s_button2]);
@@ -4510,7 +4520,7 @@ stock ColorDialog(playerid, cstate)
 	}
 	else
 	{
-		CreateDialogOnLanguageData(DL_COLORCHANGELIST2);
+		CreateDialogOnLanguageData(playerid, DL_COLORCHANGELIST2);
 		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST2);
 		NTD_User[User_ChangingColorBar] = false;
 		if(cstate == 2)
@@ -4822,19 +4832,24 @@ stock LoadProject(projectname[])
 	{
 		Iter_Clear(I_TEXTDRAWS);
 		for(new i; i < MAX_NTD_TDS; i++)
+		{
 			NTD_TD[i][TD_Created] = false;
+			format(NTD_TD[i][TD_VarName], 35, "");
+			NTD_TD[i][TD_Created] = true;
+			NTD_TD[i][TD_HighlightTimer] = -1;
+			NTD_TD[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
+			NTD_TD[i][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+			NTD_TD[i][TD_BarMaxPercentage] = 100.0;
+			NTD_TD[i][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+		}
 			
 		format(NTD_User[User_ProjectName], 128, projectname);
 		NTD_User[User_ProjectOpened] = true;
 		dfile_Open(EditorString);
+		//
 		new index;
 		for(new i; i < MAX_NTD_TDS; i++)
 		{
-			/*
-			format(EditorString, sizeof EditorString, "td_%i_bar_data", count);
-				format(stringex, sizeof stringex, "%f %f %i ", 50.0, 100.0, BAR_DIRECTION_RIGHT);
-				dfile_WriteString(EditorString, EditorLString);
-			*/
 			format(EditorString, sizeof EditorString, "td_%i_data", i);
 			if(strlen(dfile_ReadString(EditorString)) > 0)
 			{
@@ -4842,14 +4857,8 @@ stock LoadProject(projectname[])
 				if(index != ITER_NONE)
 				{
 					Iter_Add(I_TEXTDRAWS, index);
-					NTD_TD[index][TD_Created] = true;
-					NTD_TD[index][TD_HighlightTimer] = -1;
-					NTD_TD[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
-					NTD_TD[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
-					NTD_TD[index][TD_BarMaxPercentage] = 100.0;
-					NTD_TD[index][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 					format(EditorString, sizeof EditorString, "td_%i_string", i);
-					format(NTD_TD[index][TD_Text] , 300, dfile_ReadString(EditorString));
+					format(NTD_TD[index][TD_Text], 300, dfile_ReadString(EditorString));
 					format(EditorString, sizeof EditorString, "td_%i_data", i);
 					format(EditorLString, sizeof EditorLString, dfile_ReadString(EditorString)); 
 					
@@ -4860,9 +4869,6 @@ stock LoadProject(projectname[])
 					NTD_TD[index][TD_Selectable], NTD_TD[index][TD_Alignment], NTD_TD[index][TD_Proportional], NTD_TD[index][TD_PrevModelID], NTD_TD[index][TD_PrevModelC1], 
 					NTD_TD[index][TD_PrevModelC2], NTD_TD[index][TD_PrevRotX], NTD_TD[index][TD_PrevRotY], NTD_TD[index][TD_PrevRotZ], NTD_TD[index][TD_PrevRotZoom],
 					NTD_TD[index][TD_ColorAlpha], NTD_TD[index][TD_BGColorAlpha], NTD_TD[index][TD_BoxColorAlpha], NTD_TD[index][TD_VarName]);
-
-					if(strlen(NTD_TD[index][TD_VarName]) == 0)
-						format(NTD_TD[index][TD_VarName], 35, "");
 					
 					//Bar Data
 					format(EditorString, sizeof EditorString, "td_%i_bar_data", i);
