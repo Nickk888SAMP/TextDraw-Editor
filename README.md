@@ -24,11 +24,19 @@ Newest Video: https://youtu.be/WMVVbm_XBhw
 
 Screenshots(Beta 4.45): https://imgur.com/a/Bs8Je
 
-SAMP Forum Thread v5.0: https://forum.sa-mp.com/showthread.php?p=4132384
+SAMP Forum Thread v5.0>: https://forum.sa-mp.com/showthread.php?p=4132384
 
 SAMP Forum Thread Beta 1.0 - Beta 4.45: https://forum.sa-mp.com/showthread.php?t=641085
 
-Credits:
+## Dependencies
+* SSCANF2: https://github.com/maddinat0r/sscanf
+* ZCMD: https://github.com/Southclaws/zcmd
+* YSI Library: https://github.com/pawn-lang/YSI-Includes
+* DFILE: https://forum.sa-mp.com/showthread.php?t=218026
+* NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
+* Progress2: https://github.com/Southclaws/progress2
+
+## Credits:
 - a_samp: SAMP Team
 - ZCMD: Zeex
 - DFILE: DrAkE
