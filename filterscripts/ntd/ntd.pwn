@@ -869,7 +869,7 @@ new EditorFasterKey;
 new EditorAcceptKey;
 new EditorLanguage = LANG_NONE;
 new EditorVersion[10];
-new EditorLString[5000];
+new EditorLString[1000];
 new EditorString[500];
 new EditorLanguageFile[32];
 new EditorMaxDialogItems;
