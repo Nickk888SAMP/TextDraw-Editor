@@ -1,0 +1,361 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Russian
+# Author: SCRIPTMAN
+# Version: 1.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Вы не имеете права использовать эту команду. Авторизуйтесь в RCON-панели.
+<editordisabled>{FFFFFF}Редактор закрыт.
+<editorinuse>{FFFFFF}Редактор используется другим игроком!
+<infodialogcaption>Информация
+<infoeditorleave>{FFFFFF}Для выхода из редактора, используйте команду {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Скрипт был заблокирован! #n{FFFFFF}Проверьте логи сервера для получения дополнительной информации!
+<infoeditorreset>{FFFFFF}Настройки восстановлены!
+<infoeditorkeyswiched>{FFFFFF}Клавиши были изменены!
+<infoeditorfastselectdisabled>{FFFFFF}Быстрый выбор: {FF0000}Нет
+<infoeditorfastselectenabled>{FFFFFF}Быстрый выбор: {00FF00}Да
+<infoeditortdvisibility>{FFFFFF}отображение TextDraws было изменено!
+<infoinvalidmodelid>{FFFFFF}ID модели неверен!
+<languagefilenotfound>{FFFFFF}Языковой файл не найден!
+<infoprojectexported>{FFFFFF}Проект успешно экспортирован! #n{FFFFFF}Проект экспортируется в
+<infoprojectexporterror>{FFFFFF}При экспорте произошла ошибка...
+<infoparamnamechange>{FFFFFF}Имя переменной было изменено!#nНовое название переменной: {F5D742}#1#n{FFFFFF}TextDraw text: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Это имя переменной уже использовалось!
+<infoparamnamechangecharserr>{FFFFFF}Имена переменных не могут содержать специальные символы или пробелы!
+<infoparamnamechangeammerr>{FFFFFF}Имя переменной не может превышать 35 символов!
+<infomaxtextdrawsreached>{FFFFFF}Достигнуто максимальное количество TextDraws!
+<infolanguagechanged>{FFFFFF}Язык был изменен.
+<fsenabled>{00FF00}Да{FFFFFF}
+<fsdisabled>{FF0000}Нет{FFFFFF}
+<tdvforme>{F5D742}Только я{FFFFFF}
+<tdvforall>{0080C0}Все{FFFFFF}
+<keysinverted>{FFFF00}SWITCHED{FFFFFF}
+<infoprojectlimit>{FFFFFF}Достигнуто максимальное количество проектов!
+<infoprojectinvalidname>{FFFFFF}Имя слишком короткое, слишком длинное или содержит недопустимые символы!
+<infoprojectexists>{FFFFFF}Этот проект уже существует!
+<infoprojectcreated>{FFFFFF}Проект "{F5D742}#1{FFFFFF}" был успешно создан!
+<infoprojectclosed>{FFFFFF}Проект был успешно сохранен и закрыт.
+<infoprojectsaveerror>{FFFFFF}При сохранении проекта произошла ошибка.
+<infoprojectloaded>{FFFFFF}Проект "{F5D742}#1{FFFFFF}" успешно загружен!
+<previewmodelidinvalid>{FFFFFF}ID модели неверен!
+<projectrenamed>{FFFFFF}Имя проекта было успешно изменено. #n{FFFFFF}Старое название проекта:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Новое название проекта: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Имя слишком короткое, слишком длинное или содержит недопустимые символы.
+<projectnameexists>{FFFFFF}Этот проект уже существует!
+<projectnamechangeerror>{FFFFFF}Произошла ошибка при переименовании проекта.
+<projectloaderror>{FFFFFF}При загрузке проекта произошла ошибка.
+<projectdeleteerror>{FFFFFF}При удалении проекта произошла ошибка.
+<projectdeleted>{FFFFFF}Проект "{F5D742}#1{FFFFFF}" был удален.
+<modelpreviewinvalidfont>{FFFFFF}Чтобы использовать эту опцию, измените шрифт на 5!
+<noprojectsfound>{FFFFFF}В настоящее время у вас нет никаких проектов.
+<modeltexterror>{FFFFFF}Не удается изменить текст предварительного просмотра модели
+<infocompmodedisabled>{FFFFFF}Компактный режим: {FF0000}Выкл
+<infocompmodeenabled>{FFFFFF}Компактный режим: {00FF00}Вкл
+<compmodeenabled>{00FF00}Да{FFFFFF}
+<compmodedisabled>{FF0000}Нет{FFFFFF}
+< manualchangetypemzoom>Масштабирование
+<manualchangetypemcolor1>цвет 1
+<manualchangetypemcolor2>цвет 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~CLONNED_ID_~r~#1
+<tddeletedinfo>~r~DELETED_ID_#1
+<tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
+<tdselectedinfo>~g~SELECTED_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~~p~ALT=Manual~n~~p~SPACEBAR=End
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=End
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPACEBAR=END
+<tdpublic>~g~Public
+<tdperplayer>~b~For Player
+<tdclickable>~w~Clickable: ~g~YES
+<tdnotclickable>~w~Clickable: ~r~NO
+<tdshadowsize>~w~Shadow Size~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Outline Size~n~~y~#1
+<tdproportionality_true>~g~Proportional
+<tdproportionality_false>~r~Non-Proportional
+<tdalignment_left>~w~Alignment~n~~y~LEFT
+<tdalignment_center>~w~Alignment~n~~g~CENTER
+<tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Player Progress Bar
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Настройки редактора
+	<info0>{FFFFFF}Изменить позицию редактора
+	<info1>{FFFFFF}Изменить цвет подсветки
+	<info2>{FFFFFF}Изменить цвет кнопок
+	<info3>{FFFFFF}Изменить шифт с пробелом #1
+	<info4>{FFFFFF}Быстрый выбор: [#2]
+	<info5>{FFFFFF}TextDraw дисплей: [#3]
+	<info6>{FFFFFF}Компактный режим: [#4]
+	<info7>{FFFFFF}Изменить язык
+	<info8>{FF0000}Восстановленить настройки по умолчанию
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Изменение спрайта
+	<info0>{FFFFFF}Введите имя библиотеки и имя спрайта.
+	<info1>{FFFFFF}Пример: {FF8040}hud:radar_impound
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Изменить цвет подстветки
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Изменить цвет кнопок
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Обнаружена еще одна версия
+	<info0>{FFFFFF}Версия скрипта отличается от версии файла конфигурации.
+	<info1>{FFFFFF}Вы хотите восстановить настройки, чтобы скрипт мог работать правильно?
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Восстановить настройки по умолчанию
+	<info0>{FFFFFF}Вы действительно хотите восстановить настройки по умолчанию?
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="newproject">
+	<caption>Новый проект
+	<info0>{FFFFFF}Введите название нового проекта.
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>Мои TextDraws (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Имя переменной
+	<info1>{FF8800}Создать новый TextDraw#t
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Мои проекты (#1/#2)
+	<info0>{FF8800}Имя#t{FF8800}TextDraw Количество#t{FF8800}Последнее изменение#n
+	<button1>Выбрать
+	<button2>Назад
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Экспортировать как...
+	<info0>{FF8800}Обычный экспорт
+	<info1>{FF8800}Функциональный filterscript
+	<button1>Экспорт
+	<button2>Назад
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Новый TextDraw
+	<info0>{FF8800}Простой
+	<info1>{FF8800}Использовать шаблон
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Выход
+	<info0>{FFFFFF}Вы действительно хотите закрыть редактор?
+	<info1>{FFFFFF}Открытые проекты будут автоматически сохранены.
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Изменить
+	<info1>{FF8800}Копировать
+	<info2>{FF8800}Изменить слой
+	<info3>{FF8800}Изменить имя переменной
+	<info4>{FF0000}Удалить
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Проект
+	<info0>{FFFFFF}Загрузить
+	<info1>{FFFFFF}Изменить имя
+	<info2>{FF0000}Удалить
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Введите ID модели персонажа, транспорта или объекта.
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Изменить имя переменной
+	<info0>{FFFFFF}Введите новое имя переменной
+	<info1>{FFFFFF}Оставьте пустым, чтобы удалить пользовательское имя
+	<info2>{FFFFFF}Текущее имя переменной: {F5D742}#1
+	<info3>{FFFFFF}TextDraw text: {F5D742}#2
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Изменить цвет
+	<info0>{FFFFFF}Цвета должен быть в одном из форматов:#n
+	<info1>{FFFFFF}Пример для RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Пример для HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Текущий RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Текущий HEX/HTML: {F5D742}#5
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Удалить
+	<info0>{FFFFFF}Вы действительно хотите удалить этот TextDraw?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Использовать шаблон
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Изменить цвет
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="textchange">
+	<caption>Изменить текст
+	<info0>{FFFFFF}Введите текст для установки
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Изменить спрайт
+	<info0>{FF8800}Ввести вручную
+	<info1>{FF8800}Выбрать из библиотеки
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Изменить размер
+	<info0>{FF8800}Text/Box (Размер)
+	<info1>{FF8800}Box (Ширина)
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model preview
+	<info0>{FF8800}Изменить ID модели
+	<info1>{FF8800}Изменить угол поворота
+	<info2>{FF8800}Изменить масштаб
+	<info3>{FF8800}Изменить цвет модели транспорта
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Удалить
+	<info0>{FFFFFF}Вы действительно хотите удалить этот проект?
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Изменить имя проекта
+	<info0>{FFFFFF}Введите новое имя проекта.
+	<info1>{FFFFFF}Текущее имя : {F5D742}"#1"
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Изменить цвет
+	<info0>{FF8800}Цвет текста
+	<info1>{FF8800}Цвет обводки / границ
+	<info2>{FF8800}Box цвет
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Изменить цвет
+	<info0>{FF8800}Готовые цвета
+	<info1>{FF8800}Ввести
+	<info2>{FF8800}Изменить прозрачность
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Экспорт проекта
+	<info0>{FFFFFF}Вы хотите экспортировать этот проект с включённым именем массива?
+	<info1>{FFFFFF}Textdraws со стандарт. именем переменн. будут добавлены в массив для уменьшения объёма кода.
+	<button1>Да
+	<button2>Нет
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Ручное изменение значений
+	<info0>{FFFFFF}Переменная#t{FFFFFF}Теущее значение
+	<info1>{FFFFFF}Значение {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Значение {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Значение {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Значение {F5D742}Масштаб#t{FFFFFF}#4
+	<info5>{FFFFFF}Значение {F5D742}Цвет 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Значение {F5D742}Цвет 2#t{FFFFFF}#6
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Ручное изменение значений
+	<info0>{FFFFFF}Введите новое значения для{F5D742}#1#n{FFFFFF}Текущее значение: {F5D742}#2
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Изменить макс. значение прогресс бара
+	<info0>{FFFFFF}Введите новое значение для максимального значения прогресс бара.
+	<info1>{FFFFFF}Текущее максимальное значение: {F5D742}#1%
+	<button1>Подтвердить
+	<button2>Назад
+</dialog>
