@@ -14,7 +14,7 @@
 			"name": "main",
 			"args": ["-d3", "-;+", "-(+", "-Z+"],
 			"includes": [
-				"legacy"
+				"include"
 			]
 		}
 	]
