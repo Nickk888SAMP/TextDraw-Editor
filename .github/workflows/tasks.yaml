@@ -6,6 +6,7 @@ on:
       - '.gitignore'
       - '.gitsubmodule'
       - '**.md'
+      - 'tasks.yaml'
     tags:
     - '*'
     branches: [ master ]
