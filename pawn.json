@@ -5,7 +5,8 @@
 	"output": "gamemodes\\empty.amx",
 	"local": true,
 	"dependencies": [
-		"maddinat0r/sscanf"
+		"maddinat0r/sscanf",
+		"Zeex/samp-plugin-crashdetect"
 	],
 	"builds": [
 		{
