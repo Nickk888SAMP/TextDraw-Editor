@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    paths-ignore: 
+      - '.gitignore'
+      - '.gitsubmodule'
+      - '**.md'
+      - 'tasks.yaml'
+    tags:
+    - '*'
+    branches: [ master ]
+  pull_request:
+    paths-ignore: 
+    - '.gitignore'
+    - '.gitsubmodule'
+    - '**.md'
+    branches: [ master ]
+
+jobs:      
+  windows-release:
+      name: release-win
+      runs-on: windows-2019
+
+      steps:
+      
+        - uses: actions/checkout@v2
+        - name: Install utils...
+          run: 
+               $(Set-ExecutionPolicy RemoteSigned -Scope CurrentUser | Out-Host; $?) -and
+               $(iex (new-object net.webclient).downloadstring('https://get.scoop.sh') | Out-Host; $?) -and
+               $(scoop bucket add southclaws https://github.com/Southclaws/scoops.git; scoop install sampctl | Out-Host; $?) | Out-Null
+          shell: powershell
+        - name: Patch system variable path...
+          run: 
+               $(echo "~\scoop\apps\sampctl\current" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append | Out-Host; $?) | Out-Null
+          shell: powershell
+        - name: Build ntd...
+          run:
+              $(git submodule init | Out-Host; $?) -and 
+              $(git submodule update | Out-Host; $?) -and 
+              $(cd filterscripts/ntd | Out-Host; $?) -and 
+              $(sampctl p ensure | Out-Host; $?) -and 
+              $(sampctl p build | Out-Host; $?) -and
+              $(cp ntd.amx .. | Out-Host; $?) -and
+              $(cd ../../ | Out-Host; $?) -and 
+              $(sampctl p ensure | Out-Host; $?) -and 
+              $(sampctl p build | Out-Host; $?) -and
+              $(echo "gamemode0 empty" >> server.cfg | Out-Host; $?) | Out-Null
+        - name: Set new tag version...
+          run:
+            $(git fetch --prune --unshallow | Out-Host; $?) -and
+            $($latest_tag = git describe --tags --abbrev=0) -ne 0 -and 
+            $($latest_tag -match '(\d+).(\d+)' | Out-Null; $?) -and 
+            $(if ([int]$Matches[2] -ge 9) { $major_version=[int]$Matches[1] + 1 } else { $major_version=$Matches[1] }) -ne 0 -and 
+            $(if ([int]$Matches[2] -ge 9) { $minor_version=[int]0 } else { $minor_version=[int]$Matches[2] + [int]1}) -ne 0 -and 
+            $(echo "MAJOR_VER_TAG=$major_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) -and
+            $(echo "MINOR_VER_TAG=$minor_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) | Out-Null
+          shell: powershell
+        - name: Create and publish artifacts...
+          run: 
+            $(mkdir $env:temp/filterscripts | Out-Host; $?) -and 
+            $(cp filterscripts/ntd.amx $env:temp/filterscripts | Out-Host; $?) -and
+            $(Compress-Archive -LiteralPath $env:temp/filterscripts, 'scriptfiles', 
+            'NTD_RESOURCES.txd',
+            'gamemodes',
+            'plugins',
+            'server.cfg',
+            'samp-server.exe',
+            'announce.exe',
+            'samp-npc.exe' -CompressionLevel Optimal -DestinationPath ~/ntd.zip | Out-Host; $?) | Out-Null
+          shell: powershell
+    
+        - uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: "${{ env.MAJOR_VER_TAG }}.${{ env.MINOR_VER_TAG }}"
+            release_name: "NTD ${{ env.MAJOR_VER_TAG }}.${{ env.MINOR_VER_TAG }}"
+            draft: false
+            prerelease: false
+        
+          id: create_release
+        - uses: actions/upload-release-asset@v1.0.1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: C:/Users/runneradmin/ntd.zip
+            asset_name: "ntd_${{ env.MAJOR_VER_TAG }}_${{ env.MINOR_VER_TAG }}.zip"
+            asset_content_type: application/zip
+        - uses: eregon/publish-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            release_id: ${{ steps.create_release.outputs.id }}
