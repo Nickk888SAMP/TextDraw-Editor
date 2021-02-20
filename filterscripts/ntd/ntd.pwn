@@ -42,8 +42,8 @@
 #include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v6.1"
-#define SCRIPT_VERSION_CHECK 			"6.1"
+#define SCRIPT_VERSION 					"v6.2"
+#define SCRIPT_VERSION_CHECK 			"6.2"
 #define TD_PICKER_TEXT					"S"
 
 // Limits
