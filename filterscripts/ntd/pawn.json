@@ -5,7 +5,7 @@
 	"output": "ntd.amx",
 	"dependencies": [
 		"sampctl/samp-stdlib",
-		"Southclaws/progress2",
+		"Nickk888SAMP/progress2",
 		"Southclaws/zcmd",
 		"maddinat0r/sscanf"
 	],
