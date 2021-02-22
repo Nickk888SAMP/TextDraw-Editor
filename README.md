@@ -32,7 +32,7 @@ Screenshots(Beta 4.45): https://imgur.com/a/Bs8Je
 ### For the Source Code
 * ZCMD: https://github.com/Southclaws/zcmd
 * YSI Library: https://github.com/pawn-lang/YSI-Includes
-* DFILE: https://forum.sa-mp.com/showthread.php?t=218026
+* DFILE: https://github.com/Nickk888SAMP/TextDraw-Editor/blob/master/filterscripts/ntd/includes/dfile.inc
 * NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
 * Progress2: https://github.com/Nickk888SAMP/progress2
 
