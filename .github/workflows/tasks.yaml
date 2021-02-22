@@ -89,7 +89,7 @@ jobs:
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: C:/Users/runneradmin/ntd.zip
-            asset_name: "ntd_${{ env.MAJOR_VER_TAG }}.${{ env.MINOR_VER_TAG }}.${{ env.PATCH_VER_TAG }}.zip"
+            asset_name: "ntd_${{ env.MAJOR_VER_TAG }}_${{ env.MINOR_VER_TAG }}_${{ env.PATCH_VER_TAG }}.zip"
             asset_content_type: application/zip
         - uses: eregon/publish-release@v1
           env:
