@@ -20,13 +20,12 @@ NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few y
 - TextDraw layering(Change the layer of a TextDraw In-Game!).
 - Editor Compact mode(Creates a smaller version of the interface to make working easier!).
 
-Newest Video: https://youtu.be/WMVVbm_XBhw
+Video:
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=WMVVbm_XBhw
+" target="_blank"><img src="http://img.youtube.com/vi/WMVVbm_XBhw/0.jpg" width="400" height="300" border="0" /></a>
 
 Screenshots(Beta 4.45): https://imgur.com/a/Bs8Je
-
-SAMP Forum Thread v5.0>: https://forum.sa-mp.com/showthread.php?p=4132384
-
-SAMP Forum Thread Beta 1.0 - Beta 4.45: https://forum.sa-mp.com/showthread.php?t=641085
 
 ## Dependencies
 * SSCANF2: https://github.com/maddinat0r/sscanf
@@ -35,7 +34,7 @@ SAMP Forum Thread Beta 1.0 - Beta 4.45: https://forum.sa-mp.com/showthread.php?t
 * YSI Library: https://github.com/pawn-lang/YSI-Includes
 * DFILE: https://forum.sa-mp.com/showthread.php?t=218026
 * NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
-* Progress2: https://github.com/Southclaws/progress2
+* Progress2: https://github.com/Nickk888SAMP/progress2
 
 ## Credits:
 - a_samp: SAMP Team
