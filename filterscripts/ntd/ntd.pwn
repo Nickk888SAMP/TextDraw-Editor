@@ -1,6 +1,6 @@
 /********************************************************************
 *	Nickk's TextDraw editor											*
-*	Release: 6.2													*
+*	Release: 6.1.1													*
 *	All right reserved! C By: Nickk888								*
 *																	*
 *	! ! ! Compile with Zeex's Compiler ! ! !						*
@@ -42,8 +42,8 @@
 #include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v6.2"
-#define SCRIPT_VERSION_CHECK 			"6.2"
+#define SCRIPT_VERSION 					"v6.1.1"
+#define SCRIPT_VERSION_CHECK 			"6.1.1"
 #define TD_PICKER_TEXT					"S"
 
 // Limits
