@@ -54,12 +54,13 @@ jobs:
             $($file_content -match '#define\s+SCRIPT_VERSION_CHECK\s+"((\d+).(\d+).(\d+))') -ne 0 -and 
             $(if ($Matches[1] -eq $latest_tag) { echo ("::error ::Version in ntd.pwn is not bump (Version in ntd.pwn:" + $Matches[1] + " | Last release GitHub:$latest_tag)"); exit 1 })  -ne 0 -and 
             $(echo ("MAJOR_VER_TAG=" + $Matches[2]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) -and
-            $(echo ("MINOR_VER_TAG=" + $Matches[3]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) | Out-Null | Out-Null
+            $(echo ("MINOR_VER_TAG=" + $Matches[3]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) -and
+            $(echo ("PATCH_VER_TAG=" + $Matches[4]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) | Out-Null
           shell: powershell
           
         - name: Create and publish artifacts...
           run: 
-            $(echo "${{ env.MAJOR_VER_TAG }}.${{ env.MINOR_VER_TAG }}" | Out-Host; $?) -and
+            $(echo "${{ env.MAJOR_VER_TAG }}.${{ env.MINOR_VER_TAG }}.${{ env.PATCH_VER_TAG}}" | Out-Host; $?) -and
             $(mkdir $env:temp/filterscripts | Out-Host; $?) -and 
             $(cp filterscripts/ntd.amx $env:temp/filterscripts | Out-Host; $?) -and
             $(Compress-Archive -LiteralPath $env:temp/filterscripts, 'scriptfiles', 
