@@ -51,7 +51,7 @@ jobs:
             $(git fetch --prune --unshallow | Out-Null) -ne 0 -and 
             $(($latest_tag = git describe --tags --abbrev=0) | Out-Null) -ne 0 -and 
             $($file_content = cat filterscripts/ntd/ntd.pwn -Raw) -ne 0 -and 
-            $($file_content -match '#define\s+SCRIPT_VERSION_CHECK\s+"((\d+).(\d+))') -ne 0 -and 
+            $($file_content -match '#define\s+SCRIPT_VERSION_CHECK\s+"((\d+).(\d+).(\d+))') -ne 0 -and 
             $(if ($Matches[1] -eq $latest_tag) { echo ("::error ::Version in ntd.pwn is not bump (Version in ntd.pwn:" + $Matches[1] + " | Last release GitHub:$latest_tag)"); exit 1 })  -ne 0 -and 
             $(echo ("MAJOR_VER_TAG=" + $Matches[2]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) -and
             $(echo ("MINOR_VER_TAG=" + $Matches[3]) | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  | Out-Host; $?) | Out-Null | Out-Null
