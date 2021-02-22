@@ -45,3 +45,4 @@ SAMP Forum Thread Beta 1.0 - Beta 4.45: https://forum.sa-mp.com/showthread.php?t
 - sscanf: maddinat0r
 - ndialogpages: Nickk888
 - Progress2: Southclaws
+- [continue98](https://github.com/continue98) for the help with GitHub Actions and debugging/fixing.
