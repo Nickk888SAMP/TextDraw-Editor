@@ -18,7 +18,12 @@ INSTALLATION
 which is located in the main game folder.
 Path: Grand Theft Auto San Andreas\models\txd
 
-4. Open the "server.cfg" file and add "ntd" next to "filterscripts" or use "loadfs ntd"
+4. The content of the "plugins" folder should be extracted to the "plugins" folder in server files.
+Then in "server.cfg" on the "plugins" line, add "sscanf2" ("sscanf2.so" on linux) if you haven't already that is. 
+Note: If you are using Linux, you need to download the Linux version of sscanf2!, the
+package only contains the Windows version!
+
+5. Open the "server.cfg" file and add "ntd" next to "filterscripts" or use "loadfs ntd"
 in the server console, or while in game use "/rcon loadfs ntd" while been logged in as RCON.
 
 =============================================================
