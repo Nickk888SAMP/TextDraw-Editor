@@ -68,6 +68,7 @@ jobs:
             'gamemodes',
             'plugins',
             'server.cfg',
+            'How_To_Install.txt',
             'samp-server.exe',
             'announce.exe',
             'samp-npc.exe' -CompressionLevel Optimal -DestinationPath ~/ntd.zip | Out-Host; $?) | Out-Null
