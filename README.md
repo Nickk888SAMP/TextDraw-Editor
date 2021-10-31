@@ -3,22 +3,23 @@ NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few y
 
 - Clickable interface.
 - Multilanguage support (English, Polish and German natively included)
-- Player Progress Bar Support(With Color and Max Percentage settings!)
-- Build-in Sprite selector(Over 300 sprites!).
+- Player Progress Bar Support (With Color and Max Percentage settings!)
+- Build-in Sprite selector (Over 300 sprites!).
 - Preview Model and Sprites support.
 - Changeable TextDraw variable name in-game.
 - Over 35 Pre-made colors to choose.
-- Fully customizable interface(Button colors, override colors & interface position).
-- TextDraw templates(Pre-made TextDraws to choose and create your own!).
-- Quick Selection tool(Just select your TextDraw! No need to search within the Dialog!).
-- TextDraw visibility option(If you want to show other players your work!).
-- Fully editable Preview Model(Rotation, Zoom, ID and colors!).
-- Easy export your project(Simple export or Self-working Script).
+- Fully customizable interface (Button colors, override colors & interface position).
+- TextDraw templates (Pre-made TextDraws to choose and create your own!).
+- Quick Selection tool (Just select your TextDraw! No need to search within the Dialog!).
+- TextDraw visibility option (If you want to show other players your work!).
+- Fully editable Preview Model (Rotation, Zoom, ID and colors!).
+- Easy export your project (Simple export or Self-working Script).
 - Quick, fluid and stable working environment.
-- File based language and templates system(Add new languages without code interaction!).
-- Array Export mode(Collapses TextDraws with default Variable name into an Array shortening the code amount!).
-- TextDraw layering(Change the layer of a TextDraw In-Game!).
-- Editor Compact mode(Creates a smaller version of the interface to make working easier!).
+- File based language and templates system (Add new languages without code interaction!).
+- Array Export mode (Collapses TextDraws with default Variable name into an Array shortening the code amount!).
+- TextDraw layering (Change the layer of a TextDraw In-Game!).
+- Editor Compact mode (Creates a smaller version of the interface to make working easier!).
+- TextDraw Converter (Convert ANY TextDraws into your projects and edit them inside the editor!)
 
 Video:
 
@@ -35,6 +36,16 @@ Screenshots(Beta 4.45): https://imgur.com/a/Bs8Je
 * DFILE: https://github.com/Nickk888SAMP/TextDraw-Editor/blob/master/filterscripts/ntd/includes/dfile.inc
 * NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
 * Progress2: https://github.com/Nickk888SAMP/progress2
+
+## Converter
+![alt text](https://github.com/Nickk888SAMP/TextDraw-Editor/blob/master/tdconverter.png?raw=true)
+
+You've got some cool TextDraws you want to edit inside NTD? Not a problem! Try using the new TD Converter!
+Just select the file with the TextDraws and click on "Convert"! That's it! Now you can edit the TD's inside the editor! Cool huh?
+
+The converter is located inside this path: **`scriptfiles/ntd/converter/NTD Converter.exe`**
+
+Requirement to launch the Converter: [.NET 5.0 Framework](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 ## Credits:
 - a_samp: SAMP Team
