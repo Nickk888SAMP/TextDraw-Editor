@@ -47,6 +47,8 @@ The converter is located inside this path: **`scriptfiles/ntd/converter/NTD Conv
 
 Requirement to launch the Converter: [.NET 5.0 Framework](https://dotnet.microsoft.com/download/dotnet/5.0)
 
+**Attention:** Since the app isn't been licensed by Microsoft, there is a big possibility that either Windows Defender or other Anti Virus softwares will pickup, block or even delete the Converter, it's recommended that you allow the app to work or to be added to the exceptions list.
+
 ## Credits:
 - a_samp: SAMP Team
 - ZCMD: Zeex
