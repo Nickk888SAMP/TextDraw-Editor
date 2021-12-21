@@ -7,6 +7,7 @@
 <template name = "Box simple" lang = "lang_es.xml">
 <template name = "Eenvoudige doos" lang = "lang_nl.xml">
 <template name = "Caixa simples" lang = "lang_ptbr.xml">
+<template name = "Box Simplu" lang = "lang_ro.xml">
 <templatedata>_ 295.000000 169.000000 1 1 1 0 0.600000 10.300003 -1 255 135 1 298.500000 75.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 135
 </template>
 
@@ -19,6 +20,7 @@
 <template name = "Relog" lang = "lang_es.xml">
 <template name = "Klok" lang = "lang_nl.xml">
 <template name = "Relógio" lang = "lang_ptbr.xml">
+<template name = "Ceas" lang = "lang_ro.xml">
 <templatedata>00:00 577.000000 20.000000 3 1 2 0 0.554166 2.449999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -31,6 +33,7 @@
 <template name = "Fecha" lang = "lang_es.xml">
 <template name = "Datum" lang = "lang_nl.xml">
 <template name = "Data" lang = "lang_ptbr.xml">
+<template name = "Data" lang = "lang_ro.xml">
 <templatedata>00.00.0000 577.000000 8.000000 3 1 2 0 0.266666 1.299999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -43,6 +46,7 @@
 <template name = "Contador de dinero personalizado" lang = "lang_es.xml">
 <template name = "Aangepaste geldteller" lang = "lang_nl.xml">
 <template name = "Contador de dinheiro personalizado" lang = "lang_ptbr.xml">
+<template name = "Bara de bani personalizata" lang = "lang_ro.xml">
 <templatedata>$00000000 496.000000 76.000000 3 0 2 0 0.579166 2.399999 1097458175 255 50 0 400.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -55,6 +59,7 @@
 <template name = "Velocímetro" lang = "lang_es.xml">
 <template name = "Snelheidsmeter" lang = "lang_nl.xml">
 <template name = "Velocímetro" lang = "lang_ptbr.xml">
+<template name = "Vitezometru" lang = "lang_ro.xml">
 <templatedata>~y~NAME:_~g~INFERNUS~n~~y~SPEED:_~b~100KM/h~n~~y~HEALTH:_~r~100~n~~y~FUEL:_~w~64L 480.000000 316.000000 2 0 1 0 0.229166 1.950000 -1 255 100 1 604.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 100
 </template>
 
@@ -67,6 +72,7 @@
 <template name = "Porcentaje de armadura" lang = "lang_es.xml">
 <template name = "Procent Armor" lang = "lang_nl.xml">
 <template name = "Porcentagem do colete" lang = "lang_ptbr.xml">
+<template name = "Procentaj armura" lang = "lang_ro.xml">
 <templatedata>100% 578.000000 44.000000 2 0 1 0 0.241666 0.900000 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -79,6 +85,7 @@
 <template name = "Porcentaje de vida" lang = "lang_es.xml">
 <template name = "Percentage gezondheid" lang = "lang_nl.xml">
 <template name = "porcentagem da vida" lang = "lang_ptbr.xml">
+<template name = "Procentaj viata" lang = "lang_ro.xml">
 <templatedata>100% 578.000000 66.000000 2 0 1 0 0.241666 0.899999 -1 255 50 0 400.000000 17.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -91,6 +98,7 @@
 <template name = "Zonas (Zones.inc)" lang = "lang_es.xml">
 <template name = "Zones (Zones.inc)" lang = "lang_nl.xml">
 <template name = "Zonas (Zones.inc)" lang = "lang_ptbr.xml">
+<template name = "Zone (Zones.inc)" lang = "lang_ro.xml">
 <templatedata>ZONE_NAME 89.000000 322.000000 3 0 1 0 0.233333 1.450000 -293409025 255 30 1 400.000000 129.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 30
 </template>
 
@@ -103,6 +111,7 @@
 <template name = "Preview model" lang = "lang_es.xml">
 <template name = "Modelvoorbeeld" lang = "lang_nl.xml">
 <template name = "Preview Model" lang = "lang_ptbr.xml">
+<template name = "Previzualizare model" lang = "lang_ro.xml">
 <templatedata>Preview_Model 250.000000 150.000000 5 1 0 0 0.600000 2.000000 -1 125 255 0 112.500000 150.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 125 255
 </template>
 
@@ -115,6 +124,7 @@
 <template name = "Botón seleccionable" lang = "lang_es.xml">
 <template name = "Selecteerbare knop" lang = "lang_nl.xml">
 <template name = "Botão Selecionável" lang = "lang_ptbr.xml">
+<template name = "Buton selectabil" lang = "lang_ro.xml">
 <templatedata>MY_BUTTON 310.000000 211.000000 2 1 1 0 0.258333 1.750000 -1 255 200 1 16.500000 90.500000 1 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 200
 </template>
 
@@ -127,6 +137,7 @@
 <template name = "Sprite" lang = "lang_es.xml">
 <template name = "Sprite" lang = "lang_nl.xml">
 <template name = "Sprite" lang = "lang_ptbr.xml">
+<template name = "Sprite" lang = "lang_ro.xml">
 <templatedata>HUD:radar_burgershot 301.000000 211.000000 4 1 1 0 0.600000 2.000000 -1 255 50 1 17.000000 17.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50
 </template>
 
@@ -139,6 +150,7 @@
 <template name = "Barra de información del jugador" lang = "lang_es.xml">
 <template name = "Informatiebalk speler" lang = "lang_nl.xml">
 <template name = "Barra de informação do jogador" lang = "lang_ptbr.xml">
+<template name = "Bara de informatii pentru jucator" lang = "lang_ro.xml">
 <templatedata>ID:_0_I_PING:_14_I_XP:_150/1840_I_LVL:_15_I_K:_64_I_D:_102 319.000000 236.000000 2 1 0 0 0.279166 1.350000 -1 255 101 1 12.000000 640.000000 0 2 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 101
 </template>
 
@@ -151,6 +163,7 @@
 <template name = "Barra de progreso del jugador" lang = "lang_es.xml">
 <template name = "Voortgangsbalk van de speler" lang = "lang_nl.xml">
 <template name = "Barra de progresso do jogador" lang = "lang_ptbr.xml">
+<template name = "Bara de progress pentru jucator" lang = "lang_ro.xml">
 <templatedata>PlayerProgressBar 287.000000 233.000000 6 1 1 0 0.600000 2.000000 -1 255 50 1 62.000000 4.000000 0 1 1 0 1 1 -10.000000 0.000000 -20.000000 1.000000 255 255 50 
 </template>
 

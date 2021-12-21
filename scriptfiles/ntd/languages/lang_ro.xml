@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Romanian
+# Author: GroWy
+# Version: 1.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Nu poti folosi aceasta comanda deoarece nu esti logat cu parola RCON.
+<editordisabled>{FFFFFF}Ai parasit Editorul.
+<editorinuse>{FFFFFF}Editorul este folosit de un alt jucator!
+<infodialogcaption>Informatii
+<infoeditorleave>{FFFFFF}Pentru a iesi din editor, foloseste {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Script-ul a fost blocat! #n{FFFFFF}Verifica logurile server-ului pentru mai multe informatii.
+<infoeditorreset>{FFFFFF}Setarile au fost restaurate la valorile initiale!
+<infoeditorkeyswiched>{FFFFFF}Butoanele au fost schimbate!
+<infoeditorfastselectdisabled>{FFFFFF}Selectare Rapida: {FF0000}Optiune dezactivata
+<infoeditorfastselectenabled>{FFFFFF}Selectare Rapida: {00FF00}Optiune activata
+<infoeditortdvisibility>{FFFFFF}Afisarea TextDraw-urilor a fost schimbata!
+<infoinvalidmodelid>{FFFFFF}ID-ul modelului este incorect!
+<languagefilenotfound>{FFFFFF}Fisierul pentru limba nu a fost gasit!
+<infoprojectexported>{FFFFFF}Proiectul a fost exportat cu succes! #n{FFFFFF}Proiect exportat in
+<infoprojectexporterror>{FFFFFF}O eroare a intervenit la exportare...
+<infoparamnamechange>{FFFFFF}Numele variabilei a fost schimbata cu succes!#nNumele variabilei: {F5D742}#1#n{FFFFFF}Text TextDraw: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}Acest nume pentru variabila este deja folosit!
+<infoparamnamechangecharserr>{FFFFFF}Numele variabilelor nu pot contine caractere speciale sau spatii!
+<infoparamnamechangeammerr>{FFFFFF}Numele variabilelor nu pot depasi 35 de caractere!
+<infomaxtextdrawsreached>{FFFFFF}Numarul maxim de textdraw-uri a fost atins!
+<infolanguagechanged>{FFFFFF}Limba a fost schimbata cu succes!
+<fsenabled>{00FF00}ACTIVAT{FFFFFF}
+<fsdisabled>{FF0000}DEZACTIVAT{FFFFFF}
+<tdvforme>{F5D742}DOAR PENTRU MINE{FFFFFF}
+<tdvforall>{0080C0}PENTRU TOTI{FFFFFF}
+<keysinverted>{FFFF00}SCHIMBAT{FFFFFF}
+<infoprojectlimit>{FFFFFF}Numarul maxim de proiecte a fost atins!
+<infoprojectinvalidname>{FFFFFF}Numele este prea scurt, prea lung sau contine caractere invalide!
+<infoprojectexists>{FFFFFF}Acest proiect exista deja!
+<infoprojectcreated>{FFFFFF}Proiectul "{F5D742}#1{FFFFFF}" a fost creat cu succes!
+<infoprojectclosed>{FFFFFF}Proiectul a fost salvat cu succes si inchis.
+<infoprojectsaveerror>{FFFFFF}O eroare a intervenit la salvarea proiectului.
+<infoprojectloaded>{FFFFFF}Proiectul "{F5D742}#1{FFFFFF}" a fost incarcat cu succes!
+<previewmodelidinvalid>{FFFFFF}ID-ul modelului este gresit!
+<projectrenamed>{FFFFFF}Proiectul a fost redenumit cu succes. #n{FFFFFF}Nume anterior: "{F5D742}#1{FFFFFF}"#n{FFFFFF}Nume nou: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Numele este prea scurt, prea lung sau contine caractere invalide!
+<projectnameexists>{FFFFFF}Acest proiect exista deja!
+<projectnamechangeerror>{FFFFFF}O eroare a intervenit la redenumirea proiectului.
+<projectloaderror>{FFFFFF}O eroare a intervenit la incarcarea proiectului.
+<projectdeleteerror>{FFFFFF}O eroare a intervenit la stergerea proiectului.
+<projectdeleted>{FFFFFF}Proiectul "{F5D742}#1{FFFFFF}" a fost sters cu succes.
+<modelpreviewinvalidfont>{FFFFFF}Pentru a folosi aceasta optiune, foloseste font-ul 5!
+<noprojectsfound>{FFFFFF}In acest moment nu ai niciun proiect!
+<modeltexterror>{FFFFFF}Nu poti schimba text-ul pentru acest model
+<infocompmodedisabled>{FFFFFF}Modul Compact: {FF0000}Optiune dezactivata
+<infocompmodeenabled>{FFFFFF}Modul Compact: {00FF00}Optiune activata
+<compmodeenabled>{00FF00}ON{FFFFFF}
+<compmodedisabled>{FF0000}OFF{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Culoare principala
+<manualchangetypemcolor2>Culoare secundara
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~textdraw_~r~#1~y~_clonat_
+<tddeletedinfo>~r~textdraw_#1_sters_
+<tdcreatedinfo>~g~textdraw_~r~#1~g~_creat_
+<tdselectedinfo>~g~textdraw_~r~#1~g~_selectat_
+<tdfontinfo>~w~font~n~~y~#1_
+<tdcoloralpha>~w~Transparenta:~y~#1~n~~p~SHIFT=Mai_Repede~n~SPACEBAR=Termina
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Mai_Repede~n~SPACEBAR=Termina
+<tdprevmodelcolor>~w~Culoare 1:~y~#1 ~w~Culoare 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=Termina
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Mai_Repede~n~~p~ALT=Manual~n~~p~SPACEBAR=Termina
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=Termina
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Mai_Repede~n~ALT=Manual~n~SPACEBAR=Termina
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Mai_Repede~n~ALT=Manual~n~SPACEBAR=Termina
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=Termina
+<tdlayer>~w~Pozitie: ~y~#1~n~~p~SPACEBAR=END
+<tdpublic>~g~global_
+<tdperplayer>~b~per player_
+<tdclickable>~w~selectabil: ~g~da_
+<tdnotclickable>~w~selectabil: ~r~nu_
+<tdshadowsize>~w~umbra nivel~y~#1_
+<tdboxenabled>~w~box: ~g~da_
+<tdboxdisabled>~w~box: ~r~nu_
+<tdoutlinesize>~w~contur_nivel~n~~y~#1_
+<tdproportionality_true>~g~proportional_
+<tdproportionality_false>~r~non-proportional_
+<tdalignment_left>~w~aliniere~n~~y~spre_stanga_
+<tdalignment_center>~w~aliniere~n~~g~centrat_
+<tdalignment_right>~w~aliniere~n~~r~spre_dreapta_
+<tdalignment_up>~w~aliniere~n~~b~in_sus_
+<tdalignment_down>~w~aliniere~n~~p~in_jos_
+<tdfontplayerprogressbar>~w~font~n~~r~bara_de_progress_
+<tdfontspriteinfo>~w~font~n~~g~txd_sprite_
+<tdfontprevmodelinfo>~w~font~n~~b~previzualizare_model_
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Setari Editor
+	<info0>{FFFFFF}Schimba pozitia
+	<info1>{FFFFFF}Schimba culoarea evidentierii
+	<info2>{FFFFFF}Schimba culoarea butoanelor
+	<info3>{FFFFFF}Schimba SHIFT cu SPACEBAR #1
+	<info4>{FFFFFF}Selectare rapida: [#2]
+	<info5>{FFFFFF}Afisare textdraw: [#3]
+	<info6>{FFFFFF}Modul compact: [#4]
+	<info7>{FFFFFF}Schimba limba
+	<info8>{FF0000}Reseteaza setarile
+	<button1>Confirma
+	<button2>Inapoi
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Schimba Sprite
+	<info0>{FFFFFF}Scrie numele librariei si numele sprite-ului.
+	<info1>{FFFFFF}Exemplu: {FF8040}hud:radar_impound
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Culoarea Evidentierii
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Culoarea Butoanelor
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Versiune noua detectata
+	<info0>{FFFFFF}Versiunea script-ului difera de versiunea fisierului de configurare.
+	<info1>{FFFFFF}Doresti sa aduci setarile la valorile initiale, ca script-ul sa functioneze cum ar trebui?
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Reseteaza setarile
+	<info0>{FFFFFF}Esti sigur ca doresti sa aduci setarile la valorile initiale?
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="newproject">
+	<caption>Proiect Nou
+	<info0>{FFFFFF}Scrie numele noului tau proiect.
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>TextDraw-urile mele (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Nume variabila
+	<info1>{FF8800}Creaza un nou textdraw#t
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Proiectele mele (#1/#2)
+	<info0>{FF8800}Nume#t{FF8800}Numar de TextDraw-uri#t{FF8800}Ultima modificare#n
+	<button1>Acceseaza
+	<button2>Inapoi
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Exporta ca...
+	<info0>{FF8800}Export normal
+	<info1>{FF8800}Filterscript functional
+	<button1>Export
+	<button2>Inapoi
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>TextDraw Nou
+	<info0>{FF8800}Simplu
+	<info1>{FF8800}Foloseste un template
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Iesire
+	<info0>{FFFFFF}Esti sigur ca doresti sa parasesti editorul?
+	<info1>{FFFFFF}Proiectele deschise vor fi automat salvate.
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Modifica
+	<info1>{FF8800}Cloneaza
+	<info2>{FF8800}Schimba pozitia
+	<info3>{FF8800}Redenumeste variabila
+	<info4>{FF0000}Sterge
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Proiect
+	<info0>{FFFFFF}Incarca
+	<info1>{FFFFFF}Redenumeste
+	<info2>{FF0000}Sterge
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Previzualizare Model
+	<info0>{FFFFFF}Introdu id-ul modelului pentru caractere, vehicule sau obiecte.
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Redenumeste variabila
+	<info0>{FFFFFF}Introdu un nou nume pentru variabila:
+	<info1>{FFFFFF}Lasa gol pentru a sterge numele personalizat
+	<info2>{FFFFFF}Numele actual: {F5D742}#1
+	<info3>{FFFFFF}Text TextDraw: {F5D742}#2
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Schimbare Culoare
+	<info0>{FFFFFF}Introdu o culoare respectand format-ul:#n
+	<info1>{FFFFFF}Exemplu pentru RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Exemplu pentru HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}RGBA actual: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}HEX/HTML actual: {F5D742}#5
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Stergere
+	<info0>{FFFFFF}Esti sigur ca doresti sa stergi acest TextDraw?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Foloseste un template
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Schimba culoarea
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="textchange">
+	<caption>Schimba textul
+	<info0>{FFFFFF}Scrie textul care sa fie setat
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Schimba Sprite-ul
+	<info0>{FF8800}Introdu manual
+	<info1>{FF8800}Alege din librarie
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Schimba marimea
+	<info0>{FF8800}Text/Box (Marime)
+	<info1>{FF8800}Box (Latime)
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Previzualizare model
+	<info0>{FF8800}Schimba id-ul modelului
+	<info1>{FF8800}Schimba rotatia
+	<info2>{FF8800}Schimba zoom
+	<info3>{FF8800}Schimba culoarea vehiculului
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Stergere
+	<info0>{FFFFFF}Esti sigur ca doresti sa stergi acest proiect?
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Redenumeste Proiectul
+	<info0>{FFFFFF}Scrie noul nume pentru acest proiect.
+	<info1>{FFFFFF}Nume actual: {F5D742}"#1"
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Schimba Culoarea
+	<info0>{FF8800}Culoare Text
+	<info1>{FF8800}Fundal / Culoare Chenar
+	<info2>{FF8800}Culoare Box
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Schimba Culoarea
+	<info0>{FF8800}Culori Standard
+	<info1>{FF8800}Personalizat
+	<info2>{FF8800}Schimba transparenta
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Export Proiect
+	<info0>{FFFFFF}Preferi sa exporti acest proiect cu modul matrice (array-mode) activat?
+	<info1>{FFFFFF}TextDraw-urile cu variabilele denumite default vor fi adaugate intr-o matrice (array) pentru a reduce cantitatea codului.
+	<button1>Da
+	<button2>Nu
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Schimba manual valorile
+	<info0>{FFFFFF}Variabila#t{FFFFFF}Valoarea Curenta
+	<info1>{FFFFFF}Valoare {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Valoare {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Valoare {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Valoare {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Valoare {F5D742}Culoare Principala#t{FFFFFF}#5
+	<info6>{FFFFFF}Valoare {F5D742}Culoare Secundara#t{FFFFFF}#6
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Schimba manual valorile
+	<info0>{FFFFFF}Introdu noua valoare pentru {F5D742}#1#n{FFFFFF}Valoare actuala: {F5D742}#2
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Schimba valoare maxima
+	<info0>{FFFFFF}Introdu valoarea maxima pentru bara de progress.
+	<info1>{FFFFFF}Valoarea maxima actuala: {F5D742}#1%
+	<button1>Confirm
+	<button2>Inapoi
+</dialog>
+
+
