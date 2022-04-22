@@ -42,15 +42,15 @@
 #include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v6.1.1"
-#define SCRIPT_VERSION_CHECK 			"6.1.1"
+#define SCRIPT_VERSION 					"v7.0"
+#define SCRIPT_VERSION_CHECK 			"7.0"
 #define TD_PICKER_TEXT					"S"
 
 // Limits
 #define MAX_NTD_TEMPLATES				50						//Max templates that can be loaded
 #define MAX_NTD_PROJECTS 				(124)					//Max projects that can be created and loaded
 #define MAX_NTD_TDS						(MAX_DIALOG_ITEMS - 1)	//Max TextDraws that can be created and loaded
-#define MAX_NTD_LANGUAGES				20						//Max languages that can be loaded
+#define MAX_NTD_LANGUAGES				30						//Max languages that can be loaded
 #define MAX_NTD_SPRITES 				100						//Max sprites that can be loaded into library.
 //
 #define CHANGING_VAR_TIME 				35						//The Update time for the editor
