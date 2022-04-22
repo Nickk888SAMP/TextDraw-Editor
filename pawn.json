@@ -3,20 +3,18 @@
 	"repo": "TextDraw-Editor",
 	"entry": "gamemodes\\empty.pwn",
 	"output": "gamemodes\\empty.amx",
-	"local": true,
 	"dependencies": [
+		"sampctl/samp-stdlib",
 		"maddinat0r/sscanf"
 	],
-	"builds": [
-		{
-			"name": "main",
-			"args": ["-d3", "-;+", "-(+", "-Z+"]
-		}
-	],
+	"local": true,
 	"runtime": {
 		"version": "0.3.7",
 		"mode": "server",
 		"echo": "-",
+		"filterscripts": [
+			"ntd/ntd"
+		],
 		"rcon_password": "password",
 		"port": 7777,
 		"hostname": "SA-MP Server",
@@ -50,7 +48,18 @@
 		"db_log_queries": false,
 		"conncookies": true,
 		"cookielogging": false,
-		"output": true,
-		"filterscripts": ["ntd"]
-	}
+		"output": true
+	},
+	"builds": [
+		{
+			"name": "main",
+			"args": [
+				"-d3",
+				"-;+",
+				"-(+",
+				"-Z+"
+			],
+			"compiler": {}
+		}
+	]
 }

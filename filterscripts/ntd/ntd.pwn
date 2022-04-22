@@ -6235,14 +6235,14 @@ stock LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, c
 	return 1;
 }
 
-stock IsNumeric(const string[])
+/*stock IsNumeric(const string[])
 {
     for (new i = 0, j = strlen(string); i < j; i++)
     {
         if (string[i] > '9' || string[i] < '0') return 0;
     }
     return 1;
-}
+}*/
 
 stock IsFloat(const buf[])
 {
