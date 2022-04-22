@@ -1,6 +1,6 @@
 /********************************************************************
 *	Nickk's TextDraw editor											*
-*	Release: 6.2.1													*
+*	Release: 6.1.1													*
 *	All right reserved! C By: Nickk888								*
 *																	*
 *	! ! ! Compile with Zeex's Compiler ! ! !						*
@@ -42,8 +42,8 @@
 #include <progress2>
 
 //SETTINGS
-#define SCRIPT_VERSION 					"v6.2.1"
-#define SCRIPT_VERSION_CHECK 			"6.2.1"
+#define SCRIPT_VERSION 					"v6.1.1"
+#define SCRIPT_VERSION_CHECK 			"6.1.1"
 #define TD_PICKER_TEXT					"S"
 
 // Limits
@@ -6234,15 +6234,6 @@ stock LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, c
 	}
 	return 1;
 }
-
-/*stock IsNumeric(const string[])
-{
-    for (new i = 0, j = strlen(string); i < j; i++)
-    {
-        if (string[i] > '9' || string[i] < '0') return 0;
-    }
-    return 1;
-}*/
 
 stock IsFloat(const buf[])
 {
