@@ -19,7 +19,6 @@ NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few y
 - Array Export mode (Collapses TextDraws with default Variable name into an Array shortening the code amount!).
 - TextDraw layering (Change the layer of a TextDraw In-Game!).
 - Editor Compact mode (Creates a smaller version of the interface to make working easier!).
-- TextDraw Converter (Convert ANY TextDraws into your projects and edit them inside the editor!)
 
 Video:
 
