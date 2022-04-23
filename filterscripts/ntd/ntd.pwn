@@ -29,6 +29,7 @@
     #define isnull(%1) ((!(%1[0])) || (((%1[0]) == '\1') && (!(%1[1]))))
 #endif
 #define MAX_DIALOG_ITEMS 				(512 + 1)
+#define VALID_ITER_INDEX(%1,%2) if(%2 >= 0 && %2 < Iter_End(%1))
 
 //INCLUDES
 #tryinclude <crashdetect>
@@ -63,6 +64,12 @@
 #define CONFIRM_SOUNDID					1083					//Confirmation Sound
 #define DEFAULT_DIALOG_ITEMS_PER_PAGE	NDP_AUTO
 
+// Color Palette
+#define HEX_PALETTE_1 					"{134F5C}" //#134F5C
+#define HEX_PALETTE_2 					"{274E13}" //#274E13
+#define HEX_PALETTE_3 					"{F44336}" //#F44336
+#define HEX_PALETTE_4 					"{76A5AF}" //#76A5AF
+
 // File paths
 #define NTD_DIRECTORYPATH				"ntd"					//Directory
 #define EXPORTS_DIRECTORYPATH			"ntd/exports"			//Directory
@@ -74,7 +81,7 @@
 #define SETTINGS_FILEPATH 				"ntd/settings.ini"		//File
 
 //DIALOG CAPTION TEXT
-#define CAPTION_TEXT 					"{FFFFFF}NTD "SCRIPT_VERSION" - {00FF00}"
+#define CAPTION_TEXT 					HEX_PALETTE_1"NTD "SCRIPT_VERSION" {FFFFFF} "
 
 //RESOURCE NAMES
 #define WELCOME_SCREEN 					"NTD_RESOURCES:Welcome_Screen"
@@ -683,10 +690,6 @@ enum E_LANGUAGE_STR
 	str_infoeditorleave[DEFAULT_LANG_STRING_SIZE],
 	str_infoeditorlocked[DEFAULT_LANG_STRING_SIZE],
 	str_infoeditorreset[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorkeyswiched[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorfsdisabled[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorfsenabled[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditortdvisibility[DEFAULT_LANG_STRING_SIZE],
 	str_infoinvalidmodelid[DEFAULT_LANG_STRING_SIZE],
 	str_infoprojectexported[DEFAULT_LANG_STRING_SIZE],
 	str_infoprojectexporterror[DEFAULT_LANG_STRING_SIZE],
@@ -751,8 +754,6 @@ enum E_LANGUAGE_STR
 	str_modeltexterror[DEFAULT_LANG_STRING_SIZE],
 	str_noprojectsfound[DEFAULT_LANG_STRING_SIZE],
 	str_languagefilenotfound[DEFAULT_LANG_STRING_SIZE],
-	str_infocompmodedisabled[DEFAULT_LANG_STRING_SIZE],
-	str_infocompmodeenabled[DEFAULT_LANG_STRING_SIZE],
 	str_compmodeenabled[DEFAULT_LANG_STRING_SIZE],
 	str_compmodedisabled[DEFAULT_LANG_STRING_SIZE],
 	str_exportarraymode[DEFAULT_LANG_STRING_SIZE],
@@ -779,7 +780,7 @@ enum E_TD
 	bool:TD_UseBox,
 	bool:TD_Selectable,
 	bool:TD_Proportional,
-	bool:TD_IsPublic,
+	bool:TD_IsGlobal,
 	Float:TD_PosX,
 	Float:TD_PosY,
 	Float:TD_PrevRotX,
@@ -1371,47 +1372,26 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							new keyB = EditorAcceptKey;
 							EditorFasterKey = keyB;
 							EditorAcceptKey = keyA;
-							ShowInfo(playerid, Language_Strings[str_infoeditorkeyswiched]);
+							OnPlayerClickTextDraw(playerid, B_Settings);
 						}
 						case 4: //Szybki wybor
 						{
-							if(EditorQuickSelect)
-							{
-								EditorQuickSelect = false;
-								QuickSelectionShow(playerid, false);
-								ShowInfo(playerid, Language_Strings[str_infoeditorfsdisabled]);
-							}
-							else
-							{
-								EditorQuickSelect = true;
-								QuickSelectionShow(playerid, true);
-								ShowInfo(playerid, Language_Strings[str_infoeditorfsenabled]);
-							}
-							
+							EditorQuickSelect = !EditorQuickSelect;
+							QuickSelectionShow(playerid, EditorQuickSelect);
+							OnPlayerClickTextDraw(playerid, B_Settings);
 						}
 						case 5: //Wyswietlanie TextDrawow
 						{
-							if(EditorTextDrawShowForAll) 
-								ToggleTextDrawShowForAll(false);
-							else
-								ToggleTextDrawShowForAll(true);
-							ShowInfo(playerid, Language_Strings[str_infoeditortdvisibility]);
+							ToggleTextDrawShowForAll(!EditorTextDrawShowForAll);
+							OnPlayerClickTextDraw(playerid, B_Settings);
 						}
 						case 6: //Tryb kompaktowy
 						{
-							if(EditorCompactMode)
-							{
-								EditorCompactMode = false;
-								ShowInfo(playerid, Language_Strings[str_infocompmodedisabled]);
-							}
-							else
-							{
-								EditorCompactMode = true;
-								ShowInfo(playerid, Language_Strings[str_infocompmodeenabled]);
-							}
+							EditorCompactMode = !EditorCompactMode;
 							DestroyEditor();
 							CreateEditor();
 							ShowEditorEx(playerid);
+							OnPlayerClickTextDraw(playerid, B_Settings);
 						}
 						case 7: //Zmien jezyk
 							ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE_SETTINGS);
@@ -1508,7 +1488,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(ExportProject(NTD_User[User_ProjectName], NTD_User[User_ExportType], bool:response))
 				{
 					format(EditorLString, sizeof EditorLString, Language_Strings[str_infoprojectexported]);
-					format(EditorString, sizeof EditorString, " {00FFFF}scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", NTD_User[User_ProjectName]);
+					format(EditorString, sizeof EditorString, " "HEX_PALETTE_3"scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", NTD_User[User_ProjectName]);
 					strcat(EditorLString, EditorString);
 					strreplace(EditorLString, "#n", "\n");
 					ShowInfo(playerid, EditorLString);
@@ -1871,7 +1851,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						foreach(new i : I_TEMPLATES)
 						{
-							format(EditorString, sizeof EditorString, "{FF8040}%s\n", Template[i][Template_Name]);
+							format(EditorString, sizeof EditorString, "%s\n", Template[i][Template_Name]);
 							strcat(EditorLString, EditorString);
 						}
 						CreateDialogCaptionOnLangData(DL_USETEMPLATE);
@@ -2052,22 +2032,22 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60];
 			if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
-				format(invertedstr, sizeof invertedstr, "{FFFFFF}[%s]", Language_Strings[str_keysinverted]);
+				format(invertedstr, sizeof invertedstr, HEX_PALETTE_3"%s", Language_Strings[str_keysinverted]);
 				
 			if(EditorQuickSelect)
-				format(quickselectstr, sizeof quickselectstr, Language_Strings[str_fsenabled]);
+				format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_2"%s", Language_Strings[str_fsenabled]);
 			else 
-				format(quickselectstr, sizeof quickselectstr, Language_Strings[str_fsdisabled]);
+				format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_3"%s", Language_Strings[str_fsdisabled]);
 			
 			if(EditorTextDrawShowForAll)
-				format(tdvisistr, sizeof tdvisistr, Language_Strings[str_tdvforall]);
+				format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_2"%s", Language_Strings[str_tdvforall]);
 			else 
-				format(tdvisistr, sizeof tdvisistr, Language_Strings[str_tdvforme]);
+				format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_3"%s", Language_Strings[str_tdvforme]);
 				
 			if(EditorCompactMode)
-				format(compmodestr, sizeof compmodestr, Language_Strings[str_compmodeenabled]);
+				format(compmodestr, sizeof compmodestr, HEX_PALETTE_2"%s", Language_Strings[str_compmodeenabled]);
 			else 
-				format(compmodestr, sizeof compmodestr, Language_Strings[str_compmodedisabled]);
+				format(compmodestr, sizeof compmodestr, HEX_PALETTE_3"%s", Language_Strings[str_compmodedisabled]);
 			
 			CreateDialogOnLanguageData(playerid, DL_SETTINGS);
 			strreplace(EditorLString, "#1", invertedstr);
@@ -2075,7 +2055,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			strreplace(EditorLString, "#3", tdvisistr);
 			strreplace(EditorLString, "#4", compmodestr);
 			CreateDialogCaptionOnLangData(DL_SETTINGS);
-			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_SETTINGS][d_s_button1], DLS[DL_SETTINGS][d_s_button2]);
+			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST, EditorString, EditorLString, DLS[DL_SETTINGS][d_s_button1], DLS[DL_SETTINGS][d_s_button2]);
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}
@@ -2161,14 +2141,14 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_SwitchPublic)
 		{
-			if(NTD_TD[tdid][TD_IsPublic] == false)
+			if(NTD_TD[tdid][TD_IsGlobal] == false)
 			{
-				NTD_TD[tdid][TD_IsPublic] = true;
+				NTD_TD[tdid][TD_IsGlobal] = true;
 				GameTextForPlayer(playerid, Language_Strings[str_tdpublic], 1500, 6);
 			}
 			else
 			{
-				NTD_TD[tdid][TD_IsPublic] = false;
+				NTD_TD[tdid][TD_IsGlobal] = false;
 				GameTextForPlayer(playerid, Language_Strings[str_tdperplayer], 1500, 6);
 			}
 			return 1;
@@ -2887,7 +2867,7 @@ CMD:ntd(playerid, params[])
 						NTD_User[User_WelcomeTimer] = -1;
 					}
 					TogglePlayerControllable(playerid, true);
-					format(EditorString, sizeof EditorString, "{FF8040}NTD: %s", Language_Strings[str_editordisabled]);
+					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_editordisabled]);
 					SendClientMessage(playerid, -1, EditorString);
 					if(NTD_User[User_ProjectOpened])
 					{
@@ -2899,7 +2879,7 @@ CMD:ntd(playerid, params[])
 				}
 				else 
 				{
-					format(EditorString, sizeof EditorString, "{FF8040}NTD: %s", Language_Strings[str_editorinuse]);
+					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_editorinuse]);
 					SendClientMessage(playerid, -1, EditorString);
 				}
 			}
@@ -2916,10 +2896,10 @@ CMD:ntd(playerid, params[])
 	{
 		
 		if(Lang(LANG_NONE))
-			SendClientMessage(playerid, -1, "{FF8040}NTD: {FF0000}You are not authorized to use this command! Please Login to RCON.");
+			SendClientMessage(playerid, -1, HEX_PALETTE_1"NTD: {FFFFFF}You are not authorized to use this command! Please Login to RCON.");
 		else
 		{
-			format(EditorString, sizeof EditorString, "{FF8040}NTD: %s", Language_Strings[str_nopermit]);
+			format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_nopermit]);
 			SendClientMessage(playerid, -1, EditorString);
 		}
 			
@@ -3397,8 +3377,8 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						{
 							if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
-								if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-								else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+								if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
+								else if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
 							}
 							else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
 						}
@@ -3421,7 +3401,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						//Generate Custom Vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3429,7 +3409,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3448,7 +3428,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3456,7 +3436,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3479,7 +3459,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
 								{
@@ -3569,7 +3549,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						fwrite(file, "\n//Player Textdraws\n");
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
 								{
@@ -3686,7 +3666,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3732,7 +3712,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						fwrite(file, "//Player Textdraws\n");
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -3811,8 +3791,8 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						{
 							if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
-								if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-								else if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+								if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
+								else if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
 							}
 							else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
 						}
@@ -3835,7 +3815,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						//Generate Custom Vars
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3843,7 +3823,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3862,7 +3842,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 							{
 								format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3870,7 +3850,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 							{
 								format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -3892,7 +3872,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
 								{
@@ -3984,7 +3964,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -4036,7 +4016,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(PublicTD[%i]);\n", publiccount);
 								fwrite(file, EditorString);
@@ -4045,7 +4025,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsGlobal]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4056,7 +4036,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4072,7 +4052,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
 								{
@@ -4186,7 +4166,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
 								fwrite(file, EditorString);
@@ -4251,7 +4231,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						barscount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 								fwrite(file, EditorString);
@@ -4260,7 +4240,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsGlobal]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4288,7 +4268,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4312,7 +4292,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						publiccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, PublicTD[%i]);\n", publiccount);
 								fwrite(file, EditorString);
@@ -4321,7 +4301,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4332,7 +4312,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4344,7 +4324,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						nonpubliccount = 0;
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 								fwrite(file, EditorString);
@@ -4353,7 +4333,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 						}
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4364,7 +4344,7 @@ stock ExportProject(projectname[], exporttype=0, bool:intoarray = false)
 					{
 						foreach(new i : I_TEXTDRAWS)
 						{
-							if(!NTD_TD[i][TD_IsPublic] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+							if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 							{
 								format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 								fwrite(file, EditorString);
@@ -4429,8 +4409,13 @@ stock OpenTDDialog(playerid)
 			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 			strcat(formatedtd, "...");
 		}
-		if(i != NTD_User[User_EditingTDID]) format(EditorString, sizeof EditorString, "{FFFFFF}%i. {76DCC0}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
-		else format(EditorString, sizeof EditorString, "{FFFFFF}%i. {FFFF00}\x22%s\x22\t(%s)", i, formatedtd, GetProcessedTDVarName(i));
+		format(EditorString, sizeof EditorString, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s", 
+			(i == NTD_User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
+			i, 
+			formatedtd, 
+			GetProcessedTDVarName(i),
+			(NTD_TD[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
+			(NTD_TD[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
 		AddDialogListitem(playerid, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
@@ -4458,7 +4443,7 @@ stock GetAllProjects()
 			while(fread(file, line))
 			{
 				index = Iter_Free(I_PROJECTS);
-				if(index != ITER_NONE)
+				VALID_ITER_INDEX(I_PROJECTS, index)
 				{
 					if(sscanf(line, "s[128]iiiiii", 
 					NTD_Projects[index][Pro_Name], 
@@ -4657,19 +4642,19 @@ stock LoadConfigurations()
 	if(dfile_FileExists(LANGUAGESLIST_FILEPATH))
 	{
 		new File:file = fopen(LANGUAGESLIST_FILEPATH, io_read);
-		new free;
+		new index;
 		if(file)
 		{
 			Iter_Clear(I_LANGUAGES);
 			while(fread(file, EditorString, sizeof EditorString))
 			{
-				free = Iter_Free(I_LANGUAGES);
-				if(free != ITER_NONE)
+				index = Iter_Free(I_LANGUAGES);
+				VALID_ITER_INDEX(I_LANGUAGES, index)
 				{
-					if(sscanf(EditorString, "p<=>s[32]s[32]", Language[free][l_name], Language[free][l_file]) == 0)
+					if(sscanf(EditorString, "p<=>s[32]s[32]", Language[index][l_name], Language[index][l_file]) == 0)
 					{
-						Iter_Add(I_LANGUAGES, free);
-						strdel(Language[free][l_file], strlen(Language[free][l_file]) - 2, strlen(Language[free][l_file]));
+						Iter_Add(I_LANGUAGES, index);
+						strdel(Language[index][l_file], strlen(Language[index][l_file]) - 2, strlen(Language[index][l_file]));
 						
 					}
 				}
@@ -4822,7 +4807,7 @@ stock SaveProject()
 				format(EditorString, sizeof EditorString, "td_%i_data", count);
 				format(stringex, sizeof stringex, "%f %f ", NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY]);
 				strcat(EditorLString, stringex);
-				format(stringex, sizeof stringex, "%i %i ", NTD_TD[i][TD_Font], NTD_TD[i][TD_IsPublic]);
+				format(stringex, sizeof stringex, "%i %i ", NTD_TD[i][TD_Font], NTD_TD[i][TD_IsGlobal]);
 				strcat(EditorLString, stringex);
 				format(stringex, sizeof stringex, "%i %i ", NTD_TD[i][TD_OutlineSize], NTD_TD[i][TD_ShadowSize]);
 				strcat(EditorLString, stringex);
@@ -4882,7 +4867,7 @@ stock LoadProject(projectname[])
 			if(strlen(dfile_ReadString(EditorString)) > 0)
 			{
 				index = Iter_Free(I_TEXTDRAWS);
-				if(index != ITER_NONE)
+				VALID_ITER_INDEX(I_TEXTDRAWS, index)
 				{
 					Iter_Add(I_TEXTDRAWS, index);
 					format(EditorString, sizeof EditorString, "td_%i_string", i);
@@ -4891,7 +4876,7 @@ stock LoadProject(projectname[])
 					format(EditorLString, sizeof EditorLString, dfile_ReadString(EditorString)); 
 					
 					sscanf(EditorLString, "ffiiiiffiiiiffiiiiiiffffiiis[35]",
-					NTD_TD[index][TD_PosX], NTD_TD[index][TD_PosY], NTD_TD[index][TD_Font], NTD_TD[index][TD_IsPublic],
+					NTD_TD[index][TD_PosX], NTD_TD[index][TD_PosY], NTD_TD[index][TD_Font], NTD_TD[index][TD_IsGlobal],
 					NTD_TD[index][TD_OutlineSize], NTD_TD[index][TD_ShadowSize], NTD_TD[index][TD_LetterSizeX], NTD_TD[index][TD_LetterSizeY],
 					NTD_TD[index][TD_Color], NTD_TD[index][TD_BGColor], NTD_TD[index][TD_BoxColor], NTD_TD[index][TD_UseBox], NTD_TD[index][TD_BoxSizeX], NTD_TD[index][TD_BoxSizeY],
 					NTD_TD[index][TD_Selectable], NTD_TD[index][TD_Alignment], NTD_TD[index][TD_Proportional], NTD_TD[index][TD_PrevModelID], NTD_TD[index][TD_PrevModelC1], 
@@ -4945,6 +4930,7 @@ stock CreateNewTDFromTemplate(templateid)
 
 stock GetTemplatesAsLanguage(langname[])
 {
+	new tc = GetTickCount();
 	if(dfile_FileExists(TEMPLATESLIST_FILEPATH))
 	{
 		printf("[NTD] Loading templates from \"%s\" as language \"%s\"", TEMPLATESLIST_FILEPATH, langname);
@@ -4970,12 +4956,12 @@ stock GetTemplatesAsLanguage(langname[])
 						if(mline[1] != -1)
 						{
 							strmid(template_string, line, (mline[1] + 14), strlen(line));
-							new free = Iter_Free(I_TEMPLATES);
-							if(free != ITER_NONE)
+							new index = Iter_Free(I_TEMPLATES);
+							VALID_ITER_INDEX(I_TEMPLATES, index)
 							{
-								Iter_Add(I_TEMPLATES, free);
-								format(Template[free][Template_Name], 60, template_name);
-								format(Template[free][Template_Data], 258, template_string);
+								Iter_Add(I_TEMPLATES, index);
+								format(Template[index][Template_Name], 60, template_name);
+								format(Template[index][Template_Data], 258, template_string);
 							}
 							else break;
 							template_extract_mode = false;
@@ -5005,6 +4991,7 @@ stock GetTemplatesAsLanguage(langname[])
 				}
 			}
 			fclose(lfile);
+			printf("[NTD] Templates loaded in %ims", (GetTickCount() - tc));
 			return 1;
 		}
 	}
@@ -5171,7 +5158,7 @@ stock GetProcessedTDVarName(tdid)
 		{
 			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 				format(string, sizeof string, "playerprogressbar_%i", tdid);
-			else if(!NTD_TD[tdid][TD_IsPublic])
+			else if(!NTD_TD[tdid][TD_IsGlobal])
 				format(string, sizeof string, "playertextdraw_%i", tdid);
 			else 
 				format(string, sizeof string, "textdraw_%i", tdid);
@@ -5188,7 +5175,7 @@ Float:TPrevRotZ = 0.0, Float:TPrevRotZoom = 0.0, TColorA = -1, TBGColorA = 255, 
 Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 {
 	new index = Iter_Free(I_TEXTDRAWS);
-	if(index != ITER_NONE)
+	VALID_ITER_INDEX(I_TEXTDRAWS, index)
 	{
 		Iter_Add(I_TEXTDRAWS, index);
 		NTD_TD[index][TD_Created] = true;
@@ -5203,7 +5190,7 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 				NTD_TD[index][TD_PosX] = TPosX;
 				NTD_TD[index][TD_PosY] = TPosY;
 				NTD_TD[index][TD_Font] = TFont;
-				NTD_TD[index][TD_IsPublic] = TisPublic;
+				NTD_TD[index][TD_IsGlobal] = TisPublic;
 				NTD_TD[index][TD_OutlineSize] = TOutlineSize;
 				NTD_TD[index][TD_ShadowSize] = TShadowSize;
 				NTD_TD[index][TD_LetterSizeX] = TLetterSizeX;
@@ -5237,7 +5224,7 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 				NTD_TD[index][TD_PosX] = 233.0;
 				NTD_TD[index][TD_PosY] = 225.0;
 				NTD_TD[index][TD_Font] = 1;
-				NTD_TD[index][TD_IsPublic] = true;
+				NTD_TD[index][TD_IsGlobal] = true;
 				NTD_TD[index][TD_OutlineSize] = 1;
 				NTD_TD[index][TD_ShadowSize] = 0;
 				NTD_TD[index][TD_LetterSizeX] = 0.6;
@@ -5273,7 +5260,7 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 					NTD_TD[index][TD_PosX] = NTD_TD[cloneid][TD_PosX];
 					NTD_TD[index][TD_PosY] = NTD_TD[cloneid][TD_PosY];
 					NTD_TD[index][TD_Font] = NTD_TD[cloneid][TD_Font];
-					NTD_TD[index][TD_IsPublic] = NTD_TD[cloneid][TD_IsPublic];
+					NTD_TD[index][TD_IsGlobal] = NTD_TD[cloneid][TD_IsGlobal];
 					NTD_TD[index][TD_OutlineSize] = NTD_TD[cloneid][TD_OutlineSize];
 					NTD_TD[index][TD_ShadowSize] = NTD_TD[cloneid][TD_ShadowSize];
 					NTD_TD[index][TD_LetterSizeX] = NTD_TD[cloneid][TD_LetterSizeX];
@@ -5762,6 +5749,7 @@ stock CreateEditor()
 
 stock LanguageLoad(languagefile[], langname[])
 {
+	new tc = GetTickCount();
 	new line[320], macro[68], macrotext[258];
 	new mline[2], bool:dialogmode, dialogstr[32];
 	if(dfile_FileExists(languagefile))
@@ -5829,6 +5817,7 @@ stock LanguageLoad(languagefile[], langname[])
 			}
 			fclose(lfile);
 			GetTemplatesAsLanguage(langname);
+			printf("[NTD] Language loaded in %ims", (GetTickCount() - tc));
 			return 1;
 		
 		}
@@ -5856,10 +5845,6 @@ stock LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, c
 			case _H<tdvforme>: format(Language_Strings[str_tdvforme], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<tdvforall>: format(Language_Strings[str_tdvforall], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<keysinverted>: format(Language_Strings[str_keysinverted], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorkeyswiched>: format(Language_Strings[str_infoeditorkeyswiched], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorfastselectdisabled>: format(Language_Strings[str_infoeditorfsdisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorfastselectenabled>: format(Language_Strings[str_infoeditorfsenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditortdvisibility>: format(Language_Strings[str_infoeditortdvisibility], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<infoinvalidmodelid>: format(Language_Strings[str_infoinvalidmodelid], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<infoprojectexported>: format(Language_Strings[str_infoprojectexported], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<infoprojectexporterror>: format(Language_Strings[str_infoprojectexporterror], DEFAULT_LANG_STRING_SIZE, macrotext);
@@ -5919,8 +5904,6 @@ stock LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, c
 			case _H<modeltexterror>: format(Language_Strings[str_modeltexterror], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<noprojectsfound>: format(Language_Strings[str_noprojectsfound], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<languagefilenotfound>: format(Language_Strings[str_languagefilenotfound], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infocompmodedisabled>: format(Language_Strings[str_infocompmodedisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infocompmodeenabled>: format(Language_Strings[str_infocompmodeenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<compmodeenabled>: format(Language_Strings[str_compmodeenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<compmodedisabled>: format(Language_Strings[str_compmodedisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
 			case _H<manualchangetypemzoom>: format(Language_Strings[str_manualchangetypemzoom], DEFAULT_LANG_STRING_SIZE, macrotext);
