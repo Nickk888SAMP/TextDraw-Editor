@@ -4,20 +4,34 @@
 	"entry": "ntd.pwn",
 	"output": "ntd.amx",
 	"dependencies": [
+		"Zeex/samp-plugin-crashdetect:v4.20",
 		"sampctl/samp-stdlib",
 		"pawn-lang/YSI-Includes",
-		"Nickk888SAMP/Dialog-Pages",
-		"Nickk888SAMP/Progress2",
-		"Southclaws/zcmd",
-		"maddinat0r/sscanf"
+		"Nickk888SAMP/Dialog-Pages:2.5.0",
+		"Nickk888SAMP/Progress2:v2.3.1",
+		"maddinat0r/sscanf",
+		"Southclaws/pawn-json:1.2.0",
+		"Southclaws/samp-fsutil:1.3.0"
 	],
+	"runtime": {
+		"version": "0.3.7",
+		"mode": "server",
+		"rcon_password": "password",
+		"port": 7777
+	},
 	"builds": [
 		{
 			"name": "main",
-			"args": ["-d3", "-;+", "-(+", "-Z+"],
+			"args": [
+				"-d3",
+				"-;+",
+				"-(+",
+				"-Z+"
+			],
 			"includes": [
-				"includes"
-			]
+				"modules"
+			],
+			"compiler": {}
 		}
 	]
 }
