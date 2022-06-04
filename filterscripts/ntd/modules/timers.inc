@@ -302,13 +302,13 @@ public ChangingVarsTime()
 	{
 		case CH_LAYER:
 		{
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdlayer]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdlayer", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%i", tdid);
 			strreplace(EditorString, "#1", tmp_str);
 		}
 		case CH_ALPHA:
 		{
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdcoloralpha]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdcoloralpha", LANG_TYPE_GAMETEXTS));
 			switch(NTD_User[User_ChangingMColorState])
 			{
 				case 0:
@@ -333,7 +333,7 @@ public ChangingVarsTime()
 		{
 			EditorPosY = clamp(EditorPosY, BUTTON_MINHEIGHT, BUTTON_MAXHEIGHT);
 			EditorPosX = clamp(EditorPosX, 0, 615);
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdeditorposition]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdeditorposition", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%i", EditorPosX);
 			strreplace(EditorString, "#1", tmp_str);
 			format(tmp_str, sizeof tmp_str, "%i", EditorPosY);
@@ -343,7 +343,7 @@ public ChangingVarsTime()
 		{
 			NTD_TD[tdid][TD_PrevModelC1] = clamp(NTD_TD[tdid][TD_PrevModelC1], 0, 255);
 			NTD_TD[tdid][TD_PrevModelC2] = clamp(NTD_TD[tdid][TD_PrevModelC2], 0, 255);
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdprevmodelcolor]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdprevmodelcolor", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_PrevModelC1]);
 			strreplace(EditorString, "#1", tmp_str);
 			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_PrevModelC2]);
@@ -351,7 +351,7 @@ public ChangingVarsTime()
 		}	
 		case CH_POSITION:
 		{
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdposition]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdposition", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%.3f", NTD_TD[tdid][TD_PosX]);
 			strreplace(EditorString, "#1", tmp_str);
 			format(tmp_str, sizeof tmp_str, "%.3f", NTD_TD[tdid][TD_PosY]);
@@ -363,7 +363,7 @@ public ChangingVarsTime()
 			if(NTD_TD[tdid][TD_PrevRotY] > 360 || NTD_TD[tdid][TD_PrevRotY] < -360) NTD_TD[tdid][TD_PrevRotY] = 0.0;
 			if(NTD_TD[tdid][TD_PrevRotZ] > 360 || NTD_TD[tdid][TD_PrevRotZ] < -360) NTD_TD[tdid][TD_PrevRotZ] = 0.0;
 			
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdrotation]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdrotation", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%.3f", NTD_TD[tdid][TD_PrevRotX]);
 			strreplace(EditorString, "#1", tmp_str);
 			format(tmp_str, sizeof tmp_str, "%.3f", NTD_TD[tdid][TD_PrevRotY]);
@@ -376,13 +376,13 @@ public ChangingVarsTime()
 			if(NTD_TD[tdid][TD_PrevRotZoom] < 0) NTD_TD[tdid][TD_PrevRotZoom] = 0.0;
 			if(NTD_TD[tdid][TD_PrevRotZoom] > 15) NTD_TD[tdid][TD_PrevRotZoom] = 15.0;
 			
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdpremodelzoom]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdpremodelzoom", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%.3f", NTD_TD[tdid][TD_PrevRotZoom]);
 			strreplace(EditorString, "#1", tmp_str);
 		}
 		case CH_SIZE:
 		{
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdsize]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdsize", LANG_TYPE_GAMETEXTS));
 			switch(NTD_User[User_ChangingSizeState])
 			{
 				case 0:
@@ -403,7 +403,7 @@ public ChangingVarsTime()
 		}
 		case CH_SPRITE:
 		{
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdsprite]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdsprite", LANG_TYPE_GAMETEXTS));
 			strreplace(EditorString, "#1", NTD_TD[tdid][TD_Text]);
 			format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_SpritePicker]);
 			strreplace(EditorString, "#2", tmp_str);

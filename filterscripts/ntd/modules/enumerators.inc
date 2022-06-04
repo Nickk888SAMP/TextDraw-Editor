@@ -481,93 +481,13 @@ new DLI[MAX_NTD_LANGUAGE_DIALOGS][MAX_NTD_DIALOG_INFO][128]; //Dialog Language I
 enum E_LANGUAGE
 {
 	l_name[32],
-	l_file[32]
+	l_author[128],
+	l_version[10],
+	Node:l_messagesNode,
+	Node:l_gametextsNode,
+	Node:l_dialogsNode
 }
 new Language[MAX_NTD_LANGUAGES][E_LANGUAGE]; //Languages List
-
-enum E_LANGUAGE_STR
-{
-	str_nopermit[DEFAULT_LANG_STRING_SIZE],
-	str_editordisabled[DEFAULT_LANG_STRING_SIZE],
-	str_editorinuse[DEFAULT_LANG_STRING_SIZE],
-	str_infodialogcaption[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorleave[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorlocked[DEFAULT_LANG_STRING_SIZE],
-	str_infoeditorreset[DEFAULT_LANG_STRING_SIZE],
-	str_infoinvalidmodelid[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectexported[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectexporterror[DEFAULT_LANG_STRING_SIZE],
-	str_infoparamnamechange[DEFAULT_LANG_STRING_SIZE],
-	str_infoparamnamechangetaken[DEFAULT_LANG_STRING_SIZE],
-	str_infoparamnamechangecharserr[DEFAULT_LANG_STRING_SIZE],
-	str_infoparamnamechangeammerr[DEFAULT_LANG_STRING_SIZE],
-	str_infomaxtextdrawsreached[DEFAULT_LANG_STRING_SIZE],
-	str_fsenabled[DEFAULT_LANG_STRING_SIZE],
-	str_fsdisabled[DEFAULT_LANG_STRING_SIZE],
-	str_tdvforme[DEFAULT_LANG_STRING_SIZE],
-	str_tdvforall[DEFAULT_LANG_STRING_SIZE],
-	str_keysinverted[DEFAULT_LANG_STRING_SIZE],
-	str_infolanguagechanged[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectinvalidname[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectexists[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectcreated[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectclosed[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectsaveerror[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectlimit[DEFAULT_LANG_STRING_SIZE],
-	str_infoprojectloaded[DEFAULT_LANG_STRING_SIZE],
-	str_previewmodelidinvalid[DEFAULT_LANG_STRING_SIZE],
-	str_tdclonedinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tddeletedinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdcreatedinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdselectedinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdfontspriteinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdfontprevmodelinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdfontinfo[DEFAULT_LANG_STRING_SIZE],
-	str_tdcoloralpha[DEFAULT_LANG_STRING_SIZE],
-	str_tdlayer[DEFAULT_LANG_STRING_SIZE],
-	str_tdeditorposition[DEFAULT_LANG_STRING_SIZE],
-	str_tdprevmodelcolor[DEFAULT_LANG_STRING_SIZE],
-	str_tdposition[DEFAULT_LANG_STRING_SIZE],
-	str_tdrotation[DEFAULT_LANG_STRING_SIZE],
-	str_tdpremodelzoom[DEFAULT_LANG_STRING_SIZE],
-	str_tdsize[DEFAULT_LANG_STRING_SIZE],
-	str_tdsprite[DEFAULT_LANG_STRING_SIZE],
-	str_tdproportionality_true[DEFAULT_LANG_STRING_SIZE],
-	str_tdproportionality_false[DEFAULT_LANG_STRING_SIZE],
-	str_tdalignment_left[DEFAULT_LANG_STRING_SIZE],
-	str_tdalignment_center[DEFAULT_LANG_STRING_SIZE],
-	str_tdalignment_right[DEFAULT_LANG_STRING_SIZE],
-	str_tdalignment_up[DEFAULT_LANG_STRING_SIZE],
-	str_tdalignment_down[DEFAULT_LANG_STRING_SIZE],
-	str_projectrenamed[DEFAULT_LANG_STRING_SIZE],
-	str_projectnamechangecharerr[DEFAULT_LANG_STRING_SIZE],
-	str_projectnameexists[DEFAULT_LANG_STRING_SIZE],
-	str_projectnamechangeerror[DEFAULT_LANG_STRING_SIZE],
-	str_projectloaderror[DEFAULT_LANG_STRING_SIZE],
-	str_projectdeleteerror[DEFAULT_LANG_STRING_SIZE],
-	str_projectdeleted[DEFAULT_LANG_STRING_SIZE],
-	str_modelpreviewinvalidfont[DEFAULT_LANG_STRING_SIZE],
-	str_tdpublic[DEFAULT_LANG_STRING_SIZE],
-	str_tdperplayer[DEFAULT_LANG_STRING_SIZE],
-	str_tdclickable[DEFAULT_LANG_STRING_SIZE],
-	str_tdnotclickable[DEFAULT_LANG_STRING_SIZE],
-	str_tdshadowsize[DEFAULT_LANG_STRING_SIZE],
-	str_tdboxenabled[DEFAULT_LANG_STRING_SIZE],
-	str_tdboxdisabled[DEFAULT_LANG_STRING_SIZE],
-	str_tdoutlinesize[DEFAULT_LANG_STRING_SIZE],
-	str_modeltexterror[DEFAULT_LANG_STRING_SIZE],
-	str_noprojectsfound[DEFAULT_LANG_STRING_SIZE],
-	str_languagefilenotfound[DEFAULT_LANG_STRING_SIZE],
-	str_compmodeenabled[DEFAULT_LANG_STRING_SIZE],
-	str_compmodedisabled[DEFAULT_LANG_STRING_SIZE],
-	str_exportarraymode[DEFAULT_LANG_STRING_SIZE],
-	str_manualchangemessage[DEFAULT_LANG_STRING_SIZE],
-	str_manualchangetypemzoom[DEFAULT_LANG_STRING_SIZE],
-	str_manualchangetypemcolor1[DEFAULT_LANG_STRING_SIZE],
-	str_manualchangetypemcolor2[DEFAULT_LANG_STRING_SIZE],
-	str_tdfontplayerprogressbar[DEFAULT_LANG_STRING_SIZE]
-};
-new Language_Strings[E_LANGUAGE_STR]; //Language strings
 
 //Sprite Data
 enum E_SPRITE
@@ -627,6 +547,7 @@ enum E_USER
 	bool:User_Accelerate,
 	bool:User_BlockVarsTime,
 	bool:User_ChangingColorBar,
+	User_LanguageIndex,
 	User_ChangingState,
 	User_ManualChangeType,
 	User_ExportType,
@@ -653,3 +574,10 @@ enum E_PROJECT
 	Pro_fileExtensionId
 }
 new NTD_Projects[MAX_NTD_PROJECTS][E_PROJECT]; //Projects Data
+
+enum
+{
+  LANG_TYPE_MESSAGES,
+  LANG_TYPE_GAMETEXTS,
+  LANG_TYPE_DIALOGS
+}

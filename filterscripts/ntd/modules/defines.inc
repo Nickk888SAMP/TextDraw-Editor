@@ -68,13 +68,12 @@
                                                                                                                            
 */
 
-#define NTD_DIRECTORYPATH				"scriptfiles/ntd"					//Directory
-#define EXPORTS_DIRECTORYPATH			"scriptfiles/ntd/exports"			//Directory
-#define PROJECTS_DIRECTORYPATH			"scriptfiles/ntd/projects"			//Directory
-#define LANGUAGES_PATH					"scriptfiles/ntd/languages"			//Directory
-#define LANGUAGESLIST_FILEPATH			"scriptfiles/ntd/languages.list"	//File
-#define TEMPLATESLIST_FILEPATH			"scriptfiles/ntd/templates.xml"		//File
-#define SETTINGS_FILEPATH 				"scriptfiles/ntd/editor.json"		//File
+#define NTD_DIRECTORYPATH				          "ntd"					//Directory
+#define EXPORTS_DIRECTORYPATH			        "ntd/exports"			//Directory
+#define PROJECTS_DIRECTORYPATH            "ntd/projects"			//Directory
+#define LANGUAGES_DIRECTORYPATH           "ntd/languages"			//Directory
+#define TEMPLATESLIST_FILEPATH			      "ntd/templates.xml"		//File
+#define SETTINGS_FILEPATH 				        "ntd/editor.json"		//File
 
 /*
   _____                                                              _   _                            
@@ -217,3 +216,5 @@
 #define CAPTION_TEXT 					HEX_PALETTE_1"NTD "SCRIPT_VERSION" {FFFFFF} "
 #define LANG_NONE 						-1
 #define LANGUAGE_LOADED 				0
+#define LANGUAGES_CHECKSUM    "5611655cf77fe8960b2e5589920c36c2d628f4cc"
+

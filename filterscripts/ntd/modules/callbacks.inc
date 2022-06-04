@@ -10,7 +10,10 @@
 public OnFilterScriptInit()
 {
 	ScriptScriptActive = false;
-	if(Exists(NTD_DIRECTORYPATH) && Exists(EXPORTS_DIRECTORYPATH) && Exists(PROJECTS_DIRECTORYPATH) && Exists(LANGUAGES_PATH))
+	if(Exists( MakePath(NTD_DIRECTORYPATH, true) ) && 
+		Exists( MakePath(EXPORTS_DIRECTORYPATH, true) ) && 
+		Exists( MakePath(PROJECTS_DIRECTORYPATH, true) ) && 
+		Exists( MakePath(LANGUAGES_DIRECTORYPATH, true) ))
 	{
 		ScriptScriptActive = true;
 		printf("[NTD] TextDraw editor by Nickk888 %s has been successfully initialized!\n", SCRIPT_VERSION);
@@ -42,6 +45,7 @@ public OnFilterScriptInit()
 		SaveConfigurations();
 	}
 	else LoadConfigurations();
+	LoadLanguages();
 	return 1;
 }
 
@@ -156,13 +160,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		{
 			if(response)
 			{
-				format(EditorString, sizeof EditorString, "%s/%s", "ntd/languages", Language[listitem][l_file]);
-				if(LanguageLoad(EditorString, Language[listitem][l_file]))
-				{
-					EditorLanguage = LANGUAGE_LOADED;
-					format(EditorLanguageFile, sizeof EditorLanguageFile, Language[listitem][l_file]);
-					SaveConfigurations();
-				}
+				new index = Iter_Index(I_LANGUAGES, listitem);
+				ChangeEditorLanguage(index);
+				SaveConfigurations();
 				CallNTDCommand(playerid);
 			}
 		}
@@ -327,7 +327,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case CH_MODEL_ZOOM: //Zoom
 						{
-							strreplace(EditorLString, "#1", Language_Strings[str_manualchangetypemzoom]);
+							strreplace(EditorLString, "#1", GetLanguageMessage("manualchangetypemzoom", LANG_TYPE_MESSAGES));
 							strreplace(EditorLString, "#2", "%f");
 							format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotZoom]);
 						}
@@ -337,13 +337,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							{
 								case 0: //TD_Color 1
 								{
-									strreplace(EditorLString, "#1",  Language_Strings[str_manualchangetypemcolor1]);
+									strreplace(EditorLString, "#1",  GetLanguageMessage("manualchangetypemcolor1", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#2", "%i");
 									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevModelC1]);
 								}
 								case 1: //TD_Color 2
 								{
-									strreplace(EditorLString, "#1",  Language_Strings[str_manualchangetypemcolor2]);
+									strreplace(EditorLString, "#1", GetLanguageMessage("manualchangetypemcolor2", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#2", "%i");
 									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevModelC2]);
 								}
@@ -426,7 +426,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					ShowEditorEx(playerid);
 					SaveConfigurations();
 					PlayerSelectTD(playerid, false);
-					ShowInfo(playerid, Language_Strings[str_infoeditorreset]);
+					ShowInfo(playerid, GetLanguageMessage("infoeditorreset", LANG_TYPE_MESSAGES));
 				}
 				else
 				{
@@ -530,17 +530,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					format(EditorString, sizeof EditorString, "%s/%s", LANGUAGES_PATH, Language[listitem][l_file]);
-					if(LanguageLoad(EditorString, Language[listitem][l_file]))
-					{
-						EditorLanguage = LANGUAGE_LOADED;
-						format(EditorLanguageFile, sizeof EditorLanguageFile, Language[listitem][l_file]);
-						SaveConfigurations();
-						CallNTDCommand(playerid);
-						CallNTDCommand(playerid);
-						ShowInfo(playerid, Language_Strings[str_infolanguagechanged]);
-					}
-					else ShowInfo(playerid, Language_Strings[str_languagefilenotfound]);
+					new index = Iter_Index(I_LANGUAGES, listitem);
+					ChangeEditorLanguage(index);
+					SaveConfigurations();
+					CallNTDCommand(playerid);
+					CallNTDCommand(playerid);
+					ShowInfo(playerid, GetLanguageMessage("infolanguagechanged", LANG_TYPE_MESSAGES));
 				}
 				else ShowEditorEx(playerid);
 			}
@@ -577,7 +572,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					else 
 					{
-						ShowInfo(playerid, Language_Strings[str_previewmodelidinvalid]);
+						ShowInfo(playerid, GetLanguageMessage("previewmodelidinvalid", LANG_TYPE_MESSAGES));
 					}
 				}
 				else ShowEditorEx(playerid);
@@ -608,14 +603,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(ExportProject(NTD_User[User_ProjectIndex], NTD_User[User_ExportType], bool:response))
 				{
-					format(EditorLString, sizeof EditorLString, Language_Strings[str_infoprojectexported]);
+					format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES));
 					format(EditorString, sizeof EditorString, " "HEX_PALETTE_3"scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", GetProjectName(NTD_User[User_ProjectIndex]));
 					strcat(EditorLString, EditorString);
 					strreplace(EditorLString, "#n", "\n");
 					ShowInfo(playerid, EditorLString);
 				}
 				else 
-					ShowInfo(playerid, Language_Strings[str_infoprojectexporterror]);
+					ShowInfo(playerid, GetLanguageMessage("infoprojectexporterror", LANG_TYPE_MESSAGES));
 			}
 			case DIALOG_EXPORT:
 			{
@@ -811,17 +806,17 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								if(VariableExists(inputtext) == false)
 								{
 									format(NTD_TD[NTD_User[User_ChoosenTDID]][TD_VarName], 35, inputtext);
-									format(EditorLString, sizeof EditorLString, Language_Strings[str_infoparamnamechange]);
+									format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoparamnamechange", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#n", "\n");
 									strreplace(EditorLString, "#1", NTD_TD[NTD_User[User_ChoosenTDID]][TD_VarName]);
 									strreplace(EditorLString, "#2", NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
 									ShowInfo(playerid, EditorLString);
 								}
-								else ShowInfo(playerid, Language_Strings[str_infoparamnamechangetaken]);
+								else ShowInfo(playerid, GetLanguageMessage("infoparamnamechangetaken", LANG_TYPE_MESSAGES));
 							}
-							else ShowInfo(playerid, Language_Strings[str_infoparamnamechangecharserr]);
+							else ShowInfo(playerid, GetLanguageMessage("infoparamnamechangecharserr", LANG_TYPE_MESSAGES));
 						}
-						else ShowInfo(playerid, Language_Strings[str_infoparamnamechangeammerr]);
+						else ShowInfo(playerid, GetLanguageMessage("infoparamnamechangeammerr", LANG_TYPE_MESSAGES));
 					}
 					else
 					{
@@ -851,7 +846,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								SelectTD(playerid, tdid);
 								//
 								new tmp_str[12];
-								format(EditorString, sizeof EditorString, Language_Strings[str_tdclonedinfo]);
+								format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS));
 								format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
 								strreplace(EditorString, "#1", tmp_str);
 								//
@@ -860,7 +855,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								RelayerEditor();
 								ShowEditorEx(playerid, true);
 							}
-							else ShowInfo(playerid, Language_Strings[str_infomaxtextdrawsreached]);
+							else ShowInfo(playerid, GetLanguageMessage("infomaxtextdrawsreached", LANG_TYPE_MESSAGES));
 						}
 						case 2: //Zmien warstwe
 						{
@@ -907,7 +902,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						NTD_User[User_EditingTDID] = -1;
 					//
 					new tmp_str[12];
-					format(EditorString, sizeof EditorString, Language_Strings[str_tddeletedinfo]);
+					format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS));
 					format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
 					strreplace(EditorString, "#1", tmp_str);
 					//
@@ -928,7 +923,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						SelectTD(playerid, tdid);
 						//
 						new tmp_str[12];
-						format(EditorString, sizeof EditorString, Language_Strings[str_tdcreatedinfo]);
+						format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS));
 						format(tmp_str, sizeof tmp_str, "%i", tdid);
 						strreplace(EditorString, "#1", tmp_str);
 						//
@@ -938,7 +933,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						ShowEditorEx(playerid, true);
 						
 					}
-					else ShowInfo(playerid, Language_Strings[str_infomaxtextdrawsreached]);
+					else ShowInfo(playerid, GetLanguageMessage("infomaxtextdrawsreached", LANG_TYPE_MESSAGES));
 				}
 				else ShowEditorEx(playerid, true);
 			}
@@ -955,7 +950,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							SelectTD(playerid, tdid);
 							//
 							new tmp_str[12];
-							format(EditorString, sizeof EditorString, Language_Strings[str_tdcreatedinfo]);
+							format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS));
 							format(tmp_str, sizeof tmp_str, "%i", tdid);
 							strreplace(EditorString, "#1", tmp_str);
 							//
@@ -966,7 +961,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							ShowEditorEx(playerid, true);
 							
 						}
-						else ShowInfo(playerid, Language_Strings[str_infomaxtextdrawsreached]);
+						else ShowInfo(playerid, GetLanguageMessage("infomaxtextdrawsreached", LANG_TYPE_MESSAGES));
 					}
 					else if(listitem == 1) //Uzyj Szablon
 					{
@@ -1012,15 +1007,15 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						case 1:
 						{
-							format(EditorLString, sizeof EditorLString, Language_Strings[str_projectrenamed]);
+							format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectrenamed", LANG_TYPE_MESSAGES));
 							strreplace(EditorLString, "#n", "\n");
 							strreplace(EditorLString, "#1", oldproname);
 							strreplace(EditorLString, "#2", inputtext);
 							ShowInfo(playerid, EditorLString);
 						} 
-						case 2: ShowInfo(playerid, Language_Strings[str_projectnamechangecharerr]);
-						case 3: ShowInfo(playerid, Language_Strings[str_projectnameexists]);
-						case -1: ShowInfo(playerid, Language_Strings[str_projectnamechangeerror]);
+						case 2: ShowInfo(playerid, GetLanguageMessage("projectnamechangecharerr", LANG_TYPE_MESSAGES));
+						case 3: ShowInfo(playerid, GetLanguageMessage("projectnameexists", LANG_TYPE_MESSAGES));
+						case -1: ShowInfo(playerid, GetLanguageMessage("projectnamechangeerror", LANG_TYPE_MESSAGES));
 					}
 				}
 				else ShowEditorEx(playerid), OpenProjectDialog(playerid);
@@ -1037,14 +1032,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							if(LoadProject(NTD_User[User_ProjectIndex]))
 							{
-								format(EditorLString, sizeof EditorLString, Language_Strings[str_infoprojectloaded]);
+								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES));
 								strreplace(EditorLString, "#1", GetProjectName(NTD_User[User_ProjectIndex]));
 								ShowInfo(playerid, EditorLString);
 								ShowWelcomeScreen(false);
 								RelayerEditor();
 								ShowEditorEx(playerid);
 							}
-							else ShowInfo(playerid, Language_Strings[str_projectloaderror]);
+							else ShowInfo(playerid, GetLanguageMessage("projectloaderror", LANG_TYPE_MESSAGES));
 						}
 						case 1: //Zmien nazwe
 						{
@@ -1084,11 +1079,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(DeleteProject(NTD_User[User_ProjectIndex]))
 					{
-						format(EditorLString, sizeof EditorLString, Language_Strings[str_projectdeleted]);
+						format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectdeleted", LANG_TYPE_MESSAGES));
 						strreplace(EditorLString, "#1", GetProjectName(NTD_User[User_ProjectIndex]));
 						ShowInfo(playerid, EditorLString);
 					}
-					else ShowInfo(playerid, Language_Strings[str_projectdeleteerror]);
+					else ShowInfo(playerid, GetLanguageMessage("projectdeleteerror", LANG_TYPE_MESSAGES));
 				}
 				else ShowEditorEx(playerid), OpenProjectDialog(playerid);
 			}
@@ -1103,17 +1098,17 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							if(LoadProject(NTD_User[User_ProjectIndex]))
 							{
-								format(EditorLString, sizeof EditorLString, Language_Strings[str_infoprojectcreated]);
+								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectcreated", LANG_TYPE_MESSAGES));
 								strreplace(EditorLString, "#1", inputtext);
 								ShowInfo(playerid, EditorLString);
 								ShowWelcomeScreen(false);
 								ShowEditorEx(playerid);
 							}
-							else ShowInfo(playerid, Language_Strings[str_projectloaderror]);
+							else ShowInfo(playerid, GetLanguageMessage("projectloaderror", LANG_TYPE_MESSAGES));
 						}
-						else ShowInfo(playerid, Language_Strings[str_infoprojectexists]);
+						else ShowInfo(playerid, GetLanguageMessage("infoprojectexists", LANG_TYPE_MESSAGES));
 					}
-					else ShowInfo(playerid, Language_Strings[str_infoprojectinvalidname]);
+					else ShowInfo(playerid, GetLanguageMessage("infoprojectinvalidname", LANG_TYPE_MESSAGES));
 				}
 				else ShowEditorEx(playerid);
 			}
@@ -1154,30 +1149,22 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60];
 			if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
-				format(invertedstr, sizeof invertedstr, HEX_PALETTE_3"%s", Language_Strings[str_keysinverted]);
+				format(invertedstr, sizeof invertedstr, HEX_PALETTE_3"%s", GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
 				
-			if(EditorQuickSelect)
-				format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_2"%s", Language_Strings[str_fsenabled]);
-			else 
-				format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_3"%s", Language_Strings[str_fsdisabled]);
+			format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_3"%s", GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+			format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_3"%s", GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
+			format(compmodestr, sizeof compmodestr, HEX_PALETTE_2"%s", GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
 			
-			if(EditorTextDrawShowForAll)
-				format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_2"%s", Language_Strings[str_tdvforall]);
-			else 
-				format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_3"%s", Language_Strings[str_tdvforme]);
-				
-			if(EditorCompactMode)
-				format(compmodestr, sizeof compmodestr, HEX_PALETTE_2"%s", Language_Strings[str_compmodeenabled]);
-			else 
-				format(compmodestr, sizeof compmodestr, HEX_PALETTE_3"%s", Language_Strings[str_compmodedisabled]);
-			
-			CreateDialogOnLanguageData(playerid, DL_SETTINGS);
+			format(EditorLString, sizeof EditorLString, GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos"));
 			strreplace(EditorLString, "#1", invertedstr);
 			strreplace(EditorLString, "#2", quickselectstr);
 			strreplace(EditorLString, "#3", tdvisistr);
 			strreplace(EditorLString, "#4", compmodestr);
-			CreateDialogCaptionOnLangData(DL_SETTINGS);
-			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST, EditorString, EditorLString, DLS[DL_SETTINGS][d_s_button1], DLS[DL_SETTINGS][d_s_button2]);
+			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST, 
+				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
+				EditorLString, 
+				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button1"), 
+				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button2"));
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}
@@ -1203,16 +1190,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Proportionality)
 		{
-			if(NTD_TD[tdid][TD_Proportional] == false)
-			{
-				NTD_TD[tdid][TD_Proportional] = true;
-				GameTextForPlayer(playerid, Language_Strings[str_tdproportionality_true], 1500, 6);
-			}
-			else 
-			{
-				NTD_TD[tdid][TD_Proportional] = false;
-				GameTextForPlayer(playerid, Language_Strings[str_tdproportionality_false], 1500, 6);
-			}
+			NTD_TD[tdid][TD_Proportional] = !NTD_TD[tdid][TD_Proportional];
+			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_Proportional] ? "tdproportionality_true" : "tdproportionality_false") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
@@ -1227,9 +1206,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				
 				switch(NTD_TD[tdid][TD_Alignment])
 				{
-					case 1: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_left], 1500, 6);
-					case 2: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_center], 1500, 6);
-					case 3: GameTextForPlayer(playerid, Language_Strings[str_tdalignment_right], 1500, 6);
+					case 1: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_left", LANG_TYPE_GAMETEXTS), 1500, 6);
+					case 2: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_center", LANG_TYPE_GAMETEXTS), 1500, 6);
+					case 3: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_right", LANG_TYPE_GAMETEXTS), 1500, 6);
 				}
 			}
 			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -1239,22 +1218,22 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 					case BAR_DIRECTION_DOWN:
 					{
 						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
-						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_right], 1500, 6);
+						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_right", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_RIGHT:
 					{
 						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_LEFT;
-						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_left], 1500, 6);
+						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_left", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_LEFT:
 					{
 						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_UP;
-						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_up], 1500, 6);
+						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_up", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_UP:
 					{
 						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_DOWN;
-						GameTextForPlayer(playerid, Language_Strings[str_tdalignment_down], 1500, 6);
+						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_down", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 				}
 			}
@@ -1263,31 +1242,14 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_SwitchPublic)
 		{
-			if(NTD_TD[tdid][TD_IsGlobal] == false)
-			{
-				NTD_TD[tdid][TD_IsGlobal] = true;
-				GameTextForPlayer(playerid, Language_Strings[str_tdpublic], 1500, 6);
-			}
-			else
-			{
-				NTD_TD[tdid][TD_IsGlobal] = false;
-				GameTextForPlayer(playerid, Language_Strings[str_tdperplayer], 1500, 6);
-			}
+			NTD_TD[tdid][TD_IsGlobal] = !NTD_TD[tdid][TD_IsGlobal];
+			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_IsGlobal] ? "tdpublic" : "tdperplayer") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			return 1;
 		}
 		else if(clickedid == B_Selectable)
 		{
-			if(NTD_TD[tdid][TD_Selectable] == false)
-			{
-				NTD_TD[tdid][TD_Selectable] = true;
-				GameTextForPlayer(playerid, Language_Strings[str_tdclickable], 1500, 6);
-			}
-			else
-			{
-				NTD_TD[tdid][TD_Selectable] = false;
-				GameTextForPlayer(playerid, Language_Strings[str_tdnotclickable], 1500, 6);
-			}
-			
+			NTD_TD[tdid][TD_Selectable] = !NTD_TD[tdid][TD_Selectable];
+			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_Selectable] ? "tdclickable" : "tdnotclickable") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
@@ -1299,7 +1261,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			
 			NTD_TD[tdid][TD_ShadowSize]++;
 			UpdateTD(playerid, tdid);
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdshadowsize]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdshadowsize", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_ShadowSize]);
 			strreplace(EditorString, "#1", tmp_str);
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
@@ -1307,17 +1269,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_UseBox)
 		{
-			if(NTD_TD[tdid][TD_UseBox] == false)
-			{
-				NTD_TD[tdid][TD_UseBox] = true;
-				GameTextForPlayer(playerid, Language_Strings[str_tdboxenabled], 1500, 6);
-			}
-			else
-			{
-				NTD_TD[tdid][TD_UseBox] = false;
-				GameTextForPlayer(playerid, Language_Strings[str_tdboxdisabled], 1500, 6);
-			}
-			
+			NTD_TD[tdid][TD_UseBox] = !NTD_TD[tdid][TD_UseBox];
+			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_UseBox] ? "tdboxenabled" : "tdboxdisabled") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
@@ -1329,7 +1282,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			
 			NTD_TD[tdid][TD_OutlineSize]++;
 			UpdateTD(playerid, tdid);
-			format(EditorString, sizeof EditorString, Language_Strings[str_tdoutlinesize]);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdoutlinesize", LANG_TYPE_GAMETEXTS));
 			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_OutlineSize]);
 			strreplace(EditorString, "#1", tmp_str);
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
@@ -1360,7 +1313,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			}
 			else if(NTD_TD[tdid][TD_Font] == 5) 
 			{
-				ShowInfo(playerid, Language_Strings[str_modeltexterror]);
+				ShowInfo(playerid, GetLanguageMessage("modeltexterror", LANG_TYPE_MESSAGES));
 			}
 			PlayerSelectTD(playerid, false);
 			return 1;
@@ -1404,13 +1357,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			UpdateTD(playerid, tdid);
 			switch(NTD_TD[tdid][TD_Font])
 			{
-				case 4: GameTextForPlayer(playerid, Language_Strings[str_tdfontspriteinfo], 1500, 6);
-				case TEXT_DRAW_FONT_MODEL_PREVIEW: GameTextForPlayer(playerid, Language_Strings[str_tdfontprevmodelinfo], 1500, 6);
-				case TEXT_DRAW_FONT_PROGRESS_BAR: GameTextForPlayer(playerid, Language_Strings[str_tdfontplayerprogressbar], 1500, 6);
+				case 4: GameTextForPlayer(playerid, GetLanguageMessage("tdfontspriteinfo", LANG_TYPE_GAMETEXTS), 1500, 6);
+				case TEXT_DRAW_FONT_MODEL_PREVIEW: GameTextForPlayer(playerid, GetLanguageMessage("tdfontprevmodelinfo", LANG_TYPE_GAMETEXTS), 1500, 6);
+				case TEXT_DRAW_FONT_PROGRESS_BAR: GameTextForPlayer(playerid, GetLanguageMessage("tdfontplayerprogressbar", LANG_TYPE_GAMETEXTS), 1500, 6);
 				default: 
 				{
 					new tmp_str[12];
-					format(EditorString, sizeof EditorString, Language_Strings[str_tdfontinfo]);
+					format(EditorString, sizeof EditorString, GetLanguageMessage("tdfontinfo", LANG_TYPE_GAMETEXTS));
 					format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_Font]);
 					strreplace(EditorString, "#1", tmp_str);
 					GameTextForPlayer(playerid, EditorString, 1500, 6);
@@ -1428,15 +1381,15 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_NEWPROJECT][d_s_button1], DLS[DL_NEWPROJECT][d_s_button2]);
 				PlayerSelectTD(playerid, false);
 			}
-			else ShowInfo(playerid, Language_Strings[str_infoprojectlimit]);
+			else ShowInfo(playerid, GetLanguageMessage("infoprojectlimit", LANG_TYPE_MESSAGES));
 			return 1;
 		}
 		else if(clickedid == B_CloseProject)
 		{
 			if(SaveProject(NTD_User[User_ProjectIndex]) == 0) 
-				ShowInfo(playerid, Language_Strings[str_infoprojectsaveerror]);
+				ShowInfo(playerid, GetLanguageMessage("infoprojectsaveerror", LANG_TYPE_MESSAGES));
 			else 
-				ShowInfo(playerid, Language_Strings[str_infoprojectclosed]);
+				ShowInfo(playerid,GetLanguageMessage("infoprojectclosed", LANG_TYPE_MESSAGES));
 			
 			foreach(new i : I_TEXTDRAWS)
 				DestroyTD(i, i);

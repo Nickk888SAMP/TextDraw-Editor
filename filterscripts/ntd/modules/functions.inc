@@ -1103,7 +1103,7 @@ AddProjectToList(const file[])
 	return 0;
 }
 
-GetAllProjects()
+ReadProjectsDirectory()
 {
 	Iter_Clear(I_PROJECTS);
 
@@ -1141,7 +1141,7 @@ IsProjectFileValid(index)
 OpenProjectDialog(playerid)
 {
 	// Get Projects
-	GetAllProjects();
+	ReadProjectsDirectory();
 
 	EditorString = "";
 	EditorLString = "";
@@ -1171,7 +1171,7 @@ OpenProjectDialog(playerid)
 	}
 	else 
 	{
-		ShowInfo(playerid, Language_Strings[str_noprojectsfound]);
+		ShowInfo(playerid, GetLanguageMessage("noprojectsfound", LANG_TYPE_MESSAGES));
 	}
 	return 1;
 }
@@ -1470,7 +1470,7 @@ SelectTD(playerid, tdid)
 		NTD_User[User_EditingTDID] = tdid;
 		//
 		new tmp_str[12];
-		format(EditorString, sizeof EditorString, Language_Strings[str_tdselectedinfo]);
+		format(EditorString, sizeof EditorString, GetLanguageMessage("tdselectedinfo", LANG_TYPE_GAMETEXTS));
 		format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_EditingTDID]);
 		strreplace(EditorString, "#1", tmp_str);
 		//
@@ -2284,6 +2284,7 @@ CallNTDCommand(playerid)
 			if(NTD_User[User_InEditor] == false)
 			{
 				LoadConfigurations();
+				LoadLanguages();
 				if(Lang(LANG_NONE))
 				{
 					ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE);
@@ -2310,7 +2311,7 @@ CallNTDCommand(playerid)
 				ShowWelcomeScreen(true);
 				TogglePlayerControllable(playerid, false);
 				ShowEditorEx(playerid);
-				ShowInfo(playerid, Language_Strings[str_infoeditorleave]);
+				ShowInfo(playerid, GetLanguageMessage("infoeditorleave", LANG_TYPE_MESSAGES));
 				for(new i; i < 15; i++)
 					SendClientMessage(playerid, -1, " ");
 			}
@@ -2336,7 +2337,7 @@ CallNTDCommand(playerid)
 						NTD_User[User_WelcomeTimer] = -1;
 					}
 					TogglePlayerControllable(playerid, true);
-					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_editordisabled]);
+					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", GetLanguageMessage("editordisabled", LANG_TYPE_MESSAGES));
 					SendClientMessage(playerid, -1, EditorString);
 					if(NTD_User[User_ProjectOpened])
 					{
@@ -2348,7 +2349,7 @@ CallNTDCommand(playerid)
 				}
 				else 
 				{
-					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_editorinuse]);
+					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", GetLanguageMessage("editorinuse", LANG_TYPE_MESSAGES));
 					SendClientMessage(playerid, -1, EditorString);
 				}
 			}
@@ -2358,7 +2359,7 @@ CallNTDCommand(playerid)
 			if(Lang(LANG_NONE))
 				ShowInfo(playerid, "{FF0000}Script has been disabled!\n{FFFFFF}Check server logs for more informations!");
 			else
-				ShowInfo(playerid, Language_Strings[str_infoeditorlocked]);
+				ShowInfo(playerid, GetLanguageMessage("infoeditorlocked", LANG_TYPE_MESSAGES));
 		}
 	}
 	else
@@ -2368,7 +2369,7 @@ CallNTDCommand(playerid)
 			SendClientMessage(playerid, -1, HEX_PALETTE_1"NTD: {FFFFFF}You are not authorized to use this command! Please Login to RCON.");
 		else
 		{
-			format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", Language_Strings[str_nopermit]);
+			format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", GetLanguageMessage("nopermit", LANG_TYPE_MESSAGES));
 			SendClientMessage(playerid, -1, EditorString);
 		}
 			
@@ -2516,7 +2517,7 @@ QuickSelectionShow(playerid, bool:enable)
 
 ShowInfo(playerid, const text[])
 {
-	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", Language_Strings[str_infodialogcaption]);
+	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", GetLanguageMessage("infodialogcaption", LANG_TYPE_MESSAGES));
 	ShowPlayerDialog(playerid, DIALOG_INFO, DIALOG_STYLE_MSGBOX, EditorString, text, "OK", #);
 	PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 	return 1;
@@ -2592,45 +2593,9 @@ LoadConfigurations()
 		JSON_GetString(node, "languagefile", EditorLanguageFile);
 		JSON_GetInt(node, "maxdialogitems", EditorMaxDialogItems);
 		EditorMaxDialogItems = clamp(EditorMaxDialogItems, 1, NDP_AUTO);
+		return 1;
 	}
-	if(fexist("ntd/languages.list"))
-	{
-		new File:file = fopen("ntd/languages.list", io_read);
-		new index;
-		if(file)
-		{
-			Iter_Clear(I_LANGUAGES);
-			while(fread(file, EditorString, sizeof EditorString))
-			{
-				index = Iter_Free(I_LANGUAGES);
-				VALID_ITER_INDEX(I_LANGUAGES, index)
-				{
-					if(sscanf(EditorString, "p<=>s[32]s[32]", Language[index][l_name], Language[index][l_file]) == 0)
-					{
-						Iter_Add(I_LANGUAGES, index);
-						strdel(Language[index][l_file], strlen(Language[index][l_file]) - 2, strlen(Language[index][l_file]));
-						
-					}
-				}
-				else break;
-			}
-			fclose(file);
-		}
-	}
-	if(Lang(LANG_NONE))
-	{
-		if(strlen(EditorLanguageFile) > 1)
-		{
-			format(EditorString, sizeof EditorString, "%s/%s", LANGUAGES_PATH, EditorLanguageFile);
-			if(LanguageLoad(EditorString, EditorLanguageFile))
-			{
-				EditorLanguage = LANGUAGE_LOADED;
-			}
-			else EditorLanguage = LANG_NONE;
-		}
-		else EditorLanguage = LANG_NONE;
-	}
-	return 1;
+	return SaveConfigurations();
 }
 
 SaveConfigurations()
@@ -2673,6 +2638,17 @@ GetProcessedTDVarName(tdid)
 	return string;
 }
 
+MakePath(const path[], bool:addScriptfiles)
+{
+	new Path[258];
+	switch(addScriptfiles)
+	{
+		case true: format(Path, 258, "scriptfiles/%s", path);
+		case false: format(Path, 258, path);
+	}
+	return Path;
+}
+
 /*
   _                                                                 ______                          _     _                       
  | |                                                               |  ____|                        | |   (_)                      
@@ -2684,15 +2660,81 @@ GetProcessedTDVarName(tdid)
                            |___/                   |___/                                                                          
 */
 
+AddLanguageToList(const name[], const author[], const version[], Node:messagesNode, Node:gametextsNode, Node:dialogsNode)
+{
+	new free = Iter_Free(I_LANGUAGES);
+	VALID_ITER_INDEX(I_LANGUAGES, free)
+	{
+		Iter_Add(I_LANGUAGES, free);
+		format(Language[free][l_name], 32, name);
+		format(Language[free][l_author], 128, author);
+		format(Language[free][l_version], 10, version);
+		Language[free][l_messagesNode] = messagesNode;
+		Language[free][l_gametextsNode] = gametextsNode;
+		Language[free][l_dialogsNode] = dialogsNode;
+		JSON_ToggleGC(Language[free][l_messagesNode], false);
+		JSON_ToggleGC(Language[free][l_gametextsNode], false);
+		JSON_ToggleGC(Language[free][l_dialogsNode], false);
+	}
+	return 1;
+}
+
+LoadLanguages()
+{
+	Iter_Clear(I_LANGUAGES);
+
+	new Directory:dir = OpenDir( MakePath(LANGUAGES_DIRECTORYPATH, true) );
+	new langFile[126], langFilePath[256], ENTRY_TYPE:type, fileExtension[18];
+	new Node:languageNode, langName[32], langAuthor[128], langVersion[10], langChecksum[41];
+	new Node:messagesnode, Node:gametextsnode, Node:dialogsnode;
+	while(DirNext(dir, type, langFilePath)) 
+	{
+		if(type == E_REGULAR) 
+		{
+			PathBase(langFilePath, langFile);
+			PathExt(langFile, fileExtension);
+			if(!strcmp(fileExtension, ".json", true))
+			{
+				langChecksum = "\1";
+				JSON_ParseFile(langFilePath, languageNode);
+				JSON_GetString(languageNode, "language", langName);
+				JSON_GetString(languageNode, "author", langAuthor);
+				JSON_GetString(languageNode, "version", langVersion);
+				JSON_GetString(languageNode, "checksum", langChecksum);
+				if(!strcmp(langChecksum, LANGUAGES_CHECKSUM, false))
+				{
+					JSON_GetObject(languageNode, "messages", messagesnode);
+					JSON_GetObject(languageNode, "gametexts", gametextsnode);
+					JSON_GetObject(languageNode, "dialogs", dialogsnode);
+					AddLanguageToList(langName, langAuthor, langVersion, messagesnode, gametextsnode, dialogsnode);
+				}
+			}
+			
+		}
+    }
+
+	CloseDir(dir);
+	return 1;
+}
+
+ChangeEditorLanguage(index)
+{
+	NTD_User[User_LanguageIndex] = index;
+	EditorLanguage = LANGUAGE_LOADED;
+	format(EditorLanguageFile, sizeof EditorLanguageFile, Language[index][l_name]);
+	return 1;
+}
+
 ShowLanguageChangeDialog(playerid, ondialogid)
 {
+	ClearDialogListitems(playerid);
 	EditorLString = "";
 	foreach(new i : I_LANGUAGES)
 	{
-		format(EditorString, sizeof EditorString, "%s/%s", LANGUAGES_PATH, Language[i][l_file]);
-		format(EditorLString, sizeof EditorLString, "%s{8080FF}%s\t{FFFFFF}%s%s\n", EditorLString, Language[i][l_name], (fexist(EditorString)) ? ("{FFFFFF}") : ("{FF0000}"), Language[i][l_file]);
+		format(EditorLString, sizeof EditorLString, "{8080FF}%s", Language[i][l_name]);
+		AddDialogListitem(playerid, EditorLString);
 	}
-	ShowPlayerDialog(playerid, ondialogid, DIALOG_STYLE_TABLIST, CAPTION_TEXT"Language", EditorLString, "OK", #);
+	ShowPlayerDialog(playerid, ondialogid, DIALOG_STYLE_TABLIST, CAPTION_TEXT"Language", #, "OK", #, 10);
 	return 1;
 }
 
@@ -2766,484 +2808,14 @@ GetTemplatesAsLanguage(langname[])
 	return 0;
 }
 
-LanguageLoad(languagefile[], langname[])
-{
-	new tc = GetTickCount();
-	new line[320], macro[68], macrotext[258];
-	new mline[2], bool:dialogmode, dialogstr[32];
-	if(fexist(languagefile))
-	{
-		printf("[NTD] Loading language file \"%s\"", languagefile);
-		new File:lfile = fopen(languagefile, io_read);
-		if(lfile)
-		{
-			dialogmode = false;
-			while(fread(lfile, line)) 
-			{
-				mline[0] = -1;
-				mline[1] = -1;
-				for(new i, j = strlen(line); i < j; i++)
-				{
-					if(line[0] == '#' || (line[0] == ' ' && !dialogmode))
-						break;
-					else if(line[i] == '<')
-						mline[0] = i;
-					else if(line[i] == '>')
-						mline[1] = i;
-					else if(mline[0] != -1 && mline[1] != -1)
-					{
-						strmid(macro, line, mline[0] + 1, mline[1]);
-						strmid(macrotext, line, mline[1] + 1, j - 1);
-						break;
-					}
-				}
-				if(mline[0] != -1)
-				{
-					if(dialogmode)
-					{
-						if(strfind(macro, "/dialog") != -1)
-							dialogmode = false;
-						else
-						{
-							LanguageMacroApply(macro, macrotext, true, dialogstr);
-						}
-					}
-					else
-					{
-						if(strfind(macro, "dialog name") != -1)
-						{
-							mline[0] = -1;
-							for(new i, j = strlen(macro); i < j; i++)
-							{
-								if(macro[i] == '"' && mline[0] == -1)
-									mline[0] = i;
-								else if(macro[i] == '"' && mline[0] != -1)
-								{
-									strmid(macro, macro, mline[0] + 1, i);
-									break;
-								}
-							}
-							format(dialogstr, sizeof dialogstr, macro);
-							//printf("Dialog Macro: %s | Text: %s", macro, macrotext);
-							dialogmode = true;
-						}
-						else
-						{
-							LanguageMacroApply(macro, macrotext, false);
-						}
-					}
-				}
-			}
-			fclose(lfile);
-			GetTemplatesAsLanguage(langname);
-			printf("[NTD] Language loaded in %ims", (GetTickCount() - tc));
-			return 1;
-		
-		}
-	}
-	else printf("[NTD] Language file doesn't exist: %s", languagefile);
-	return 0;
-}
-
-LanguageMacroApply(const macro[], const macrotext[], bool:isdialogmacro, const dialogstr[] = "")
-{
-	if(!isdialogmacro)
-	{
-		//printf("Macro: %s | Text: %s", macro, macrotext);
-		switch(YHash(macro))
-		{
-			case _H<nopermit>: format(Language_Strings[str_nopermit], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<editordisabled>: format(Language_Strings[str_editordisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<editorinuse>: format(Language_Strings[str_editorinuse], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infodialogcaption>: format(Language_Strings[str_infodialogcaption], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorleave>: format(Language_Strings[str_infoeditorleave], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorlocked>: format(Language_Strings[str_infoeditorlocked], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoeditorreset>: format(Language_Strings[str_infoeditorreset], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<fsenabled>: format(Language_Strings[str_fsenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<fsdisabled>: format(Language_Strings[str_fsdisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdvforme>: format(Language_Strings[str_tdvforme], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdvforall>: format(Language_Strings[str_tdvforall], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<keysinverted>: format(Language_Strings[str_keysinverted], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoinvalidmodelid>: format(Language_Strings[str_infoinvalidmodelid], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectexported>: format(Language_Strings[str_infoprojectexported], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectexporterror>: format(Language_Strings[str_infoprojectexporterror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoparamnamechange>: format(Language_Strings[str_infoparamnamechange], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoparamnamechangetaken>: format(Language_Strings[str_infoparamnamechangetaken], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoparamnamechangecharserr>: format(Language_Strings[str_infoparamnamechangecharserr], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoparamnamechangeammerr>: format(Language_Strings[str_infoparamnamechangeammerr], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infomaxtextdrawsreached>: format(Language_Strings[str_infomaxtextdrawsreached], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infolanguagechanged>: format(Language_Strings[str_infolanguagechanged], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectinvalidname>: format(Language_Strings[str_infoprojectinvalidname], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectexists>: format(Language_Strings[str_infoprojectexists], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectcreated>: format(Language_Strings[str_infoprojectcreated], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectclosed>: format(Language_Strings[str_infoprojectclosed], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectsaveerror>: format(Language_Strings[str_infoprojectsaveerror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectlimit>: format(Language_Strings[str_infoprojectlimit], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<infoprojectloaded>: format(Language_Strings[str_infoprojectloaded], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<previewmodelidinvalid>: format(Language_Strings[str_previewmodelidinvalid], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdclonedinfo>: format(Language_Strings[str_tdclonedinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tddeletedinfo>: format(Language_Strings[str_tddeletedinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdcreatedinfo>: format(Language_Strings[str_tdcreatedinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdselectedinfo>: format(Language_Strings[str_tdselectedinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdfontspriteinfo>: format(Language_Strings[str_tdfontspriteinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdfontprevmodelinfo>: format(Language_Strings[str_tdfontprevmodelinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdfontinfo>: format(Language_Strings[str_tdfontinfo], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdcoloralpha>: format(Language_Strings[str_tdcoloralpha], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdlayer>: format(Language_Strings[str_tdlayer], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdeditorposition>: format(Language_Strings[str_tdeditorposition], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdprevmodelcolor>: format(Language_Strings[str_tdprevmodelcolor], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdposition>: format(Language_Strings[str_tdposition], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdrotation>: format(Language_Strings[str_tdrotation], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdsize>: format(Language_Strings[str_tdsize], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdpremodelzoom>: format(Language_Strings[str_tdpremodelzoom], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdsprite>: format(Language_Strings[str_tdsprite], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdproportionality_true>: format(Language_Strings[str_tdproportionality_true], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdproportionality_false>: format(Language_Strings[str_tdproportionality_false], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdalignment_left>: format(Language_Strings[str_tdalignment_left], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdalignment_center>: format(Language_Strings[str_tdalignment_center], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdalignment_right>: format(Language_Strings[str_tdalignment_right], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdalignment_up>: format(Language_Strings[str_tdalignment_up], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdalignment_down>: format(Language_Strings[str_tdalignment_down], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectrenamed>: format(Language_Strings[str_projectrenamed], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectnamechangecharerr>: format(Language_Strings[str_projectnamechangecharerr], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectnameexists>: format(Language_Strings[str_projectnameexists], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectnamechangeerror>: format(Language_Strings[str_projectnamechangeerror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectloaderror>: format(Language_Strings[str_projectloaderror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectdeleteerror>: format(Language_Strings[str_projectdeleteerror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<projectdeleted>: format(Language_Strings[str_projectdeleted], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<modelpreviewinvalidfont>: format(Language_Strings[str_modelpreviewinvalidfont], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdpublic>: format(Language_Strings[str_tdpublic], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdperplayer>: format(Language_Strings[str_tdperplayer], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdclickable>: format(Language_Strings[str_tdclickable], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdnotclickable>: format(Language_Strings[str_tdnotclickable], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdshadowsize>: format(Language_Strings[str_tdshadowsize], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdboxenabled>: format(Language_Strings[str_tdboxenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdboxdisabled>: format(Language_Strings[str_tdboxdisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdoutlinesize>: format(Language_Strings[str_tdoutlinesize], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<modeltexterror>: format(Language_Strings[str_modeltexterror], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<noprojectsfound>: format(Language_Strings[str_noprojectsfound], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<languagefilenotfound>: format(Language_Strings[str_languagefilenotfound], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<compmodeenabled>: format(Language_Strings[str_compmodeenabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<compmodedisabled>: format(Language_Strings[str_compmodedisabled], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<manualchangetypemzoom>: format(Language_Strings[str_manualchangetypemzoom], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<manualchangetypemcolor1>: format(Language_Strings[str_manualchangetypemcolor1], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<manualchangetypemcolor2>: format(Language_Strings[str_manualchangetypemcolor2], DEFAULT_LANG_STRING_SIZE, macrotext);
-			case _H<tdfontplayerprogressbar>: format(Language_Strings[str_tdfontplayerprogressbar], DEFAULT_LANG_STRING_SIZE, macrotext);
-		}
-	}
-	else
-	{
-		//printf("Dialog: %s | Macro: %s | Text: %s", dialogstr, macro, macrotext);
-		if(isnull(macro))
-			return 0;
-		if(strcmp(macro, "caption", true) == 0)
-		{
-			switch(YHash(dialogstr))
-			{
-				case _H<dialogsettings>: format(DLS[DL_SETTINGS][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<spritechange>: format(DLS[DL_SPRITECHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<overridecolorchange>: format(DLS[DL_OVERRIDECOLORCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<buttonscolorchange>: format(DLS[DL_BUTTONSCOLORCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<settingsreset>: format(DLS[DL_SETTINGSRESET][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<newproject>: format(DLS[DL_NEWPROJECT][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<textdrawslist>: format(DLS[DL_TDLIST][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<exportproject>: format(DLS[DL_EXPORTPROJECT][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<newtextdraw>: format(DLS[DL_NEWTEXTDRAW][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<projectslist>: format(DLS[DL_PROJECTSLIST][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<exitconfirmation>: format(DLS[DL_EXITCONFIRMATION][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<tdoptions>: format(DLS[DL_TDOPTIONS][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<projectsoptions>: format(DLS[DL_PROJECTSOPTIONS][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<previewmodelid>: format(DLS[DL_PREVIEWMODELID][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<variablechange>: format(DLS[DL_VARIABLECHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<colorchange>: format(DLS[DL_COLORCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<deletedconfirm>: format(DLS[DL_DELETECONFIRM][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<usetemplate>: format(DLS[DL_USETEMPLATE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<premadecolors>: format(DLS[DL_PREMADECOLORS][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<changeprojectname>: format(DLS[DL_PROJECTNAMECHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<deleteprojectconfirm>: format(DLS[DL_DELETEPROJECTCONFIRM][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<previewmodelchangelist>: format(DLS[DL_PREVIEWMODELCHANGELIST][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<textchange>: format(DLS[DL_TEXTCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<spritechangelist>: format(DLS[DL_SPRITECHANGELIST][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<boxsizechangelist>: format(DLS[DL_BOXSIZECHANGELIST][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<colorchangelist1>: format(DLS[DL_COLORCHANGELIST1][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<colorchangelist2>: format(DLS[DL_COLORCHANGELIST2][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<oldversionsettingsreset>: format(DLS[DL_OLDVERSIONSETTINGSRESET][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_caption], DEFAULT_LANG_STRING_SIZE, macrotext);
-			}
-		}
-		else if(strcmp(macro, "button1", true) == 0)
-		{
-			switch(YHash(dialogstr))
-			{
-				case _H<dialogsettings>: format(DLS[DL_SETTINGS][d_s_button1], 32, macrotext);
-				case _H<spritechange>: format(DLS[DL_SPRITECHANGE][d_s_button1], 32, macrotext);
-				case _H<overridecolorchange>: format(DLS[DL_OVERRIDECOLORCHANGE][d_s_button1], 32, macrotext);
-				case _H<buttonscolorchange>: format(DLS[DL_BUTTONSCOLORCHANGE][d_s_button1], 32, macrotext);
-				case _H<settingsreset>: format(DLS[DL_SETTINGSRESET][d_s_button1], 32, macrotext);
-				case _H<newproject>: format(DLS[DL_NEWPROJECT][d_s_button1], 32, macrotext);
-				case _H<textdrawslist>: format(DLS[DL_TDLIST][d_s_button1], 32, macrotext);
-				case _H<exportproject>: format(DLS[DL_EXPORTPROJECT][d_s_button1], 32, macrotext);
-				case _H<newtextdraw>: format(DLS[DL_NEWTEXTDRAW][d_s_button1], 32, macrotext);
-				case _H<projectslist>: format(DLS[DL_PROJECTSLIST][d_s_button1], 32, macrotext);
-				case _H<exitconfirmation>: format(DLS[DL_EXITCONFIRMATION][d_s_button1], 32, macrotext);
-				case _H<tdoptions>: format(DLS[DL_TDOPTIONS][d_s_button1], 32, macrotext);
-				case _H<projectsoptions>: format(DLS[DL_PROJECTSOPTIONS][d_s_button1], 32, macrotext);
-				case _H<previewmodelid>: format(DLS[DL_PREVIEWMODELID][d_s_button1], 32, macrotext);
-				case _H<variablechange>: format(DLS[DL_VARIABLECHANGE][d_s_button1], 32, macrotext);
-				case _H<colorchange>: format(DLS[DL_COLORCHANGE][d_s_button1], 32, macrotext);
-				case _H<deletedconfirm>: format(DLS[DL_DELETECONFIRM][d_s_button1], 32, macrotext);
-				case _H<usetemplate>: format(DLS[DL_USETEMPLATE][d_s_button1], 32, macrotext);
-				case _H<premadecolors>: format(DLS[DL_PREMADECOLORS][d_s_button1], 32, macrotext);
-				case _H<changeprojectname>: format(DLS[DL_PROJECTNAMECHANGE][d_s_button1], 32, macrotext);
-				case _H<deleteprojectconfirm>: format(DLS[DL_DELETEPROJECTCONFIRM][d_s_button1], 32, macrotext);
-				case _H<previewmodelchangelist>: format(DLS[DL_PREVIEWMODELCHANGELIST][d_s_button1], 32, macrotext);
-				case _H<textchange>: format(DLS[DL_TEXTCHANGE][d_s_button1], 32, macrotext);
-				case _H<spritechangelist>: format(DLS[DL_SPRITECHANGELIST][d_s_button1], 32, macrotext);
-				case _H<boxsizechangelist>: format(DLS[DL_BOXSIZECHANGELIST][d_s_button1], 32, macrotext);
-				case _H<colorchangelist1>: format(DLS[DL_COLORCHANGELIST1][d_s_button1], 32, macrotext);
-				case _H<colorchangelist2>: format(DLS[DL_COLORCHANGELIST2][d_s_button1], 32, macrotext);
-				case _H<oldversionsettingsreset>: format(DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button1], 32, macrotext);
-				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_button1], 32, macrotext);
-				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_button1], 32, macrotext);
-				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_button1], 32, macrotext);
-				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_button1], 32, macrotext);
-			}
-		}
-		else if(strcmp(macro, "button2", true) == 0)
-		{
-			switch(YHash(dialogstr))
-			{
-				case _H<dialogsettings>: format(DLS[DL_SETTINGS][d_s_button2], 32, macrotext);
-				case _H<spritechange>: format(DLS[DL_SPRITECHANGE][d_s_button2], 32, macrotext);
-				case _H<overridecolorchange>: format(DLS[DL_OVERRIDECOLORCHANGE][d_s_button2], 32, macrotext);
-				case _H<buttonscolorchange>: format(DLS[DL_BUTTONSCOLORCHANGE][d_s_button2], 32, macrotext);
-				case _H<settingsreset>: format(DLS[DL_SETTINGSRESET][d_s_button2], 32, macrotext);
-				case _H<newproject>: format(DLS[DL_NEWPROJECT][d_s_button2], 32, macrotext);
-				case _H<textdrawslist>: format(DLS[DL_TDLIST][d_s_button2], 32, macrotext);
-				case _H<exportproject>: format(DLS[DL_EXPORTPROJECT][d_s_button2], 32, macrotext);
-				case _H<newtextdraw>: format(DLS[DL_NEWTEXTDRAW][d_s_button2], 32, macrotext);
-				case _H<projectslist>: format(DLS[DL_PROJECTSLIST][d_s_button2], 32, macrotext);
-				case _H<exitconfirmation>: format(DLS[DL_EXITCONFIRMATION][d_s_button2], 32, macrotext);
-				case _H<tdoptions>: format(DLS[DL_TDOPTIONS][d_s_button2], 32, macrotext);
-				case _H<projectsoptions>: format(DLS[DL_PROJECTSOPTIONS][d_s_button2], 32, macrotext);
-				case _H<previewmodelid>: format(DLS[DL_PREVIEWMODELID][d_s_button2], 32, macrotext);
-				case _H<variablechange>: format(DLS[DL_VARIABLECHANGE][d_s_button2], 32, macrotext);
-				case _H<colorchange>: format(DLS[DL_COLORCHANGE][d_s_button2], 32, macrotext);
-				case _H<deletedconfirm>: format(DLS[DL_DELETECONFIRM][d_s_button2], 32, macrotext);
-				case _H<usetemplate>: format(DLS[DL_USETEMPLATE][d_s_button2], 32, macrotext);
-				case _H<premadecolors>: format(DLS[DL_PREMADECOLORS][d_s_button2], 32, macrotext);
-				case _H<changeprojectname>: format(DLS[DL_PROJECTNAMECHANGE][d_s_button2], 32, macrotext);
-				case _H<deleteprojectconfirm>: format(DLS[DL_DELETEPROJECTCONFIRM][d_s_button2], 32, macrotext);
-				case _H<previewmodelchangelist>: format(DLS[DL_PREVIEWMODELCHANGELIST][d_s_button2], 32, macrotext);
-				case _H<textchange>: format(DLS[DL_TEXTCHANGE][d_s_button2], 32, macrotext);
-				case _H<spritechangelist>: format(DLS[DL_SPRITECHANGELIST][d_s_button2], 32, macrotext);
-				case _H<boxsizechangelist>: format(DLS[DL_BOXSIZECHANGELIST][d_s_button2], 32, macrotext);
-				case _H<colorchangelist1>: format(DLS[DL_COLORCHANGELIST1][d_s_button2], 32, macrotext);
-				case _H<colorchangelist2>: format(DLS[DL_COLORCHANGELIST2][d_s_button2], 32, macrotext);
-				case _H<oldversionsettingsreset>: format(DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button2], 32, macrotext);
-				case _H<exportwitharray>: format(DLS[DL_EXPORTWITHARRAY][d_s_button2], 32, macrotext);
-				case _H<manualvarchange>: format(DLS[DL_MANUALVARCHANGE][d_s_button2], 32, macrotext);
-				case _H<manualchangemessage>: format(DLS[DL_MANUALVARCHANGE1][d_s_button2], 32, macrotext);
-				case _H<barmaxpercentagechange>: format(DLS[DL_MAXBARPERCCHANGE][d_s_button2], 32, macrotext);
-			}
-		}
-		else
-		{
-			for(new i; i < MAX_NTD_DIALOG_INFO; i++)
-			{
-				format(EditorString, sizeof EditorString, "info%i", i);
-				if(strcmp(macro, EditorString, true) == 0)
-				{
-					switch(YHash(dialogstr))
-					{	
-						case _H<barmaxpercentagechange>:
-						{
-							strpack(DLI[DL_MAXBARPERCCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_MAXBARPERCCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<manualchangemessage>:
-						{
-							strpack(DLI[DL_MANUALVARCHANGE1][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_MANUALVARCHANGE1][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<manualvarchange>:
-						{
-							strpack(DLI[DL_MANUALVARCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_MANUALVARCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<exportwitharray>:
-						{
-							strpack(DLI[DL_EXPORTWITHARRAY][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_EXPORTWITHARRAY][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<oldversionsettingsreset>:
-						{
-							strpack(DLI[DL_OLDVERSIONSETTINGSRESET][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_OLDVERSIONSETTINGSRESET][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<deleteprojectconfirm>:
-						{
-							strpack(DLI[DL_DELETEPROJECTCONFIRM][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_DELETEPROJECTCONFIRM][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<colorchangelist2>:
-						{
-							strpack(DLI[DL_COLORCHANGELIST2][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_COLORCHANGELIST2][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<colorchangelist1>:
-						{
-							strpack(DLI[DL_COLORCHANGELIST1][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_COLORCHANGELIST1][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<boxsizechangelist>:
-						{
-							strpack(DLI[DL_BOXSIZECHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_BOXSIZECHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<spritechangelist>:
-						{
-							strpack(DLI[DL_SPRITECHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_SPRITECHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<textchange>:
-						{
-							strpack(DLI[DL_TEXTCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_TEXTCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<previewmodelchangelist>:
-						{
-							strpack(DLI[DL_PREVIEWMODELCHANGELIST][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_PREVIEWMODELCHANGELIST][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<changeprojectname>:
-						{
-							strpack(DLI[DL_PROJECTNAMECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_PROJECTNAMECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<variablechange>:
-						{
-							strpack(DLI[DL_VARIABLECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_VARIABLECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<dialogsettings>:
-						{
-							strpack(DLI[DL_SETTINGS][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_SETTINGS][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<spritechange>:
-						{
-							strpack(DLI[DL_SPRITECHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_SPRITECHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<settingsreset>:
-						{
-							strpack(DLI[DL_SETTINGSRESET][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_SETTINGSRESET][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<newproject>:
-						{
-							strpack(DLI[DL_NEWPROJECT][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_NEWPROJECT][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<textdrawslist>:
-						{
-							strpack(DLI[DL_TDLIST][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_TDLIST][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<exportproject>:
-						{
-							strpack(DLI[DL_EXPORTPROJECT][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_EXPORTPROJECT][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<newtextdraw>:
-						{
-							strpack(DLI[DL_NEWTEXTDRAW][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_NEWTEXTDRAW][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<projectslist>:
-						{
-							strpack(DLI[DL_PROJECTSLIST][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_PROJECTSLIST][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<exitconfirmation>:
-						{
-							strpack(DLI[DL_EXITCONFIRMATION][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_EXITCONFIRMATION][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<tdoptions>:
-						{
-							strpack(DLI[DL_TDOPTIONS][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_TDOPTIONS][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<projectsoptions>:
-						{
-							strpack(DLI[DL_PROJECTSOPTIONS][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_PROJECTSOPTIONS][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<previewmodelid>:
-						{
-							strpack(DLI[DL_PREVIEWMODELID][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_PREVIEWMODELID][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<colorchange>:
-						{
-							strpack(DLI[DL_COLORCHANGE][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_COLORCHANGE][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-						case _H<deletedconfirm>:
-						{
-							strpack(DLI[DL_DELETECONFIRM][i], macrotext);
-							for(new j = i + 1; j < MAX_NTD_DIALOG_INFO; j++)
-								format(DLI[DL_DELETECONFIRM][j], DEFAULT_LANG_STRING_SIZE, "");
-						}
-					}
-					break;
-				}
-			}
-		}
-		
-	}
-	return 1;
-}
-
-
 CreateDialogCaptionOnLangData(dialoglanguageid)
 {
 	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", DLS[dialoglanguageid][d_s_caption]);
 	strreplace(EditorString, "#x", "\x");
 	return 1;
 }
+
+
 
 CreateDialogOnLanguageData(playerid, dialoglanguageid)
 {
@@ -3270,4 +2842,40 @@ CreateDialogOnLanguageData(playerid, dialoglanguageid)
 		}
 	}
 	return 1;
+}
+
+GetLanguageMessage(const key[], type, const subKey[] = "\1")
+{
+	new langMessageStr[258];
+	new langID = NTD_User[User_LanguageIndex];
+	
+	switch(type)
+	{
+		case LANG_TYPE_MESSAGES: JSON_GetString(Language[langID][l_messagesNode], key, langMessageStr);
+		case LANG_TYPE_GAMETEXTS: JSON_GetString(Language[langID][l_gametextsNode], key, langMessageStr);
+		case LANG_TYPE_DIALOGS: 
+		{
+			new Node:tmpDialogNode;
+			JSON_GetObject(Language[langID][l_dialogsNode], key, tmpDialogNode);
+			if(!strcmp(subKey, "infos", true))
+			{
+				new tmpDialogInfoKey[8], tmpDialogInfoStr[128];
+				for(new i; i < MAX_NTD_DIALOG_INFO; i++)
+				{
+					format(tmpDialogInfoKey, 8, "info%i", i);
+					if(JSON_GetString(tmpDialogNode, tmpDialogInfoKey, tmpDialogInfoStr) == 0)
+					{
+						if(i > 0)
+							strcat(langMessageStr, "\n");
+						strcat(langMessageStr, tmpDialogInfoStr);
+					}
+					else break;
+				}
+			}
+			else JSON_GetString(tmpDialogNode, subKey, langMessageStr);
+		}
+	}
+	strreplace(EditorLString, "#t", "\t");
+	strreplace(EditorLString, "#n", "\n");
+	return langMessageStr;
 }
