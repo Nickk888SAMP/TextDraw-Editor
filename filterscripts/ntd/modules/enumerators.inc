@@ -1,41 +1,4 @@
 
-//DIALOGLANGUAGE
-enum
-{
-	DL_SETTINGS,
-	DL_SPRITECHANGE,
-	DL_OVERRIDECOLORCHANGE,
-	DL_BUTTONSCOLORCHANGE,
-	DL_SETTINGSRESET,
-	DL_NEWPROJECT,
-	DL_TDLIST,
-	DL_EXPORTPROJECT,
-	DL_NEWTEXTDRAW,
-	DL_PROJECTSLIST,
-	DL_EXITCONFIRMATION,
-	DL_TDOPTIONS,
-	DL_PROJECTSOPTIONS,
-	DL_PREVIEWMODELID,
-	DL_VARIABLECHANGE,
-	DL_COLORCHANGE,
-	DL_DELETECONFIRM,
-	DL_USETEMPLATE,
-	DL_PREMADECOLORS,
-	DL_PROJECTNAMECHANGE,
-	DL_DELETEPROJECTCONFIRM,
-	DL_PREVIEWMODELCHANGELIST,
-	DL_TEXTCHANGE,
-	DL_SPRITECHANGELIST,
-	DL_BOXSIZECHANGELIST,
-	DL_COLORCHANGELIST1,
-	DL_COLORCHANGELIST2,
-	DL_OLDVERSIONSETTINGSRESET,
-	DL_EXPORTWITHARRAY,
-	DL_MANUALVARCHANGE,
-	DL_MANUALVARCHANGE1,
-	DL_MAXBARPERCCHANGE
-};
-
 //CHANGING TYPES
 enum
 {
@@ -74,7 +37,7 @@ new Extensions[][E_EXTENSIONS] =
 	{ "ntdp", "NTD Legacy", FILE_EXTENSION_NTD_LEGACY }
 };
 
-
+// Colors
 new Premade_Colors[][] =
 {
 	0x000000FF,
@@ -117,6 +80,7 @@ new Premade_Colors[][] =
 	0x68228BFF
 };
 
+// Sprites
 new Sprites[][][] =
 {
    //ID | LIBRARY | SPRITE
@@ -458,26 +422,24 @@ new Sprites[][][] =
 	
 };
 
-//ENUMERATORS
+//Sprite Data
+enum E_SPRITE
+{
+	Sprite_Lib[50],
+	Sprite_Name[50]
+}
+new Sprite_Library[MAX_NTD_SPRITES][E_SPRITE]; //Sprites Data
 
-//Templates Data
+
+// Templates Data
 enum E_TEMPLATE
 {
-	Template_Name[60],
+	Template_Name[64],
 	Template_Data[258]
 };
 new Template[MAX_NTD_TEMPLATES][E_TEMPLATE];
 
-//Languages Data
-enum E_LANGUAGE_STR_DIALOG
-{
-	d_s_caption[128],
-	d_s_button1[32],
-	d_s_button2[32]
-}
-new DLS[MAX_NTD_LANGUAGE_DIALOGS][E_LANGUAGE_STR_DIALOG]; //Dialog Language String
-new DLI[MAX_NTD_LANGUAGE_DIALOGS][MAX_NTD_DIALOG_INFO][128]; //Dialog Language Info
-
+// Language
 enum E_LANGUAGE
 {
 	l_name[32],
@@ -488,14 +450,6 @@ enum E_LANGUAGE
 	Node:l_dialogsNode
 }
 new Language[MAX_NTD_LANGUAGES][E_LANGUAGE]; //Languages List
-
-//Sprite Data
-enum E_SPRITE
-{
-	Sprite_Lib[50],
-	Sprite_Name[50]
-}
-new Sprite_Library[MAX_NTD_SPRITES][E_SPRITE]; //Sprites Data
 
 //TextDraw Data
 enum E_TD
@@ -519,7 +473,7 @@ enum E_TD
 	Text:TD_SelfID,
 	PlayerBar:TD_BarID,
 	Text:TD_PickerID,
-	TD_Text[300],
+	TD_Text[328],
 	TD_VarName[35],
 	TD_PrevModelID,
 	TD_PrevModelC1,
@@ -547,7 +501,6 @@ enum E_USER
 	bool:User_Accelerate,
 	bool:User_BlockVarsTime,
 	bool:User_ChangingColorBar,
-	User_LanguageIndex,
 	User_ChangingState,
 	User_ManualChangeType,
 	User_ExportType,

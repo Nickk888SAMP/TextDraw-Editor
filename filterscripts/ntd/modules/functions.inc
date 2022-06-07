@@ -40,10 +40,10 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 {
 	new filename[128], bool:clickableTD, publiccount, nonpubliccount, barscount;
 	format(filename, 128, EXPORTS_DIRECTORYPATH"/%s.pwn", GetProjectName(index));
-	if(Exists(filename))
+	if(Exists(MakePath(filename, true)))
 		fremove(filename);
 	
-	if(Exists(EXPORTS_DIRECTORYPATH))
+	if(Exists(MakePath(EXPORTS_DIRECTORYPATH, true)))
 	{
 		new File:file = fopen(filename, io_write);
 		if(file)
@@ -1096,7 +1096,7 @@ AddProjectToList(const file[])
 				break;
 			}
 		}
-		printf("File: %s | Extension: %s | Extension ID: %i", NTD_Projects[index][Pro_fileName], extension, NTD_Projects[index][Pro_fileExtensionId]);
+		//printf("File: %s | Extension: %s | Extension ID: %i", NTD_Projects[index][Pro_fileName], extension, NTD_Projects[index][Pro_fileExtensionId]);
 		Iter_Add(I_PROJECTS, index);
 		return 1;
 	}
@@ -1107,7 +1107,7 @@ ReadProjectsDirectory()
 {
 	Iter_Clear(I_PROJECTS);
 
-	new Directory:dir = OpenDir("scriptfiles/ntd/projects");
+	new Directory:dir = OpenDir(MakePath(PROJECTS_DIRECTORYPATH, true));
 	new item[256], ENTRY_TYPE:type;
 		
 	while(DirNext(dir, type, item)) 
@@ -1130,7 +1130,6 @@ IsProjectFileValid(index)
 		return 0;
 	new filePath[256];
 	format(filePath, sizeof filePath, "%s/%s.%s", PROJECTS_DIRECTORYPATH, NTD_Projects[index][Pro_fileName], Extensions[ NTD_Projects[index][Pro_fileExtensionId] ]);
-	print(filePath);
 	if(NTD_Projects[index][Pro_fileExtensionId] != -1 && Exists(filePath))
 	{
 		return 1;
@@ -1140,33 +1139,32 @@ IsProjectFileValid(index)
 
 OpenProjectDialog(playerid)
 {
+	ClearDialogListitems(playerid);
 	// Get Projects
 	ReadProjectsDirectory();
-
-	EditorString = "";
-	EditorLString = "";
+	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "infos"));
 	if(Iter_Count(I_PROJECTS) > 0)
 	{
-		CreateDialogOnLanguageData(playerid, DL_PROJECTSLIST);
-		AddDialogListitem(playerid, EditorLString);
 		foreach(new i : I_PROJECTS)
 		{
 			if(NTD_Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
 			{
-				format(EditorString, sizeof EditorString, "%s%s", (IsProjectFileValid(i) ? "{FFFFFF}" : "{FF0000}"), NTD_Projects[i][Pro_fileName]);
+				AddDialogListitem(playerid, "%s%s", (IsProjectFileValid(i) ? "{FFFFFF}" : "{FFFFFF}"), NTD_Projects[i][Pro_fileName]);
 			}
-			else format(EditorString, sizeof EditorString, "%s%s", (IsProjectFileValid(i) ? "{FFE599}" : "{FF0000}"), NTD_Projects[i][Pro_fileName]);
+			else 
+			{
+				AddDialogListitem(playerid, "%s%s", (IsProjectFileValid(i) ? "{FFE599}" : "{FFE599}"), NTD_Projects[i][Pro_fileName]);
+			}
+
 			
-			AddDialogListitem(playerid, EditorString);
 		}
 		//
-		CreateDialogCaptionOnLangData(DL_PROJECTSLIST);
-		new tmp_str[2][24];
-		format(tmp_str[0], 24, "%i", Iter_Count(I_PROJECTS));
-		format(tmp_str[1], 24, "%i", MAX_NTD_PROJECTS);
-		strreplace(EditorString, "#1", tmp_str[0]);
-		strreplace(EditorString, "#2", tmp_str[1]);
-		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, EditorString, #, DLS[DL_PROJECTSLIST][d_s_button1], DLS[DL_PROJECTSLIST][d_s_button2], EditorMaxDialogItems);
+		
+		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST, 
+		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_NTD_PROJECTS), #, 
+		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button1"), 
+		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button2"), 
+		EditorMaxDialogItems);
 		PlayerSelectTD(playerid, false);
 	}
 	else 
@@ -1178,18 +1176,21 @@ OpenProjectDialog(playerid)
 
 SaveProject(index)
 {
-	new filePath[300];
-	
-	//Project File 
-	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
-	print(filePath);
-	if(Exists(filePath) && NTD_User[User_ProjectOpened])
+	if(NTD_User[User_ProjectOpened])
 	{
+		new filePath[300];
+	
+		//Project File Path
+		format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
+		filePath = MakePath(filePath, true);
+
+		// Node
 		new Node:node;
 		node = JSON_Object(
 			"textdraws", JSON_Array()
 		);
 
+		// TextDraws
 		foreach(new i : I_TEXTDRAWS)
 		{
 			if(NTD_TD[i][TD_Created])
@@ -1227,9 +1228,12 @@ SaveProject(index)
 				"progressbarmaxpercentage", JSON_Float(NTD_TD[i][TD_BarMaxPercentage]),
 				"progressbaralignment", JSON_Int(NTD_TD[i][TD_BarDirectory])
 				);
+				// Append current textdraw to array.
 				JSON_ArrayAppend(node, "textdraws", tdNode);
 			}
 		}
+
+		// Save File
 		JSON_SaveFile(filePath, node);
 		return 1;
 	}
@@ -1238,9 +1242,9 @@ SaveProject(index)
 
 LoadProject(index)
 {
-	new filePath[258], Node:node, Node:arrayNode, Node:tdnode, length;
+	new filePath[258], Node:node, free, Node:arrayNode, Node:tdnode, length;
 	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
-	print(filePath);
+	filePath = MakePath(filePath, true);
 	if(Exists(filePath))
 	{
 		// Reset the TextDraw iterator.
@@ -1270,48 +1274,49 @@ LoadProject(index)
 		// Loop through the Array
 		for(new i; i < length; i++)
 		{
+			
 			// Get the TextDraw Object Node
 			JSON_ArrayObject(arrayNode, i, tdnode);
 
 			// Create the TextDraw
-			index = Iter_Free(I_TEXTDRAWS);
-			VALID_ITER_INDEX(I_TEXTDRAWS, index)
+			free = Iter_Free(I_TEXTDRAWS);
+			VALID_ITER_INDEX(I_TEXTDRAWS, free)
 			{
-				Iter_Add(I_TEXTDRAWS, index);
-				JSON_GetString(tdnode, "string", NTD_TD[index][TD_Text]);
-				JSON_GetFloat(tdnode, "posx", NTD_TD[index][TD_PosX]);
-				JSON_GetFloat(tdnode, "posy", NTD_TD[index][TD_PosY]);
-				JSON_GetInt(tdnode, "font", NTD_TD[index][TD_Font]);
-				JSON_GetBool(tdnode, "public", NTD_TD[index][TD_IsGlobal]);
-				JSON_GetInt(tdnode, "outline", NTD_TD[index][TD_OutlineSize]);
-				JSON_GetInt(tdnode, "shadow", NTD_TD[index][TD_ShadowSize]);
-				JSON_GetFloat(tdnode, "lettersizex", NTD_TD[index][TD_LetterSizeX]);
-				JSON_GetFloat(tdnode, "lettersizey", NTD_TD[index][TD_LetterSizeY]);
-				JSON_GetInt(tdnode, "textcolor", NTD_TD[index][TD_Color]);
-				JSON_GetInt(tdnode, "backgroundcolor", NTD_TD[index][TD_BGColor]);
-				JSON_GetInt(tdnode, "boxcolor", NTD_TD[index][TD_BoxColor]);
-				JSON_GetInt(tdnode, "textcoloralpha", NTD_TD[index][TD_ColorAlpha]);
-				JSON_GetInt(tdnode, "backgroundcoloralpha", NTD_TD[index][TD_BGColorAlpha]);
-				JSON_GetInt(tdnode, "boxcoloralpha", NTD_TD[index][TD_BoxColorAlpha]);
-				JSON_GetBool(tdnode, "usebox", NTD_TD[index][TD_UseBox]);
-				JSON_GetBool(tdnode, "selectable", NTD_TD[index][TD_Selectable]);
-				JSON_GetInt(tdnode, "alignment", NTD_TD[index][TD_Alignment]);
-				JSON_GetFloat(tdnode, "boxsizex", NTD_TD[index][TD_BoxSizeX]);
-				JSON_GetFloat(tdnode, "boxsizey", NTD_TD[index][TD_BoxSizeY]);
-				JSON_GetInt(tdnode, "proportional", NTD_TD[index][TD_Proportional]);
-				JSON_GetInt(tdnode, "previewmodelid", NTD_TD[index][TD_PrevModelID]);
-				JSON_GetInt(tdnode, "previewmodelcolor1", NTD_TD[index][TD_PrevModelC1]);
-				JSON_GetInt(tdnode, "previewmodelcolor2", NTD_TD[index][TD_PrevModelC2]);
-				JSON_GetFloat(tdnode, "previewmodelrotx", NTD_TD[index][TD_PrevRotX]);
-				JSON_GetFloat(tdnode, "previewmodelroty", NTD_TD[index][TD_PrevRotY]);
-				JSON_GetFloat(tdnode, "previewmodelrotz", NTD_TD[index][TD_PrevRotZ]);
-				JSON_GetFloat(tdnode, "previewmodelzoom", NTD_TD[index][TD_PrevRotZoom]);
-				JSON_GetInt(tdnode, "variablename", NTD_TD[index][TD_VarName]);
-				JSON_GetFloat(tdnode, "progressbarmaxpercentage", NTD_TD[index][TD_BarMaxPercentage]);
-				JSON_GetInt(tdnode, "progressbaralignment", NTD_TD[index][TD_BarDirectory]);
-				NTD_TD[index][TD_Created] = true;
+				Iter_Add(I_TEXTDRAWS, free);
+				JSON_GetString(tdnode, "string", NTD_TD[free][TD_Text]);
+				JSON_GetFloat(tdnode, "posx", NTD_TD[free][TD_PosX]);
+				JSON_GetFloat(tdnode, "posy", NTD_TD[free][TD_PosY]);
+				JSON_GetInt(tdnode, "font", NTD_TD[free][TD_Font]);
+				JSON_GetBool(tdnode, "public", NTD_TD[free][TD_IsGlobal]);
+				JSON_GetInt(tdnode, "outline", NTD_TD[free][TD_OutlineSize]);
+				JSON_GetInt(tdnode, "shadow", NTD_TD[free][TD_ShadowSize]);
+				JSON_GetFloat(tdnode, "lettersizex", NTD_TD[free][TD_LetterSizeX]);
+				JSON_GetFloat(tdnode, "lettersizey", NTD_TD[free][TD_LetterSizeY]);
+				JSON_GetInt(tdnode, "textcolor", NTD_TD[free][TD_Color]);
+				JSON_GetInt(tdnode, "backgroundcolor", NTD_TD[free][TD_BGColor]);
+				JSON_GetInt(tdnode, "boxcolor", NTD_TD[free][TD_BoxColor]);
+				JSON_GetInt(tdnode, "textcoloralpha", NTD_TD[free][TD_ColorAlpha]);
+				JSON_GetInt(tdnode, "backgroundcoloralpha", NTD_TD[free][TD_BGColorAlpha]);
+				JSON_GetInt(tdnode, "boxcoloralpha", NTD_TD[free][TD_BoxColorAlpha]);
+				JSON_GetBool(tdnode, "usebox", NTD_TD[free][TD_UseBox]);
+				JSON_GetBool(tdnode, "selectable", NTD_TD[free][TD_Selectable]);
+				JSON_GetInt(tdnode, "alignment", NTD_TD[free][TD_Alignment]);
+				JSON_GetFloat(tdnode, "boxsizex", NTD_TD[free][TD_BoxSizeX]);
+				JSON_GetFloat(tdnode, "boxsizey", NTD_TD[free][TD_BoxSizeY]);
+				JSON_GetInt(tdnode, "proportional", NTD_TD[free][TD_Proportional]);
+				JSON_GetInt(tdnode, "previewmodelid", NTD_TD[free][TD_PrevModelID]);
+				JSON_GetInt(tdnode, "previewmodelcolor1", NTD_TD[free][TD_PrevModelC1]);
+				JSON_GetInt(tdnode, "previewmodelcolor2", NTD_TD[free][TD_PrevModelC2]);
+				JSON_GetFloat(tdnode, "previewmodelrotx", NTD_TD[free][TD_PrevRotX]);
+				JSON_GetFloat(tdnode, "previewmodelroty", NTD_TD[free][TD_PrevRotY]);
+				JSON_GetFloat(tdnode, "previewmodelrotz", NTD_TD[free][TD_PrevRotZ]);
+				JSON_GetFloat(tdnode, "previewmodelzoom", NTD_TD[free][TD_PrevRotZoom]);
+				JSON_GetInt(tdnode, "variablename", NTD_TD[free][TD_VarName]);
+				JSON_GetFloat(tdnode, "progressbarmaxpercentage", NTD_TD[free][TD_BarMaxPercentage]);
+				JSON_GetInt(tdnode, "progressbaralignment", NTD_TD[free][TD_BarDirectory]);
+				NTD_TD[free][TD_Created] = true;
 			}
-			break;
+			else break;
 		}
 		NTD_User[User_ProjectOpened] = true;
 		NTD_User[User_ProjectIndex] = index;
@@ -1332,20 +1337,20 @@ GetProjectName(index, bool:withExtension = false)
 	return projectName;
 }
 
-DeleteProject(projectname[], bool:force = true)
+DeleteProject(index, bool:force = true)
 {
 	new filePath[128];
-	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s.ntdp", projectname);
+	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
 	if(!force)
 	{
-		if(Exists(filePath))
+		if(Exists( MakePath(filePath, true) ))
 		{
 			fremove(filePath);
 		}
 	}
 	else
 	{
-		if(Exists(filePath))
+		if(Exists( MakePath(filePath, true) ))
 			fremove(filePath);
 		return 1;
 	}
@@ -1365,15 +1370,13 @@ DeleteProject(projectname[], bool:force = true)
 */
 ShowTDOptions(playerid, tdid)
 {
-	new tmp_str[12];
 	NTD_User[User_ChoosenTDID] = tdid;
-	CreateDialogOnLanguageData(playerid, DL_TDOPTIONS);
-	CreateDialogCaptionOnLangData(DL_TDOPTIONS);
-	format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
-	strreplace(EditorString, "#1", tmp_str);
-	strreplace(EditorString, "#2", NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
-	ShowPlayerDialog(NTD_User[User_PlayerIDInEditor], DIALOG_MANAGE2, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_TDOPTIONS][d_s_button1], DLS[DL_TDOPTIONS][d_s_button2]);
-	PlayerSelectTD(NTD_User[User_PlayerIDInEditor], false);
+	ShowPlayerDialog(playerid, DIALOG_MANAGE2, DIALOG_STYLE_LIST, 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, NTD_TD[ tdid ][TD_Text]), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos"), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button2"));
+	PlayerSelectTD(playerid, false);
 	return 1;
 }
 
@@ -1642,7 +1645,9 @@ CreateNewTDFromTemplate(templateid)
 OpenTDDialog(playerid)
 {
 	new formatedtd[MAXFORMATEDTD];
-	CreateDialogOnLanguageData(playerid, DL_TDLIST);
+	ClearDialogListitems(playerid);
+	AddDialogListitem(playerid, GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "info0"));
+	AddDialogListitem(playerid, GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "info1"));
 	foreach(new i : I_TEXTDRAWS)
 	{
 		format(formatedtd, MAXFORMATEDTD, NTD_TD[i][TD_Text]);
@@ -1661,15 +1666,12 @@ OpenTDDialog(playerid)
 		AddDialogListitem(playerid, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
-	//
-	CreateDialogCaptionOnLangData(DL_TDLIST);
-	new tmp_str[2][24];
-	format(tmp_str[0], 24, "%i", Iter_Count(I_TEXTDRAWS));
-	format(tmp_str[1], 24, "%i", MAX_NTD_TDS);
-	strreplace(EditorString, "#1", tmp_str[0]);
-	strreplace(EditorString, "#2", tmp_str[1]);
 	
-	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  EditorString, #, DLS[DL_TDLIST][d_s_button1], DLS[DL_TDLIST][d_s_button2], EditorMaxDialogItems);
+	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  
+	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_TEXTDRAWS), MAX_NTD_TDS), #, 
+	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button2"), 
+	EditorMaxDialogItems);
 	return 1;
 }
 
@@ -1822,7 +1824,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	TextDrawShowForPlayer(playerid, B_Settings);
 	TextDrawShowForPlayer(playerid, E_Box);
 	
-	TextDrawSetSelectable(B_NewProject, false);
+	//TextDrawSetSelectable(B_NewProject, false);
 	TextDrawSetSelectable(B_OpenProject, false);
 	TextDrawSetSelectable(B_CloseProject, false);
 	TextDrawSetSelectable(B_Export, false);
@@ -1845,7 +1847,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	#pragma unused alpha
 	SplitRGBA(EditorButtonsColor,red,green,blue, alpha); 
 	unsetcolor = CreateRGBA(red,green,blue,35);
-	TextDrawColor(B_NewProject, unsetcolor);
+	//TextDrawColor(B_NewProject, unsetcolor);
 	TextDrawColor(B_OpenProject, unsetcolor);
 	TextDrawColor(B_CloseProject, unsetcolor);
 	TextDrawColor(B_Export, unsetcolor);
@@ -1866,8 +1868,12 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	
 	new tdid = NTD_User[User_EditingTDID];
 	if(b1_active) 
+	{
+		/*
 		TextDrawSetSelectable(B_NewProject, true),
-		TextDrawColor(B_NewProject, EditorButtonsColor);
+		TextDrawColor(B_NewProject, EditorButtonsColor);*/
+	}
+		
 	if(b2_active) 
 		TextDrawSetSelectable(B_OpenProject, true),
 		TextDrawColor(B_OpenProject, EditorButtonsColor);
@@ -1965,7 +1971,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 		}
 	}
 	
-	TextDrawShowForPlayer(playerid, B_NewProject);
+	//TextDrawShowForPlayer(playerid, B_NewProject);
 	TextDrawShowForPlayer(playerid, B_OpenProject);
 	TextDrawShowForPlayer(playerid, B_CloseProject);
 	TextDrawShowForPlayer(playerid, B_Export);
@@ -1992,7 +1998,7 @@ HideEditor(playerid)
 	TextDrawHideForPlayer(playerid, E_Box);
 	TextDrawHideForPlayer(playerid, B_Exit);
 	TextDrawHideForPlayer(playerid, B_Settings);
-	TextDrawHideForPlayer(playerid, B_NewProject);
+	//TextDrawHideForPlayer(playerid, B_NewProject);
 	TextDrawHideForPlayer(playerid, B_OpenProject);
 	TextDrawHideForPlayer(playerid, B_CloseProject);
 	TextDrawHideForPlayer(playerid, B_Export);
@@ -2018,7 +2024,7 @@ DestroyEditor()
 	TextDrawDestroy(E_Box);
 	TextDrawDestroy(B_Exit);
 	TextDrawDestroy(B_Settings);
-	TextDrawDestroy(B_NewProject);
+	//TextDrawDestroy(B_NewProject);
 	TextDrawDestroy(B_OpenProject);
 	TextDrawDestroy(B_CloseProject);
 	TextDrawDestroy(B_Export);
@@ -2094,11 +2100,11 @@ CreateEditor()
 	TextDrawColor(B_Settings, 0xFFFFFFFF);
 	TextDrawSetSelectable(B_Settings, true);
 	
-	B_NewProject = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, BUTTON_NEW);
+	/*B_NewProject = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, BUTTON_NEW);
 	TextDrawFont(B_NewProject, 4);
 	TextDrawTextSize(B_NewProject, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_NewProject, true);
-	TextDrawColor(B_NewProject, EditorButtonsColor);
+	TextDrawColor(B_NewProject, EditorButtonsColor);*/
 	
 	B_OpenProject = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), EditorPosY, BUTTON_OPEN);
 	TextDrawFont(B_OpenProject, 4);
@@ -2283,18 +2289,21 @@ CallNTDCommand(playerid)
 		{
 			if(NTD_User[User_InEditor] == false)
 			{
-				LoadConfigurations();
 				LoadLanguages();
-				if(Lang(LANG_NONE))
+				LoadConfigurations();
+				ChangeEditorLanguage(GetLanguageIndexFromName(EditorLanguageFile));
+				if(EditorLanguage == -1)
 				{
 					ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE);
 					return 1;
 				}
 				else if(strcmp(EditorVersion, SCRIPT_VERSION_CHECK, false) != 0)
 				{
-					CreateDialogOnLanguageData(playerid, DL_OLDVERSIONSETTINGSRESET);
-					CreateDialogCaptionOnLangData(DL_OLDVERSIONSETTINGSRESET);
-					ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button1], DLS[DL_OLDVERSIONSETTINGSRESET][d_s_button2]);
+					ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, 
+					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "caption"), 
+					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "infos"), 
+					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "button1"), 
+					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "button2"));
 					return 1;
 				}
 				CreateEditor();
@@ -2356,7 +2365,7 @@ CallNTDCommand(playerid)
 		}
 		else 
 		{
-			if(Lang(LANG_NONE))
+			if(EditorLanguage == -1)
 				ShowInfo(playerid, "{FF0000}Script has been disabled!\n{FFFFFF}Check server logs for more informations!");
 			else
 				ShowInfo(playerid, GetLanguageMessage("infoeditorlocked", LANG_TYPE_MESSAGES));
@@ -2365,7 +2374,7 @@ CallNTDCommand(playerid)
 	else
 	{
 		
-		if(Lang(LANG_NONE))
+		if(EditorLanguage == -1)
 			SendClientMessage(playerid, -1, HEX_PALETTE_1"NTD: {FFFFFF}You are not authorized to use this command! Please Login to RCON.");
 		else
 		{
@@ -2396,105 +2405,60 @@ EnableVarChangeTimer(bool:starttimer)
 
 ShowManualVarChangeDialog(playerid)
 {
-	EditorLString = "";
 	new tdid = NTD_User[User_EditingTDID];
-	strunpack(EditorString, DLI[DL_MANUALVARCHANGE][0]);
-	strcat(EditorString, "\n");
-	strcat(EditorLString, EditorString);
+	ClearDialogListitems(playerid);
+	AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info0"));
 	switch(NTD_User[User_ChangingState])
 	{
 		case CH_POSITION:
 		{
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][1]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][2]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strreplace(EditorLString, "#1", "%f");
-			strreplace(EditorLString, "#2", "%f");
-			format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PosX], NTD_TD[tdid][TD_PosY]);
-			CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE);	
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", NTD_TD[tdid][TD_PosX]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", NTD_TD[tdid][TD_PosY]));
 		}
 		case CH_SIZE:
 		{
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][1]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][2]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strreplace(EditorLString, "#1", "%f");
-			strreplace(EditorLString, "#2", "%f");
-			format(EditorLString, sizeof EditorLString, EditorLString, 
-			(NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeX]) : (NTD_TD[tdid][TD_BoxSizeX]), 
-			(NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeY]) : (NTD_TD[tdid][TD_BoxSizeY]));
-			CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE);	
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeX]) : (NTD_TD[tdid][TD_BoxSizeX])));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeY]) : (NTD_TD[tdid][TD_BoxSizeY])));
 		}
 		case CH_MODEL_ROTATION:
 		{
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][1]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][2]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][3]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strreplace(EditorLString, "#1", "%f");
-			strreplace(EditorLString, "#2", "%f");
-			strreplace(EditorLString, "#3", "%f");
-			format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotX], NTD_TD[tdid][TD_PrevRotY], NTD_TD[tdid][TD_PrevRotZ]);
-			CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE);	
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", NTD_TD[tdid][TD_PrevRotX]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", NTD_TD[tdid][TD_PrevRotY]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info3", "f", NTD_TD[tdid][TD_PrevRotZ]));
 		}
 		case CH_MODEL_ZOOM:
 		{
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][4]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strreplace(EditorLString, "#4", "%f");
-			format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotZoom]);
-			CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE);	
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info4", "f", NTD_TD[tdid][TD_PrevRotZoom]));
 		}
 		case CH_MODEL_COLOR:
 		{
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][5]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strunpack(EditorString, DLI[DL_MANUALVARCHANGE][6]);
-			strcat(EditorString, "\n");
-			strcat(EditorLString, EditorString);
-			strreplace(EditorLString, "#5", "%i");
-			strreplace(EditorLString, "#6", "%i");
-			format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevModelC1], NTD_TD[tdid][TD_PrevModelC2]);
-			CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE);	
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info5", "i", NTD_TD[tdid][TD_PrevModelC1]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info6", "i", NTD_TD[tdid][TD_PrevModelC2]));
 		}
 	}
-	strreplace(EditorLString, "#t", "\t");
-	ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE, DIALOG_STYLE_TABLIST_HEADERS, EditorString, EditorLString, DLS[DL_MANUALVARCHANGE][d_s_button1], DLS[DL_MANUALVARCHANGE][d_s_button2]);
+	ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE, DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "caption"), #, 
+	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button2"),
+	NDP_AUTO);
 	return 1;
 }
 
 ResetConfiguration(playerid)
 {
+	EditorPosX = 0;
 	EditorPosY = BUTTON_MAXHEIGHT;
 	EditorCursorColor = CURSOR_COLOR;
 	EditorButtonsColor = BUTTON_TD_COLOR;
 	EditorFasterKey = KEY_JUMP;
 	EditorAcceptKey = KEY_SPRINT;
 	EditorVersion = SCRIPT_VERSION_CHECK;
+	EditorCompactMode = false;
 	ToggleTextDrawShowForAll(false);
 	QuickSelectionShow(playerid, true);
 	EditorQuickSelect = true;
 	EditorMaxDialogItems = DEFAULT_DIALOG_ITEMS_PER_PAGE;
 	return 1;
-}
-
-Lang(lang)
-{
-	if(EditorLanguage == lang) return true;
-	return false;
 }
 
 QuickSelectionShow(playerid, bool:enable)
@@ -2527,23 +2491,27 @@ ColorDialog(playerid, cstate)
 {
 	if(cstate == 0)
 	{
-		CreateDialogOnLanguageData(playerid, DL_COLORCHANGELIST1);
-		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST1);
 		NTD_User[User_ChangingColorBar] = false;
-		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_COLORCHANGELIST1][d_s_button1], DLS[DL_COLORCHANGELIST1][d_s_button2]);
+		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, 
+		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "caption"), 
+		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "infos"),
+		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "button1"), 
+		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "button2"));
 		PlayerSelectTD(playerid, false);
 	}
 	else
 	{
-		CreateDialogOnLanguageData(playerid, DL_COLORCHANGELIST2);
-		CreateDialogCaptionOnLangData(DL_COLORCHANGELIST2);
 		NTD_User[User_ChangingColorBar] = false;
 		if(cstate == 2)
 		{
 			NTD_User[User_ChangingMColorState] = 0;
 			NTD_User[User_ChangingColorBar] = true;
 		}
-		ShowPlayerDialog(playerid, DIALOG_COLOR2, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_COLORCHANGELIST2][d_s_button1], DLS[DL_COLORCHANGELIST2][d_s_button2]);
+		ShowPlayerDialog(playerid, DIALOG_COLOR2, DIALOG_STYLE_LIST, 
+		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "caption"), 
+		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "infos"),
+		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "button1"), 
+		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "button2"));
 		PlayerSelectTD(playerid, false);
 	}
 	return 1;
@@ -2576,10 +2544,11 @@ ToggleTextDrawShowForAll(bool:toggle)
 
 LoadConfigurations()
 {
-	if(Exists(SETTINGS_FILEPATH))
+	printf("Loading Configuration: %s", MakePath(SETTINGS_FILEPATH, true));
+	if(Exists( MakePath(SETTINGS_FILEPATH, true) ))
 	{
 		new Node:node;
-		JSON_ParseFile(SETTINGS_FILEPATH, node);
+		JSON_ParseFile( MakePath(SETTINGS_FILEPATH, true) , node);
 		JSON_GetInt(node, "x", EditorPosX);
 		JSON_GetInt(node, "y", EditorPosY);
 		JSON_GetInt(node, "hcolor", EditorCursorColor);
@@ -2614,7 +2583,8 @@ SaveConfigurations()
 		"languagefile", JSON_String(EditorLanguageFile),
 		"maxdialogitems", JSON_Int(EditorMaxDialogItems)
 	);
-	JSON_SaveFile(SETTINGS_FILEPATH, node);
+	JSON_SaveFile(MakePath(SETTINGS_FILEPATH, true), node);
+	printf("Saving Configuration: %s", MakePath(SETTINGS_FILEPATH, true));
 	return 1;
 }
 
@@ -2659,6 +2629,18 @@ MakePath(const path[], bool:addScriptfiles)
                             __/ |                   __/ |                                                                         
                            |___/                   |___/                                                                          
 */
+
+GetLanguageIndexFromName(const langName[])
+{
+	foreach(new i : I_LANGUAGES)
+	{
+		if(!strcmp(Language[i][l_name], langName, false))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
 
 AddLanguageToList(const name[], const author[], const version[], Node:messagesNode, Node:gametextsNode, Node:dialogsNode)
 {
@@ -2719,8 +2701,7 @@ LoadLanguages()
 
 ChangeEditorLanguage(index)
 {
-	NTD_User[User_LanguageIndex] = index;
-	EditorLanguage = LANGUAGE_LOADED;
+	EditorLanguage = GetLanguageIndexFromName(Language[index][l_name]);
 	format(EditorLanguageFile, sizeof EditorLanguageFile, Language[index][l_name]);
 	return 1;
 }
@@ -2738,117 +2719,31 @@ ShowLanguageChangeDialog(playerid, ondialogid)
 	return 1;
 }
 
-GetTemplatesAsLanguage(langname[])
-{
-	new tc = GetTickCount();
-	if(fexist("ntd/templates.xml"))
-	{
-		printf("[NTD] Loading templates from \"%s\" as language \"%s\"", "ntd/templates.xml", langname);
-		new File:lfile = fopen("ntd/templates.xml", io_read);
-		if(lfile)
-		{
-			Iter_Clear(I_TEMPLATES);
-			new line[320], template_name[60], template_string[258];
-			new mline[2], bool:template_extract_mode = false;
-			while(fread(lfile, line)) 
-			{
-				if(template_extract_mode)
-				{
-					mline[0] = strfind(line, "</template>", true);
-					if(mline[0] != -1)
-					{
-						template_extract_mode = false;
-						continue;
-					}
-					else
-					{
-						mline[1] = strfind(line, "<templatedata>", true);
-						if(mline[1] != -1)
-						{
-							strmid(template_string, line, (mline[1] + 14), strlen(line));
-							new index = Iter_Free(I_TEMPLATES);
-							VALID_ITER_INDEX(I_TEMPLATES, index)
-							{
-								Iter_Add(I_TEMPLATES, index);
-								format(Template[index][Template_Name], 60, template_name);
-								format(Template[index][Template_Data], 258, template_string);
-							}
-							else break;
-							template_extract_mode = false;
-							continue;
-						}
-					}
-				}
-				else
-				{
-					mline[0] = strfind(line, "<template name", true);
-					if(mline[0] != -1 && strfind(line, langname, true) != -1)
-					{
-						mline[1] = -1;
-						for(new i = mline[0] + 15; i < strlen(line); i++)
-						{
-							if(line[i] == '"' && mline[1] == -1) 
-								mline[1] = i;
-							else if(mline[1] != -1 && line[i] == '"')
-							{
-								strmid(template_name, line, (mline[1] + 1), i);
-								template_extract_mode = true;
-								break;
-							}
-						}
-					}
-					else continue;
-				}
-			}
-			fclose(lfile);
-			printf("[NTD] Templates loaded in %ims", (GetTickCount() - tc));
-			return 1;
-		}
-	}
-	return 0;
-}
-
-CreateDialogCaptionOnLangData(dialoglanguageid)
-{
-	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", DLS[dialoglanguageid][d_s_caption]);
-	strreplace(EditorString, "#x", "\x");
-	return 1;
-}
-
-
-
-CreateDialogOnLanguageData(playerid, dialoglanguageid)
-{
-	EditorLString = "";
-	for(new i; i < MAX_NTD_DIALOG_INFO; i++)
-	{
-		if(strlen(DLI[dialoglanguageid][i]) > 1)
-		{
-			strunpack(EditorString, DLI[dialoglanguageid][i]);
-			strreplace(EditorString, "#t", "\t");
-			strreplace(EditorString, "#n", "\n");
-			switch(dialoglanguageid)
-			{
-				case DL_TDLIST, DL_PROJECTSLIST:
-				{
-					AddDialogListitem(playerid, EditorString);
-				}
-				default:
-				{
-					if(i > 0) strcat(EditorLString, "\n");
-					strcat(EditorLString, EditorString);
-				}
-			}
-		}
-	}
-	return 1;
-}
-
-GetLanguageMessage(const key[], type, const subKey[] = "\1")
+stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] = "", GLOBAL_TAG_TYPES:...)
 {
 	new langMessageStr[258];
-	new langID = NTD_User[User_LanguageIndex];
-	
+	new langID = EditorLanguage;
+	new argumentString[10][128];
+	new args = numargs();
+	new tmpArgsMacroStr[10];
+	if(EditorLanguage == -1)
+	{
+		langMessageStr = "Language Data Error";
+		return langMessageStr;
+	}
+	if(args > 4)
+	{
+		for(new a = 4; a < args; a++)
+		{
+			switch( fmat[(a - 4)] )
+			{
+				case 's': GetArgStr(a, argumentString[a - 4]);
+				case 'i': format(argumentString[a - 4], 128, "%i", getarg(a));
+				case 'f': format(argumentString[a - 4], 128, "%f", getarg(a));
+				case 'x': format(argumentString[a - 4], 128, "%x", getarg(a));
+			}
+		}
+	}
 	switch(type)
 	{
 		case LANG_TYPE_MESSAGES: JSON_GetString(Language[langID][l_messagesNode], key, langMessageStr);
@@ -2867,15 +2762,39 @@ GetLanguageMessage(const key[], type, const subKey[] = "\1")
 					{
 						if(i > 0)
 							strcat(langMessageStr, "\n");
-						strcat(langMessageStr, tmpDialogInfoStr);
+						if(args > 4)
+						{
+							for(new a = 0; a < (args - 4); a++)
+							{
+								format(tmpArgsMacroStr, 10, "#%i", (a + 1));
+								strreplace(tmpDialogInfoStr, tmpArgsMacroStr, argumentString[a]);
+							}
+						}
+						strcat(langMessageStr,  tmpDialogInfoStr);
 					}
 					else break;
 				}
 			}
-			else JSON_GetString(tmpDialogNode, subKey, langMessageStr);
+			else if(!strcmp(subKey, "caption", true))
+			{
+				if(JSON_GetString(tmpDialogNode, subKey, langMessageStr) == 0)
+				{
+					strins(langMessageStr, CAPTION_TEXT, 0);
+				}
+				else langMessageStr = "Language Data Error";
+				
+			}
+			else
+			{
+				if(JSON_GetString(tmpDialogNode, subKey, langMessageStr) != 0)
+				{
+					langMessageStr = "Language Data Error";
+				}
+			}
+			
 		}
 	}
-	strreplace(EditorLString, "#t", "\t");
-	strreplace(EditorLString, "#n", "\n");
+	strreplace(langMessageStr, "#t", "\t");
+	strreplace(langMessageStr, "#n", "\n");
 	return langMessageStr;
 }

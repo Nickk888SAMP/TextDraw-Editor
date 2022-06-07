@@ -28,7 +28,7 @@ public OnFilterScriptInit()
 		SendRconCommand("unloadfs ntd");
 		return 1;
 	}
-	if(!Exists(SETTINGS_FILEPATH))
+	if(!Exists( MakePath(SETTINGS_FILEPATH, true) ))
 	{
 		EditorPosX = 0;
 		EditorPosY = BUTTON_MAXHEIGHT;
@@ -39,7 +39,7 @@ public OnFilterScriptInit()
 		EditorQuickSelect = true;
 		EditorTextDrawShowForAll = false;
 		EditorCompactMode = false;
-		EditorLanguage = LANG_NONE;
+		EditorLanguage = -1;
 		EditorMaxDialogItems = DEFAULT_DIALOG_ITEMS_PER_PAGE;
 		format(EditorVersion, sizeof EditorVersion, SCRIPT_VERSION_CHECK);
 		SaveConfigurations();
@@ -163,7 +163,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				new index = Iter_Index(I_LANGUAGES, listitem);
 				ChangeEditorLanguage(index);
 				SaveConfigurations();
-				CallNTDCommand(playerid);
 			}
 		}
 	}
@@ -261,8 +260,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					NTD_User[User_ManualChangeType] = listitem;
-					CreateDialogOnLanguageData(playerid, DL_MANUALVARCHANGE1);
-					CreateDialogCaptionOnLangData(DL_MANUALVARCHANGE1);
 					switch(NTD_User[User_ChangingState])
 					{
 						case CH_POSITION:
@@ -319,7 +316,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								}
 								case 2: //Z
 								{
-									strreplace(EditorLString, "#1", "Y");
+									strreplace(EditorLString, "#1", "Z");
 									strreplace(EditorLString, "#2", "%f");
 									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotZ]);
 								}
@@ -350,7 +347,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							}
 						}
 					}
-					ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE1, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_MANUALVARCHANGE1][d_s_button1], DLS[DL_MANUALVARCHANGE1][d_s_button2]);
+					ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE1, DIALOG_STYLE_INPUT, 
+					GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "caption"), 
+					EditorLString, 
+					GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button1"), 
+					GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button2"));
 				}
 			}
 			case DIALOG_SPRITES2:
@@ -384,9 +385,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(listitem == 0) //Wpisz recznie
 					{
-						CreateDialogOnLanguageData(playerid, DL_SPRITECHANGE);
-						CreateDialogCaptionOnLangData(DL_SPRITECHANGE);
-						ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_SPRITECHANGE][d_s_button1], DLS[DL_SPRITECHANGE][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "caption"), 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "infos"), 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "button2"));
 					}
 					else if(listitem == 1) //Biblioteka
 					{
@@ -410,8 +413,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						strcat(EditorLString, SPRITE_TYPE_17"\n");
 						strcat(EditorLString, SPRITE_TYPE_18"\n");
 						strcat(EditorLString, SPRITE_TYPE_19);
-						CreateDialogCaptionOnLangData(DL_SPRITECHANGE);
-						ShowPlayerDialog(playerid, DIALOG_SPRITES2, DIALOG_STYLE_LIST, EditorString, EditorLString,  DLS[DL_SPRITECHANGE][d_s_button1], DLS[DL_SPRITECHANGE][d_s_button2]);
+						//
+						ShowPlayerDialog(playerid, DIALOG_SPRITES2, DIALOG_STYLE_LIST, 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "caption"), 
+						EditorLString, 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("spritechange", LANG_TYPE_DIALOGS, "button2"));
 					}
 				}
 				else ShowEditorEx(playerid);
@@ -471,21 +478,25 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							for(new i = 1; i < sizeof Premade_Colors; i++)
 							{
-								format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
-								strcat(EditorLString, EditorString);
+								AddDialogListitem(playerid, "{%06x}############################", (Premade_Colors[i][0] >>> 8));
 							}
-							CreateDialogCaptionOnLangData(DL_OVERRIDECOLORCHANGE);
-							ShowPlayerDialog(playerid, DIALOG_SETTINGSCOLOR, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_OVERRIDECOLORCHANGE][d_s_button1], DLS[DL_OVERRIDECOLORCHANGE][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_SETTINGSCOLOR, DIALOG_STYLE_LIST, 
+							GetLanguageMessage("overridecolorchange", LANG_TYPE_DIALOGS, "caption"), #, 
+							GetLanguageMessage("overridecolorchange", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("overridecolorchange", LANG_TYPE_DIALOGS, "button2"),
+							NDP_AUTO);
 						}
 						case 2: //Zmien kolor przyciskow
 						{
 							for(new i = 1; i < sizeof Premade_Colors; i++)
 							{
-								format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
-								strcat(EditorLString, EditorString);
+								AddDialogListitem(playerid, "{%06x}############################", (Premade_Colors[i][0] >>> 8));
 							}
-							CreateDialogCaptionOnLangData(DL_BUTTONSCOLORCHANGE);
-							ShowPlayerDialog(playerid, DIALOG_SETTINGSCOLOR1, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_BUTTONSCOLORCHANGE][d_s_button1], DLS[DL_BUTTONSCOLORCHANGE][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_SETTINGSCOLOR1, DIALOG_STYLE_LIST, 
+							GetLanguageMessage("buttonscolorchange", LANG_TYPE_DIALOGS, "caption"), #, 
+							GetLanguageMessage("buttonscolorchange", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("buttonscolorchange", LANG_TYPE_DIALOGS, "button2"),
+							NDP_AUTO);
 						}
 						case 3: //Odwroc Shift z Spacja
 						{
@@ -518,9 +529,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE_SETTINGS);
 						case 8: //Ustawienia fabryczne
 						{
-							CreateDialogOnLanguageData(playerid, DL_SETTINGSRESET);
-							CreateDialogCaptionOnLangData(DL_SETTINGSRESET);
-							ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_SETTINGSRESET][d_s_button1], DLS[DL_SETTINGSRESET][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, 
+							GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "infos"), 
+							GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "button2"));
 						}
 					}
 				}
@@ -533,8 +546,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					new index = Iter_Index(I_LANGUAGES, listitem);
 					ChangeEditorLanguage(index);
 					SaveConfigurations();
-					CallNTDCommand(playerid);
-					CallNTDCommand(playerid);
 					ShowInfo(playerid, GetLanguageMessage("infolanguagechanged", LANG_TYPE_MESSAGES));
 				}
 				else ShowEditorEx(playerid);
@@ -583,9 +594,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(listitem == 0) //Zmien Model
 					{
-						CreateDialogOnLanguageData(playerid, DL_PREVIEWMODELID);
-						CreateDialogCaptionOnLangData(DL_PREVIEWMODELID);
-						ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL1, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_PREVIEWMODELID][d_s_button1], DLS[DL_PREVIEWMODELID][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL1, DIALOG_STYLE_INPUT, 
+						GetLanguageMessage("previewmodelid", LANG_TYPE_DIALOGS, "caption"), 
+						GetLanguageMessage("previewmodelid", LANG_TYPE_DIALOGS, "infos"), 
+						GetLanguageMessage("previewmodelid", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("previewmodelid", LANG_TYPE_DIALOGS, "button2"));
 					}
 					else if(listitem > 0)
 					{
@@ -606,7 +619,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES));
 					format(EditorString, sizeof EditorString, " "HEX_PALETTE_3"scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", GetProjectName(NTD_User[User_ProjectIndex]));
 					strcat(EditorLString, EditorString);
-					strreplace(EditorLString, "#n", "\n");
 					ShowInfo(playerid, EditorLString);
 				}
 				else 
@@ -617,9 +629,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					NTD_User[User_ExportType] = listitem;
-					CreateDialogOnLanguageData(playerid, DL_EXPORTWITHARRAY);
-					CreateDialogCaptionOnLangData(DL_EXPORTWITHARRAY);
-					ShowPlayerDialog(playerid, DIALOG_EXPORT2, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_EXPORTWITHARRAY][d_s_button1], DLS[DL_EXPORTWITHARRAY][d_s_button2]);
+					ShowPlayerDialog(playerid, DIALOG_EXPORT2, DIALOG_STYLE_MSGBOX, 
+					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "caption"), 
+					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "infos"), 
+					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "button1"), 
+					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "button2"));
 				}
 				else ShowEditorEx(playerid);
 			}
@@ -711,34 +725,28 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						for(new i; i < sizeof Premade_Colors; i++)
 						{
-							format(EditorString, sizeof EditorString, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
-							strcat(EditorLString, EditorString);
+							AddDialogListitem(playerid, "{%06x}############################\n", (Premade_Colors[i][0] >>> 8));
 						}
-						CreateDialogCaptionOnLangData(DL_PREMADECOLORS);
-						ShowPlayerDialog(playerid, DIALOG_COLOR3, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PREMADECOLORS][d_s_button1], DLS[DL_PREMADECOLORS][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_COLOR3, DIALOG_STYLE_LIST, 
+						GetLanguageMessage("premadecolors", LANG_TYPE_DIALOGS, "caption"), #, 
+						GetLanguageMessage("premadecolors", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("premadecolors", LANG_TYPE_DIALOGS, "button2"),
+						NDP_AUTO);
 					}
 					else if(listitem == 1) //Kombinator
 					{
-						new color[4], tmp_str[12];
+						new color[4];
 						switch(NTD_User[User_ChangingMColorState])
 						{
 							case 0: SplitRGBA(NTD_TD[tdid][TD_Color],color[0],color[1],color[2],color[3]);
 							case 1: SplitRGBA(NTD_TD[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
 							case 2: SplitRGBA(NTD_TD[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
 						}
-						CreateDialogOnLanguageData(playerid, DL_COLORCHANGE);
-						CreateDialogCaptionOnLangData(DL_COLORCHANGE);
-						format(tmp_str, sizeof tmp_str, "%i", color[0]);
-						strreplace(EditorLString, "#1", tmp_str);
-						format(tmp_str, sizeof tmp_str, "%i", color[1]);
-						strreplace(EditorLString, "#2", tmp_str);
-						format(tmp_str, sizeof tmp_str, "%i", color[2]);
-						strreplace(EditorLString, "#3", tmp_str);
-						format(tmp_str, sizeof tmp_str, "%i", color[3]);
-						strreplace(EditorLString, "#4", tmp_str);
-						format(tmp_str, sizeof tmp_str, "%x", NTD_TD[tdid][TD_Color]);
-						strreplace(EditorLString, "#5", tmp_str);
-						ShowPlayerDialog(playerid, DIALOG_COLOR4, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_COLORCHANGE][d_s_button1], DLS[DL_COLORCHANGE][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_COLOR4, DIALOG_STYLE_INPUT, 
+						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "caption"), 
+						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "infos", color[0], color[1], color[2], color[3], NTD_TD[tdid][TD_Color]), 
+						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "button2"));
 					}
 					else if(listitem == 2) //Przezroczystosc
 					{
@@ -866,11 +874,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 3: //Zmien nazwe parametru
 						{
-							CreateDialogOnLanguageData(playerid, DL_VARIABLECHANGE);
-							CreateDialogCaptionOnLangData(DL_VARIABLECHANGE);
-							strreplace(EditorLString, "#1", GetProcessedTDVarName(NTD_User[User_ChoosenTDID]));
-							strreplace(EditorLString, "#2", NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
-							ShowPlayerDialog(playerid, DIALOG_CHANGEPARAMNAME, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_VARIABLECHANGE][d_s_button1], DLS[DL_VARIABLECHANGE][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_CHANGEPARAMNAME, DIALOG_STYLE_INPUT, 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "infos", GetProcessedTDVarName(NTD_User[User_ChoosenTDID]), NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]), 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button2"));
 						}
 						case 4: //Usun
 						{
@@ -881,10 +889,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 								strcat(formatedtd, "...");
 							}
-							CreateDialogOnLanguageData(playerid, DL_DELETECONFIRM);
-							CreateDialogCaptionOnLangData(DL_DELETECONFIRM);
-							strreplace(EditorLString, "#1", formatedtd);
-							ShowPlayerDialog(playerid, DIALOG_DELETETD, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_DELETECONFIRM][d_s_button1], DLS[DL_DELETECONFIRM][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_DELETETD, DIALOG_STYLE_MSGBOX, 
+							GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "infos", "s", formatedtd), 
+							GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "button2"));
 						}
 					}
 					
@@ -970,8 +979,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							format(EditorString, sizeof EditorString, "%s\n", Template[i][Template_Name]);
 							strcat(EditorLString, EditorString);
 						}
-						CreateDialogCaptionOnLangData(DL_USETEMPLATE);
-						ShowPlayerDialog(playerid, DIALOG_MANAGE4, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_USETEMPLATE][d_s_button1], DLS[DL_USETEMPLATE][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_MANAGE4, DIALOG_STYLE_LIST, 
+						GetLanguageMessage("usetemplate", LANG_TYPE_DIALOGS, "caption"), 
+						EditorLString, 
+						GetLanguageMessage("usetemplate", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("usetemplate", LANG_TYPE_DIALOGS, "button2"));
 					}
 				}
 				else ShowEditorEx(playerid, true);
@@ -984,9 +996,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						return 0;
 					if(listitem == 0) //Stworz nowy TD
 					{
-						CreateDialogOnLanguageData(playerid, DL_NEWTEXTDRAW);
-						CreateDialogCaptionOnLangData(DL_NEWTEXTDRAW);
-						ShowPlayerDialog(playerid, DIALOG_MANAGE3, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_NEWTEXTDRAW][d_s_button1], DLS[DL_NEWTEXTDRAW][d_s_button2]);
+						ShowPlayerDialog(playerid, DIALOG_MANAGE3, DIALOG_STYLE_LIST, 
+						GetLanguageMessage("newtextdraw", LANG_TYPE_DIALOGS, "caption"), 
+						GetLanguageMessage("newtextdraw", LANG_TYPE_DIALOGS, "infos"), 
+						GetLanguageMessage("newtextdraw", LANG_TYPE_DIALOGS, "button1"), 
+						GetLanguageMessage("newtextdraw", LANG_TYPE_DIALOGS, "button2"));
 					}
 					else //TDS
 					{
@@ -1032,9 +1046,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							if(LoadProject(NTD_User[User_ProjectIndex]))
 							{
-								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES));
-								strreplace(EditorLString, "#1", GetProjectName(NTD_User[User_ProjectIndex]));
-								ShowInfo(playerid, EditorLString);
+								ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, GetProjectName(NTD_User[User_ProjectIndex])));
 								ShowWelcomeScreen(false);
 								RelayerEditor();
 								ShowEditorEx(playerid);
@@ -1043,17 +1055,20 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 1: //Zmien nazwe
 						{
-							CreateDialogOnLanguageData(playerid, DL_PROJECTNAMECHANGE);
-							CreateDialogCaptionOnLangData(DL_PROJECTNAMECHANGE);
-							strreplace(EditorLString, "#1", GetProjectName(NTD_User[User_ProjectIndex]));
-							ShowPlayerDialog(playerid, DIALOG_RENAMEPROJECT, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_PROJECTNAMECHANGE][d_s_button1], DLS[DL_PROJECTNAMECHANGE][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_RENAMEPROJECT, DIALOG_STYLE_INPUT, 
+							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "infos", "s", GetProjectName(NTD_User[User_ProjectIndex])), 
+							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "button2"));
 							PlayerSelectTD(playerid, false);
 						}
 						case 2: //Usun
 						{
-							CreateDialogOnLanguageData(playerid, DL_DELETEPROJECTCONFIRM);
-							CreateDialogCaptionOnLangData(DL_DELETEPROJECTCONFIRM);
-							ShowPlayerDialog(playerid, DIALOG_DELETEPROJECT, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_DELETEPROJECTCONFIRM][d_s_button1], DLS[DL_DELETEPROJECTCONFIRM][d_s_button2]);
+							ShowPlayerDialog(playerid, DIALOG_DELETEPROJECT, DIALOG_STYLE_MSGBOX, 
+							GetLanguageMessage("deleteprojectconfirm", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("deleteprojectconfirm", LANG_TYPE_DIALOGS, "infos"), 
+							GetLanguageMessage("deleteprojectconfirm", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("deleteprojectconfirm", LANG_TYPE_DIALOGS, "button2"));
 						}
 					}
 				}
@@ -1065,11 +1080,24 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(listitem == INVALID_LISTITEM) 
 						return 0;
-					new index = Iter_Index(I_PROJECTS, listitem);
-					NTD_User[User_ProjectIndex] = index;
-					CreateDialogOnLanguageData(playerid, DL_PROJECTSOPTIONS);
-					CreateDialogCaptionOnLangData(DL_PROJECTSOPTIONS);
-					ShowPlayerDialog(playerid, DIALOG_OPEN2, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PROJECTSOPTIONS][d_s_button1], DLS[DL_PROJECTSOPTIONS][d_s_button2]);
+					switch(listitem)
+					{
+						case INVALID_LISTITEM: return 0;
+						case 0: 
+						{
+
+						}
+						default:
+						{
+							new index = Iter_Index(I_PROJECTS, (listitem - 1));
+							NTD_User[User_ProjectIndex] = index;
+							ShowPlayerDialog(playerid, DIALOG_OPEN2, DIALOG_STYLE_LIST, 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", NTD_Projects[index][Pro_fileName]), 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "infos"), 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button2"));
+						}
+					}
 				}
 				else ShowEditorEx(playerid);
 			}
@@ -1139,9 +1167,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		if(clickedid == B_Exit)
 		{
-			CreateDialogOnLanguageData(playerid, DL_EXITCONFIRMATION);
-			CreateDialogCaptionOnLangData(DL_EXITCONFIRMATION);
-			ShowPlayerDialog(playerid, DIALOG_EXIT, DIALOG_STYLE_MSGBOX, EditorString, EditorLString, DLS[DL_EXITCONFIRMATION][d_s_button1], DLS[DL_EXITCONFIRMATION][d_s_button2]);
+			ShowPlayerDialog(playerid, DIALOG_EXIT, DIALOG_STYLE_MSGBOX, 
+			GetLanguageMessage("exitconfirmation", LANG_TYPE_DIALOGS, "caption"), 
+			GetLanguageMessage("exitconfirmation", LANG_TYPE_DIALOGS, "infos"), 
+			GetLanguageMessage("exitconfirmation", LANG_TYPE_DIALOGS, "button1"), 
+			GetLanguageMessage("exitconfirmation", LANG_TYPE_DIALOGS, "button2"));
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}
@@ -1149,17 +1179,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60];
 			if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
-				format(invertedstr, sizeof invertedstr, HEX_PALETTE_3"%s", GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
+				format(invertedstr, sizeof invertedstr, "%s%s", HEX_PALETTE_3, GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
 				
-			format(quickselectstr, sizeof quickselectstr, HEX_PALETTE_3"%s", GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
-			format(tdvisistr, sizeof tdvisistr, HEX_PALETTE_3"%s", GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
-			format(compmodestr, sizeof compmodestr, HEX_PALETTE_2"%s", GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+			format(quickselectstr, sizeof quickselectstr, "%s%s", (EditorQuickSelect ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+			format(tdvisistr, sizeof tdvisistr, "%s%s", (EditorTextDrawShowForAll ? HEX_PALETTE_3 : HEX_PALETTE_2), GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
+			format(compmodestr, sizeof compmodestr, "%s%s", (EditorCompactMode ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
 			
-			format(EditorLString, sizeof EditorLString, GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos"));
-			strreplace(EditorLString, "#1", invertedstr);
-			strreplace(EditorLString, "#2", quickselectstr);
-			strreplace(EditorLString, "#3", tdvisistr);
-			strreplace(EditorLString, "#4", compmodestr);
+			format(EditorLString, sizeof EditorLString, GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "ssss", invertedstr, quickselectstr, tdvisistr, compmodestr));
 			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST, 
 				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
 				EditorLString, 
@@ -1172,18 +1198,20 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 			{
-				CreateDialogOnLanguageData(playerid, DL_PREVIEWMODELCHANGELIST);
-				CreateDialogCaptionOnLangData(DL_PREVIEWMODELCHANGELIST);
-				ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_PREVIEWMODELCHANGELIST][d_s_button1], DLS[DL_PREVIEWMODELCHANGELIST][d_s_button2]);
+				ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL, DIALOG_STYLE_LIST,
+				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "caption"), 
+				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "infos"), 
+				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "button1"), 
+				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "button2"));
 				PlayerSelectTD(playerid, false);
 			}
 			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				CreateDialogOnLanguageData(playerid, DL_MAXBARPERCCHANGE);
-				CreateDialogCaptionOnLangData(DL_MAXBARPERCCHANGE);
-				strreplace(EditorLString, "#1", "%f");
-				format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_BarMaxPercentage]);
-				ShowPlayerDialog(playerid, DIALOG_MAXBARPERCCHANGE, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_MAXBARPERCCHANGE][d_s_button1], DLS[DL_MAXBARPERCCHANGE][d_s_button2]);
+				ShowPlayerDialog(playerid, DIALOG_MAXBARPERCCHANGE, DIALOG_STYLE_INPUT, 
+				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "caption"), 
+				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "infos", "f", NTD_TD[tdid][TD_BarMaxPercentage]), 
+				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "button1"), 
+				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "button2"));
 				PlayerSelectTD(playerid, false);
 			}
 			return 1;
@@ -1301,15 +1329,19 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			if(NTD_TD[tdid][TD_Font] != 4 && NTD_TD[tdid][TD_Font] != 5) 
 			{
-				CreateDialogOnLanguageData(playerid, DL_TEXTCHANGE);
-				CreateDialogCaptionOnLangData(DL_TEXTCHANGE);
-				ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_TEXTCHANGE][d_s_button1], DLS[DL_TEXTCHANGE][d_s_button2]);
+				ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, 
+				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "caption"), 
+				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "infos"), 
+				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "button1"), 
+				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "button2"));
 			}
 			else if(NTD_TD[tdid][TD_Font] == 4) 
 			{
-				CreateDialogOnLanguageData(playerid, DL_SPRITECHANGELIST);
-				CreateDialogCaptionOnLangData(DL_SPRITECHANGELIST);
-				ShowPlayerDialog(playerid, DIALOG_SPRITES1, DIALOG_STYLE_LIST,EditorString, EditorLString, DLS[DL_SPRITECHANGELIST][d_s_button1], DLS[DL_SPRITECHANGELIST][d_s_button2]);
+				ShowPlayerDialog(playerid, DIALOG_SPRITES1, DIALOG_STYLE_LIST, 
+				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "caption"), 
+				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "infos"), 
+				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "button1"), 
+				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "button2"));
 			}
 			else if(NTD_TD[tdid][TD_Font] == 5) 
 			{
@@ -1331,9 +1363,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				}
 				default:
 				{
-					CreateDialogOnLanguageData(playerid, DL_BOXSIZECHANGELIST);
-					CreateDialogCaptionOnLangData(DL_BOXSIZECHANGELIST);
-					ShowPlayerDialog(playerid, DIALOG_SIZE, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_BOXSIZECHANGELIST][d_s_button1], DLS[DL_BOXSIZECHANGELIST][d_s_button2]);
+					ShowPlayerDialog(playerid, DIALOG_SIZE, DIALOG_STYLE_LIST, 
+					GetLanguageMessage("boxsizechangelist", LANG_TYPE_DIALOGS, "caption"), 
+					GetLanguageMessage("boxsizechangelist", LANG_TYPE_DIALOGS, "infos"), 
+					GetLanguageMessage("boxsizechangelist", LANG_TYPE_DIALOGS, "button1"), 
+					GetLanguageMessage("boxsizechangelist", LANG_TYPE_DIALOGS, "button2"));
 				}
 			}
 			PlayerSelectTD(playerid, false);
@@ -1372,24 +1406,22 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			ShowEditorEx(playerid);
 			return 1;
 		}
-		else if(clickedid == B_NewProject)
+		/*else if(clickedid == B_NewProject)
 		{
 			if(Iter_Count(I_PROJECTS) < MAX_NTD_PROJECTS)
 			{
-				CreateDialogOnLanguageData(playerid, DL_NEWPROJECT);
-				CreateDialogCaptionOnLangData(DL_NEWPROJECT);
-				ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_NEWPROJECT][d_s_button1], DLS[DL_NEWPROJECT][d_s_button2]);
+				//ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_NEWPROJECT][d_s_button1], DLS[DL_NEWPROJECT][d_s_button2]);
 				PlayerSelectTD(playerid, false);
 			}
 			else ShowInfo(playerid, GetLanguageMessage("infoprojectlimit", LANG_TYPE_MESSAGES));
 			return 1;
-		}
+		}*/
 		else if(clickedid == B_CloseProject)
 		{
 			if(SaveProject(NTD_User[User_ProjectIndex]) == 0) 
 				ShowInfo(playerid, GetLanguageMessage("infoprojectsaveerror", LANG_TYPE_MESSAGES));
 			else 
-				ShowInfo(playerid,GetLanguageMessage("infoprojectclosed", LANG_TYPE_MESSAGES));
+				ShowInfo(playerid, GetLanguageMessage("infoprojectclosed", LANG_TYPE_MESSAGES));
 			
 			foreach(new i : I_TEXTDRAWS)
 				DestroyTD(i, i);
@@ -1412,9 +1444,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Export)
 		{
-			CreateDialogOnLanguageData(playerid, DL_EXPORTPROJECT);
-			CreateDialogCaptionOnLangData(DL_EXPORTPROJECT);
-			ShowPlayerDialog(playerid, DIALOG_EXPORT, DIALOG_STYLE_LIST, EditorString, EditorLString, DLS[DL_EXPORTPROJECT][d_s_button1], DLS[DL_EXPORTPROJECT][d_s_button2]);
+			ShowPlayerDialog(playerid, DIALOG_EXPORT, DIALOG_STYLE_LIST, 
+			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "caption"), 
+			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "infos"), 
+			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button1"), 
+			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button2"));
 			PlayerSelectTD(playerid, false);
 			return 1;
 		}

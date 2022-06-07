@@ -35,6 +35,7 @@
 #include <json>
 #include <YSI_Data\y_iterate>
 #include <YSI_Coding\y_stringhash>
+#include <YSI_Coding\y_va>
 
 /*
   ___                                        _      

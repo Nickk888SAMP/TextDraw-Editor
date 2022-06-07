@@ -25,7 +25,7 @@ new Iterator:I_TEXTDRAWS<MAX_NTD_TDS>;
                                                                        
 */
 new Text:E_Box;
-new Text:B_NewProject;
+//new Text:B_NewProject;
 new Text:B_OpenProject;
 new Text:B_CloseProject;
 new Text:B_Export;
@@ -69,7 +69,7 @@ new EditorCursorColor;
 new EditorButtonsColor;
 new EditorFasterKey;
 new EditorAcceptKey;
-new EditorLanguage = LANG_NONE;
+new EditorLanguage = -1;
 new EditorVersion[10];
 new EditorLString[1000];
 new EditorString[500];
