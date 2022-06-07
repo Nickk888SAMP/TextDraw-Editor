@@ -9,10 +9,10 @@
                                                                
                                                                
 */
-new Iterator:I_TEMPLATES<MAX_NTD_TEMPLATES>;
-new Iterator:I_LANGUAGES<MAX_NTD_LANGUAGES>;
-new Iterator:I_PROJECTS<MAX_NTD_PROJECTS>;
-new Iterator:I_TEXTDRAWS<MAX_NTD_TDS>;
+new Iterator:I_TEMPLATES<MAX_TEMPLATES>;
+new Iterator:I_LANGUAGES<MAX_LANGUAGES>;
+new Iterator:I_PROJECTS<MAX_PROJECTS>;
+new Iterator:I_TEXTDRAWS<MAX_TEXTDRAWS>;
 
 /*
   _______                 _     _____                                  
@@ -25,7 +25,7 @@ new Iterator:I_TEXTDRAWS<MAX_NTD_TDS>;
                                                                        
 */
 new Text:E_Box;
-//new Text:B_NewProject;
+new Text:B_Groups;
 new Text:B_OpenProject;
 new Text:B_CloseProject;
 new Text:B_Export;

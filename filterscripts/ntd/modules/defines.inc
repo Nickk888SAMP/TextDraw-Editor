@@ -23,26 +23,27 @@
                                            __/ |      
                                           |___/       
 */
-#define SCRIPT_VERSION 					"v7.0"
-#define SCRIPT_VERSION_CHECK 			"7.0"
-#define TD_PICKER_TEXT					"S"
+#define SCRIPT_VERSION 					                "v7.0"
+#define SCRIPT_VERSION_CHECK 			              "7.0"
+#define TD_PICKER_TEXT					                "S"
 
-#define MAX_NTD_TEMPLATES				50						//Max templates that can be loaded
-#define MAX_NTD_PROJECTS 				(124)					//Max projects that can be created and loaded
-#define MAX_NTD_TDS						(MAX_DIALOG_ITEMS - 1)	//Max TextDraws that can be created and loaded
-#define MAX_NTD_LANGUAGES				30						//Max languages that can be loaded
-#define MAX_NTD_SPRITES 				100						//Max sprites that can be loaded into library.
+#define MAX_TEMPLATES				                    50						            //Max templates that can be loaded
+#define MAX_PROJECTS 			  	                  (124)					            //Max projects that can be created and loaded
+#define MAX_TEXTDRAWS			                      (512 - 1)	                //Max TextDraws that can be created and loaded
+#define MAX_LANGUAGES				                    30						            //Max languages that can be loaded
+#define MAX_SPRITES 				                    100						            //Max sprites that can be loaded into library.
 
-#define CHANGING_VAR_TIME 				35						//The Update time for the editor
-#define MAXFORMATEDTD 					32						//Clamps the TextDraw name in the Dialogs
-#define CURSOR_COLOR 					-8388353				//Default Cursor Color
-#define BUTTON_TD_COLOR 				-1						//Default Buttons Color
-#define DIALOG_DIALOG_ADDER				1000 					//If there are coliding Dialog ID's, change this to fix it!
-#define TDPICKER_COLOR_ACTIVE 			0xFFFF00FF				//Color of the TD Picker when active
-#define TDPICKER_COLOR 					0xFFFFFF55				//Color of the TD Picker when inactive
-#define CONFIRM_SOUNDID					1083					//Confirmation Sound
-#define DEFAULT_DIALOG_ITEMS_PER_PAGE	NDP_AUTO
-#define MAX_DIALOG_ITEMS 				(512 + 1)
+#define CHANGING_VAR_TIME 				              35						            //The Update time for the editor
+#define MAXFORMATEDTD 					                32						            //Clamps the TextDraw name in the Dialogs
+#define CURSOR_COLOR 					                  -8388353				          //Default Cursor Color
+#define BUTTON_TD_COLOR 				                -1						            //Default Buttons Color
+#define DIALOG_DIALOG_ADDER				              1000 					            //If there are coliding Dialog ID's, change this to fix it!
+#define TDPICKER_COLOR_ACTIVE 			            0xFFFF00FF				      //Color of the TD Picker when active
+#define TDPICKER_COLOR 					                0xFFFFFFCC			       	//Color of the TD Picker when inactive
+#define CONFIRM_SOUNDID					                1083					  	        //Confirmation Sound
+#define DEFAULT_DIALOG_ITEMS_PER_PAGE	          NDP_AUTO
+#define MAX_DIALOG_ITEMS 				                (MAX_TEXTDRAWS + 1)
+
 
 /*
    _____           _                      
@@ -88,8 +89,8 @@
 #define BACKGROUND_BAR					"NTD_RESOURCES:BG_Bar"
 #define BUTTON_EXIT 					"NTD_RESOURCES:Button_Exit"
 #define BUTTON_SETTINGS 				"NTD_RESOURCES:Button_Settings"
-#define BUTTON_NEW 						"NTD_RESOURCES:Button_New"
-#define BUTTON_OPEN 					"NTD_RESOURCES:Button_Open"
+#define BUTTON_GROUPS 						"NTD_RESOURCES:Button_Groups"
+#define BUTTON_PROJECTS 					"NTD_RESOURCES:Button_Open"
 #define BUTTON_CLOSE 					"NTD_RESOURCES:Button_Close"
 #define BUTTON_EXPORT 					"NTD_RESOURCES:Button_Export"
 #define BUTTON_MANAGE 					"NTD_RESOURCES:Button_Manage"

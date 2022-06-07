@@ -12,34 +12,52 @@ RenameProject(index, newprojectname[])
 {
 	new string1[128], string2[128];
 	format(string1, sizeof string1, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));	
-	if(!Exists(string1)) 	
+	if(!Exists( MakePath(string1, true) )) 	
 		return -1;
-	format(string2, sizeof string2, PROJECTS_DIRECTORYPATH"/%s.%s", newprojectname, Extensions[ NTD_Projects[index][Pro_fileExtensionId] ][fe_extension]);	
-	if(Exists(string2)) 
+
+	format(string2, sizeof string2, PROJECTS_DIRECTORYPATH"/%s.%s", newprojectname, Extensions[ Projects[index][Pro_fileExtensionId] ][fe_extension]);	
+	if(Exists( MakePath(string2, true) )) 
 		return 3;
+
 	if(!IsValidString(newprojectname) || strlen(newprojectname) == 0 || strlen(newprojectname) > 40)
 		return 2;
-	
-	MoveFile(string1, string2);
+
+	MoveFile(MakePath(string1, true), MakePath(string2, true));
 	return 1;
 }
 
-CreateProject(projectname[])
+GetProjectIndexByName(const projectname[])
+{
+	foreach(new i : I_PROJECTS)
+	{
+		if(!strcmp(projectname, Projects[i][Pro_fileName], false))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+CreateProject(const projectname[])
 {
 	new filePath[256];
-	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s.ntd", projectname);			
+	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s.ntd", projectname);	
+	format(filePath, 256, MakePath(filePath, true));
+	print(filePath);
 	if(!Exists(filePath))
 	{
 		JSON_SaveFile(filePath, JSON_Object());
-		return 1;
+		ReadProjectsDirectory();
+		return GetProjectIndexByName(projectname);
 	}
-	return 0;
+	return -1;
 }
 
 ExportProject(index, exporttype=0, bool:intoarray = false)
 {
 	new filename[128], bool:clickableTD, publiccount, nonpubliccount, barscount;
 	format(filename, 128, EXPORTS_DIRECTORYPATH"/%s.pwn", GetProjectName(index));
+	print(filename);
 	if(Exists(MakePath(filename, true)))
 		fremove(filename);
 	
@@ -58,12 +76,12 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					//Count non custom vars
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-							else if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							if(TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) == 0) publiccount++;
+							else if(!TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) == 0) nonpubliccount++;
 						}
-						else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
+						else if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0) barscount++;
 					}
 					//Generate Non custom Vars
 					if(publiccount > 0)
@@ -84,7 +102,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					//Generate Custom Vars
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -92,7 +110,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -100,7 +118,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -111,7 +129,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 						{
 							format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -119,7 +137,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 						{
 							format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -127,7 +145,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -142,43 +160,43 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					barscount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non custom var name
 							{
-								format(EditorString, sizeof EditorString, "PublicTD[%i] = TextDrawCreate(%f, %f, \x22%s\x22);\n", publiccount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "PublicTD[%i] = TextDrawCreate(%f, %f, \x22%s\x22);\n", publiccount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawFont(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "TextDrawFont(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawLetterSize(PublicTD[%i], %f, %f);\n", publiccount, NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "TextDrawLetterSize(PublicTD[%i], %f, %f);\n", publiccount, TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawTextSize(PublicTD[%i], %f, %f);\n", publiccount, NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "TextDrawTextSize(PublicTD[%i], %f, %f);\n", publiccount, TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetOutline(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "TextDrawSetOutline(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetShadow(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "TextDrawSetShadow(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawAlignment(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "TextDrawAlignment(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "TextDrawColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawBoxColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "TextDrawBoxColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawUseBox(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "TextDrawUseBox(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetProportional(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "TextDrawSetProportional(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetSelectable(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "TextDrawSetSelectable(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(PublicTD[%i], %f, %f, %f, %f);\n", publiccount, NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(PublicTD[%i], %f, %f, %f, %f);\n", publiccount, TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(PublicTD[%i], %i, %i);\n", publiccount, NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(PublicTD[%i], %i, %i);\n", publiccount, TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 									
 								}
@@ -187,88 +205,88 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawFont(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "TextDrawFont(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawLetterSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "TextDrawLetterSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawTextSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "TextDrawTextSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetOutline(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "TextDrawSetOutline(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetShadow(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "TextDrawSetShadow(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawAlignment(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "TextDrawAlignment(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "TextDrawColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawBoxColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "TextDrawBoxColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawUseBox(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "TextDrawUseBox(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetProportional(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "TextDrawSetProportional(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetSelectable(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "TextDrawSetSelectable(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(%s, %i, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(%s, %i, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 									
 								}
 								fwrite(file, "\n");
 							}
 						}					
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 					fwrite(file, "\n//Player Textdraws\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non Custom var name
 							{
-								format(EditorString, sizeof EditorString, "PlayerTD[playerid][%i] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", nonpubliccount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "PlayerTD[playerid][%i] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", nonpubliccount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, PlayerTD[playerid][%i], %f, %f, %f, %f);\n", nonpubliccount, NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, PlayerTD[playerid][%i], %f, %f, %f, %f);\n", nonpubliccount, TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, PlayerTD[playerid][%i], %i, %i);\n", nonpubliccount, NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, PlayerTD[playerid][%i], %i, %i);\n", nonpubliccount, TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 								}
 								fwrite(file, "\n");
@@ -276,45 +294,45 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 								}
 								fwrite(file, "\n");
 							}
 						}
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 					fwrite(file, "\n/*Player Progress Bars\n");
@@ -322,23 +340,23 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non Custom var name
 							{
-								format(EditorString, sizeof EditorString, "PlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								format(EditorString, sizeof EditorString, "PlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 								fwrite(file, EditorString);
 								fwrite(file, "\n");
 								barscount++;
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 								fwrite(file, EditorString);
 								fwrite(file, "\n");
 							}
@@ -349,92 +367,92 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+							format(EditorString, sizeof EditorString, "%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawFont(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+							format(EditorString, sizeof EditorString, "TextDrawFont(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawLetterSize(%s, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+							format(EditorString, sizeof EditorString, "TextDrawLetterSize(%s, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawTextSize(%s, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+							format(EditorString, sizeof EditorString, "TextDrawTextSize(%s, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawSetOutline(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+							format(EditorString, sizeof EditorString, "TextDrawSetOutline(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawSetShadow(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+							format(EditorString, sizeof EditorString, "TextDrawSetShadow(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawAlignment(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+							format(EditorString, sizeof EditorString, "TextDrawAlignment(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+							format(EditorString, sizeof EditorString, "TextDrawColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+							format(EditorString, sizeof EditorString, "TextDrawBackgroundColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawBoxColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+							format(EditorString, sizeof EditorString, "TextDrawBoxColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawUseBox(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+							format(EditorString, sizeof EditorString, "TextDrawUseBox(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawSetProportional(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+							format(EditorString, sizeof EditorString, "TextDrawSetProportional(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "TextDrawSetSelectable(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+							format(EditorString, sizeof EditorString, "TextDrawSetSelectable(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 							fwrite(file, EditorString);
-							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+							if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 							{
-								format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+								format(EditorString, sizeof EditorString, "TextDrawSetPreviewModel(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+								format(EditorString, sizeof EditorString, "TextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(%s, %i, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+								format(EditorString, sizeof EditorString, "TextDrawSetPreviewVehCol(%s, %i, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 								fwrite(file, EditorString);
 								
 							}
 							fwrite(file, "\n");
 						}					
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 					fwrite(file, "//Player Textdraws\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+							format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawFont(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawAlignment(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawUseBox(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+							format(EditorString, sizeof EditorString, "PlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 							fwrite(file, EditorString);
-							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+							if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 							{
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+								format(EditorString, sizeof EditorString, "PlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 								fwrite(file, EditorString);
 							}
 							fwrite(file, "\n");
 						}
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 					fwrite(file, "\n/*Player Progress Bars\n");
@@ -442,11 +460,11 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+							format(EditorString, sizeof EditorString, "%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+							format(EditorString, sizeof EditorString, "SetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 							fwrite(file, EditorString);
 							fwrite(file, "\n");
 						}
@@ -458,7 +476,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				fwrite(file, "#include <a_samp>\n");
 				foreach(new i : I_TEXTDRAWS)
 				{
-					if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+					if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 					{
 						fwrite(file, "#include <progress2>\n");
 						fwrite(file, "//Requires \"progress2\" include by Southclaws\n");
@@ -472,12 +490,12 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					//Count non custom vars
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) publiccount++;
-							else if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) == 0) nonpubliccount++;
+							if(TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) == 0) publiccount++;
+							else if(!TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) == 0) nonpubliccount++;
 						}
-						else if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0) barscount++;
+						else if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0) barscount++;
 					}
 					//Generate Non custom Vars
 					if(publiccount > 0)
@@ -498,7 +516,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					//Generate Custom Vars
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -506,7 +524,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -514,7 +532,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(strlen(NTD_TD[i][TD_VarName]) != 0 && NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(strlen(TextDraw[i][TD_VarName]) != 0 && TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -525,7 +543,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 						{
 							format(EditorString, sizeof EditorString, "new Text:%s;\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -533,7 +551,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR) 
 						{
 							format(EditorString, sizeof EditorString, "new PlayerText:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -541,7 +559,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "new PlayerBar:%s[MAX_PLAYERS];\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -555,43 +573,43 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					publiccount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non custom var name
 							{
-								format(EditorString, sizeof EditorString, "\tPublicTD[%i] = TextDrawCreate(%f, %f, \x22%s\x22);\n", publiccount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "\tPublicTD[%i] = TextDrawCreate(%f, %f, \x22%s\x22);\n", publiccount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawFont(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "\tTextDrawFont(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(PublicTD[%i], %f, %f);\n", publiccount, NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(PublicTD[%i], %f, %f);\n", publiccount, TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawTextSize(PublicTD[%i], %f, %f);\n", publiccount, NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "\tTextDrawTextSize(PublicTD[%i], %f, %f);\n", publiccount, TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawAlignment(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "\tTextDrawAlignment(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "\tTextDrawColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawUseBox(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "\tTextDrawUseBox(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(PublicTD[%i], %i);\n", publiccount, NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(PublicTD[%i], %i);\n", publiccount, TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(PublicTD[%i], %f, %f, %f, %f);\n", publiccount, NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(PublicTD[%i], %f, %f, %f, %f);\n", publiccount, TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(PublicTD[%i], %i, %i);\n", publiccount, NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(PublicTD[%i], %i, %i);\n", publiccount, TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 									
 								}
@@ -600,46 +618,46 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawFont(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "\tTextDrawFont(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawTextSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "\tTextDrawTextSize(%s, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawAlignment(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "\tTextDrawAlignment(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "\tTextDrawColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawUseBox(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "\tTextDrawUseBox(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(%s, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(%s, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(%s, %i, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(%s, %i, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 									
 								}
 								fwrite(file, "\n");
 							}
 						}					
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 				}
@@ -647,46 +665,46 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+							format(EditorString, sizeof EditorString, "\t%s = TextDrawCreate(%f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawFont(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+							format(EditorString, sizeof EditorString, "\tTextDrawFont(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(%s, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+							format(EditorString, sizeof EditorString, "\tTextDrawLetterSize(%s, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawTextSize(%s, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+							format(EditorString, sizeof EditorString, "\tTextDrawTextSize(%s, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+							format(EditorString, sizeof EditorString, "\tTextDrawSetOutline(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+							format(EditorString, sizeof EditorString, "\tTextDrawSetShadow(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawAlignment(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+							format(EditorString, sizeof EditorString, "\tTextDrawAlignment(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+							format(EditorString, sizeof EditorString, "\tTextDrawColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+							format(EditorString, sizeof EditorString, "\tTextDrawBackgroundColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+							format(EditorString, sizeof EditorString, "\tTextDrawBoxColor(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawUseBox(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+							format(EditorString, sizeof EditorString, "\tTextDrawUseBox(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+							format(EditorString, sizeof EditorString, "\tTextDrawSetProportional(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+							format(EditorString, sizeof EditorString, "\tTextDrawSetSelectable(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 							fwrite(file, EditorString);
-							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+							if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 							{
-								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(%s, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewModel(%s, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewRot(%s, %f, %f, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(%s, %i, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+								format(EditorString, sizeof EditorString, "\tTextDrawSetPreviewVehCol(%s, %i, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 								fwrite(file, EditorString);
 								
 							}
 							fwrite(file, "\n");
-							if(NTD_TD[i][TD_Selectable])
+							if(TextDraw[i][TD_Selectable])
 								clickableTD = true;
 						}					
 						
@@ -699,7 +717,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					publiccount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0)
 						{
 							format(EditorString, sizeof EditorString, "\tTextDrawDestroy(PublicTD[%i]);\n", publiccount);
 							fwrite(file, EditorString);
@@ -708,7 +726,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+						if(TextDraw[i][TD_IsGlobal]  && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) != 0)
 						{
 							format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -719,7 +737,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\tTextDrawDestroy(%s);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -735,43 +753,43 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					barscount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non Custom var name
 							{
-								format(EditorString, sizeof EditorString, "\tPlayerTD[playerid][%i] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", nonpubliccount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "\tPlayerTD[playerid][%i] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", nonpubliccount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, PlayerTD[playerid][%i], %f, %f);\n", nonpubliccount, TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, PlayerTD[playerid][%i], %i);\n", nonpubliccount, TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, PlayerTD[playerid][%i], %f, %f, %f, %f);\n", nonpubliccount, NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, PlayerTD[playerid][%i], %f, %f, %f, %f);\n", nonpubliccount, TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, PlayerTD[playerid][%i], %i, %i);\n", nonpubliccount, NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, PlayerTD[playerid][%i], %i, %i);\n", nonpubliccount, TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 								}
 								fwrite(file, "\n");
@@ -779,66 +797,66 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 								fwrite(file, EditorString);
-								if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+								if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 								{
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 									fwrite(file, EditorString);
-									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+									format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 									fwrite(file, EditorString);
 								}
 								fwrite(file, "\n");
 							}
 						}
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							
-							if(strlen(NTD_TD[i][TD_VarName]) == 0) //Non Custom var name
+							if(strlen(TextDraw[i][TD_VarName]) == 0) //Non Custom var name
 							{
-								format(EditorString, sizeof EditorString, "\tPlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								format(EditorString, sizeof EditorString, "\tPlayerProgressBar[playerid][%i] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n", barscount, TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, PlayerProgressBar[playerid][%i], %f);\n", barscount, (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 								fwrite(file, EditorString);
 								fwrite(file, "\n");
 								barscount++;
 							}
 							else //Custom var name
 							{
-								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+								format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+								format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 								fwrite(file, EditorString);
 								fwrite(file, "\n");
 							}
@@ -849,58 +867,58 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_Text]);
+							format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerTextDraw(playerid, %f, %f, \x22%s\x22);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_Text]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Font]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawFont(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Font]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_LetterSizeX], NTD_TD[i][TD_LetterSizeY]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawLetterSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_LetterSizeX], TextDraw[i][TD_LetterSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawTextSize(playerid, %s[playerid], %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_OutlineSize]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetOutline(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_OutlineSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_ShadowSize]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetShadow(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_ShadowSize]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Alignment]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawAlignment(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Alignment]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Color]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Color]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BGColor]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawBackgroundColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BGColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_BoxColor]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawBoxColor(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_BoxColor]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_UseBox]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawUseBox(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_UseBox]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Proportional]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetProportional(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Proportional]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_Selectable]);
+							format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetSelectable(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_Selectable]);
 							fwrite(file, EditorString);
-							if(NTD_TD[i][TD_Selectable])
+							if(TextDraw[i][TD_Selectable])
 								clickableTD = true;
-							if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+							if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 							{
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelID]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewModel(playerid, %s[playerid], %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelID]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevRotX], NTD_TD[i][TD_PrevRotY], NTD_TD[i][TD_PrevRotZ], NTD_TD[i][TD_PrevRotZoom]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewRot(playerid, %s[playerid], %f, %f, %f, %f);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevRotX], TextDraw[i][TD_PrevRotY], TextDraw[i][TD_PrevRotZ], TextDraw[i][TD_PrevRotZoom]);
 								fwrite(file, EditorString);
-								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n", GetProcessedTDVarName(i), NTD_TD[i][TD_PrevModelC1], NTD_TD[i][TD_PrevModelC2]);
+								format(EditorString, sizeof EditorString, "\tPlayerTextDrawSetPreviewVehCol(playerid, %s[playerid], %i, %i);\n", GetProcessedTDVarName(i), TextDraw[i][TD_PrevModelC1], TextDraw[i][TD_PrevModelC2]);
 								fwrite(file, EditorString);
 							}
 							fwrite(file, "\n");
 							
 						}
-						if(NTD_TD[i][TD_Selectable])
+						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;		
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), NTD_TD[i][TD_PosX], NTD_TD[i][TD_PosY], NTD_TD[i][TD_BoxSizeX], NTD_TD[i][TD_BoxSizeY], NTD_TD[i][TD_Color], NTD_TD[i][TD_BarMaxPercentage], NTD_TD[i][TD_BarDirectory]);
+							format(EditorString, sizeof EditorString, "\t%s[playerid] = CreatePlayerProgressBar(playerid, %f, %f, %f, %f, %i, %f, %i);\n",  GetProcessedTDVarName(i), TextDraw[i][TD_PosX], TextDraw[i][TD_PosY], TextDraw[i][TD_BoxSizeX], TextDraw[i][TD_BoxSizeY], TextDraw[i][TD_Color], TextDraw[i][TD_BarMaxPercentage], TextDraw[i][TD_BarDirectory]);
 							fwrite(file, EditorString);
-							format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (NTD_TD[i][TD_BarMaxPercentage] / 2.0));
+							format(EditorString, sizeof EditorString, "\tSetPlayerProgressBarValue(playerid, %s[playerid], %f);\n", GetProcessedTDVarName(i), (TextDraw[i][TD_BarMaxPercentage] / 2.0));
 							fwrite(file, EditorString);
 							fwrite(file, "\n");
 						}
@@ -914,7 +932,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					barscount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0)
 						{
 							format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 							fwrite(file, EditorString);
@@ -923,7 +941,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal]  && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+						if(!TextDraw[i][TD_IsGlobal]  && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) != 0)
 						{
 							format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -931,9 +949,9 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(strlen(TextDraw[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\tDestroyPlayerProgressBar(playerid, PlayerProgressBar[playerid][%i]);\n", barscount);
 								fwrite(file, EditorString);
@@ -951,7 +969,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\tPlayerTextDrawDestroy(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -959,7 +977,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\tDestroyPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -975,7 +993,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					publiccount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0)
 						{
 							format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, PublicTD[%i]);\n", publiccount);
 							fwrite(file, EditorString);
@@ -984,7 +1002,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) != 0)
 						{
 							format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -995,7 +1013,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\t\tTextDrawShowForPlayer(playerid, %s);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -1007,7 +1025,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					nonpubliccount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) == 0)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) == 0)
 						{
 							format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, PlayerTD[playerid][%i]);\n", nonpubliccount);
 							fwrite(file, EditorString);
@@ -1016,7 +1034,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(NTD_TD[i][TD_VarName]) != 0)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR && strlen(TextDraw[i][TD_VarName]) != 0)
 						{
 							format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -1027,7 +1045,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(!NTD_TD[i][TD_IsGlobal] && NTD_TD[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\t\tPlayerTextDrawShow(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -1039,9 +1057,9 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					barscount = 0;
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
-							if(strlen(NTD_TD[i][TD_VarName]) == 0)
+							if(strlen(TextDraw[i][TD_VarName]) == 0)
 							{
 								format(EditorString, sizeof EditorString, "\t\tShowPlayerProgressBar(playerid, PlayerProgressBar[playerid][%i]);\n", barscount);
 								fwrite(file, EditorString);
@@ -1059,7 +1077,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 				{
 					foreach(new i : I_TEXTDRAWS)
 					{
-						if(NTD_TD[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 						{
 							format(EditorString, sizeof EditorString, "\t\tShowPlayerProgressBar(playerid, %s[playerid]);\n", GetProcessedTDVarName(i));
 							fwrite(file, EditorString);
@@ -1086,17 +1104,17 @@ AddProjectToList(const file[])
 	new extension[16];
 	VALID_ITER_INDEX(I_PROJECTS, index)
 	{
-		NTD_Projects[index][Pro_fileExtensionId] = -1;
-		sscanf(file, "P<.>s[128]s[16]", NTD_Projects[index][Pro_fileName], extension);
+		Projects[index][Pro_fileExtensionId] = -1;
+		sscanf(file, "P<.>s[128]s[16]", Projects[index][Pro_fileName], extension);
 		for(new i; i < sizeof Extensions; i++)
 		{
 			if(!strcmp(Extensions[i][fe_extension], extension, true))
 			{
-				NTD_Projects[index][Pro_fileExtensionId] = Extensions[i][fe_extensionId];
+				Projects[index][Pro_fileExtensionId] = Extensions[i][fe_extensionId];
 				break;
 			}
 		}
-		//printf("File: %s | Extension: %s | Extension ID: %i", NTD_Projects[index][Pro_fileName], extension, NTD_Projects[index][Pro_fileExtensionId]);
+		//printf("File: %s | Extension: %s | Extension ID: %i | name: %s", Projects[index][Pro_fileName], extension, Projects[index][Pro_fileExtensionId]);
 		Iter_Add(I_PROJECTS, index);
 		return 1;
 	}
@@ -1126,11 +1144,11 @@ ReadProjectsDirectory()
 
 IsProjectFileValid(index)
 {
-	if(NTD_Projects[index][Pro_fileExtensionId] == -1)
+	if(Projects[index][Pro_fileExtensionId] == -1)
 		return 0;
 	new filePath[256];
-	format(filePath, sizeof filePath, "%s/%s.%s", PROJECTS_DIRECTORYPATH, NTD_Projects[index][Pro_fileName], Extensions[ NTD_Projects[index][Pro_fileExtensionId] ]);
-	if(NTD_Projects[index][Pro_fileExtensionId] != -1 && Exists(filePath))
+	format(filePath, sizeof filePath, "%s/%s.%s", PROJECTS_DIRECTORYPATH, Projects[index][Pro_fileName], Extensions[ Projects[index][Pro_fileExtensionId] ]);
+	if(Projects[index][Pro_fileExtensionId] != -1 && Exists(MakePath(filePath, true)))
 	{
 		return 1;
 	}
@@ -1142,26 +1160,35 @@ OpenProjectDialog(playerid)
 	ClearDialogListitems(playerid);
 	// Get Projects
 	ReadProjectsDirectory();
-	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "infos"));
+	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "info0"));
+	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "info1"));
 	if(Iter_Count(I_PROJECTS) > 0)
 	{
 		foreach(new i : I_PROJECTS)
 		{
-			if(NTD_Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
+			if(Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
 			{
-				AddDialogListitem(playerid, "%s%s", (IsProjectFileValid(i) ? "{FFFFFF}" : "{FFFFFF}"), NTD_Projects[i][Pro_fileName]);
+				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s", 
+					i,
+					(IsProjectFileValid(i) ? HEX_PALETTE_4 : "{FF0000}"), 
+					GetProjectName(i, true), 
+					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName]);
 			}
 			else 
 			{
-				AddDialogListitem(playerid, "%s%s", (IsProjectFileValid(i) ? "{FFE599}" : "{FFE599}"), NTD_Projects[i][Pro_fileName]);
+				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s", 
+					i,
+					(IsProjectFileValid(i) ? "{FFE599}" : "{FF0000}"), 
+					GetProjectName(i, true), 
+					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName]);
 			}
 
 			
 		}
 		//
 		
-		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST, 
-		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_NTD_PROJECTS), #, 
+		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, 
+		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_PROJECTS), #, 
 		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button1"), 
 		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button2"), 
 		EditorMaxDialogItems);
@@ -1176,7 +1203,7 @@ OpenProjectDialog(playerid)
 
 SaveProject(index)
 {
-	if(NTD_User[User_ProjectOpened])
+	if(User[User_ProjectOpened])
 	{
 		new filePath[300];
 	
@@ -1193,40 +1220,40 @@ SaveProject(index)
 		// TextDraws
 		foreach(new i : I_TEXTDRAWS)
 		{
-			if(NTD_TD[i][TD_Created])
+			if(TextDraw[i][TD_Created])
 			{
 				new Node:tdNode = JSON_Object(
-				"string", JSON_String(NTD_TD[i][TD_Text]),
-				"posx", JSON_Float(NTD_TD[i][TD_PosX]),
-				"posy", JSON_Float(NTD_TD[i][TD_PosY]),
-				"font", JSON_Int(NTD_TD[i][TD_Font]),
-				"public", JSON_Bool(NTD_TD[i][TD_IsGlobal]),
-				"outline", JSON_Int(NTD_TD[i][TD_OutlineSize]),
-				"shadow", JSON_Int(NTD_TD[i][TD_ShadowSize]),
-				"lettersizex", JSON_Float(NTD_TD[i][TD_LetterSizeX]),
-				"lettersizey", JSON_Float(NTD_TD[i][TD_LetterSizeY]),
-				"textcolor", JSON_Int(NTD_TD[i][TD_Color]),
-				"backgroundcolor", JSON_Int(NTD_TD[i][TD_BGColor]),
-				"boxcolor", JSON_Int(NTD_TD[i][TD_BoxColor]),
-				"textcoloralpha", JSON_Int(NTD_TD[i][TD_ColorAlpha]),
-				"backgroundcoloralpha", JSON_Int(NTD_TD[i][TD_BGColorAlpha]),
-				"boxcoloralpha", JSON_Int(NTD_TD[i][TD_BoxColorAlpha]),
-				"usebox", JSON_Bool(NTD_TD[i][TD_UseBox]),
-				"boxsizex", JSON_Float(NTD_TD[i][TD_BoxSizeX]),
-				"boxsizey", JSON_Float(NTD_TD[i][TD_BoxSizeY]),
-				"selectable", JSON_Bool(NTD_TD[i][TD_Selectable]),
-				"alignment", JSON_Int(NTD_TD[i][TD_Alignment]),
-				"proportional", JSON_Bool(NTD_TD[i][TD_Proportional]),
-				"previewmodelid", JSON_Int(NTD_TD[i][TD_PrevModelID]),
-				"previewmodelcolor1", JSON_Int(NTD_TD[i][TD_PrevModelC1]),
-				"previewmodelcolor2", JSON_Int(NTD_TD[i][TD_PrevModelC2]),
-				"previewmodelrotx", JSON_Float(NTD_TD[i][TD_PrevRotX]),
-				"previewmodelroty", JSON_Float(NTD_TD[i][TD_PrevRotY]),
-				"previewmodelrotz", JSON_Float(NTD_TD[i][TD_PrevRotZ]),
-				"previewmodelzoom", JSON_Float(NTD_TD[i][TD_PrevRotZoom]),
-				"variablename", JSON_String(NTD_TD[i][TD_VarName]),
-				"progressbarmaxpercentage", JSON_Float(NTD_TD[i][TD_BarMaxPercentage]),
-				"progressbaralignment", JSON_Int(NTD_TD[i][TD_BarDirectory])
+				"string", JSON_String(TextDraw[i][TD_Text]),
+				"posx", JSON_Float(TextDraw[i][TD_PosX]),
+				"posy", JSON_Float(TextDraw[i][TD_PosY]),
+				"font", JSON_Int(TextDraw[i][TD_Font]),
+				"public", JSON_Bool(TextDraw[i][TD_IsGlobal]),
+				"outline", JSON_Int(TextDraw[i][TD_OutlineSize]),
+				"shadow", JSON_Int(TextDraw[i][TD_ShadowSize]),
+				"lettersizex", JSON_Float(TextDraw[i][TD_LetterSizeX]),
+				"lettersizey", JSON_Float(TextDraw[i][TD_LetterSizeY]),
+				"textcolor", JSON_Int(TextDraw[i][TD_Color]),
+				"backgroundcolor", JSON_Int(TextDraw[i][TD_BGColor]),
+				"boxcolor", JSON_Int(TextDraw[i][TD_BoxColor]),
+				"textcoloralpha", JSON_Int(TextDraw[i][TD_ColorAlpha]),
+				"backgroundcoloralpha", JSON_Int(TextDraw[i][TD_BGColorAlpha]),
+				"boxcoloralpha", JSON_Int(TextDraw[i][TD_BoxColorAlpha]),
+				"usebox", JSON_Bool(TextDraw[i][TD_UseBox]),
+				"boxsizex", JSON_Float(TextDraw[i][TD_BoxSizeX]),
+				"boxsizey", JSON_Float(TextDraw[i][TD_BoxSizeY]),
+				"selectable", JSON_Bool(TextDraw[i][TD_Selectable]),
+				"alignment", JSON_Int(TextDraw[i][TD_Alignment]),
+				"proportional", JSON_Bool(TextDraw[i][TD_Proportional]),
+				"previewmodelid", JSON_Int(TextDraw[i][TD_PrevModelID]),
+				"previewmodelcolor1", JSON_Int(TextDraw[i][TD_PrevModelC1]),
+				"previewmodelcolor2", JSON_Int(TextDraw[i][TD_PrevModelC2]),
+				"previewmodelrotx", JSON_Float(TextDraw[i][TD_PrevRotX]),
+				"previewmodelroty", JSON_Float(TextDraw[i][TD_PrevRotY]),
+				"previewmodelrotz", JSON_Float(TextDraw[i][TD_PrevRotZ]),
+				"previewmodelzoom", JSON_Float(TextDraw[i][TD_PrevRotZoom]),
+				"variablename", JSON_String(TextDraw[i][TD_VarName]),
+				"progressbarmaxpercentage", JSON_Float(TextDraw[i][TD_BarMaxPercentage]),
+				"progressbaralignment", JSON_Int(TextDraw[i][TD_BarDirectory])
 				);
 				// Append current textdraw to array.
 				JSON_ArrayAppend(node, "textdraws", tdNode);
@@ -1251,15 +1278,16 @@ LoadProject(index)
 		Iter_Clear(I_TEXTDRAWS);
 
 		// Reset the TextDraw enumerator
-		for(new i; i < MAX_NTD_TDS; i++)
+		for(new i; i < MAX_TEXTDRAWS; i++)
 		{
-			NTD_TD[i][TD_Created] = false;
-			format(NTD_TD[i][TD_VarName], 35, "");
-			NTD_TD[i][TD_HighlightTimer] = -1;
-			NTD_TD[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
-			NTD_TD[i][TD_SelfID] = Text:INVALID_TEXT_DRAW;
-			NTD_TD[i][TD_BarMaxPercentage] = 100.0;
-			NTD_TD[i][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+			TextDraw[i][TD_Created] = false;
+			TextDraw[i][TD_VarName] = 0;
+			TextDraw[i][TD_HighlightTimer] = -1;
+			TextDraw[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
+			TextDraw[i][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+			TextDraw[i][TD_PickerID] = Text:INVALID_TEXT_DRAW;
+			TextDraw[i][TD_BarMaxPercentage] = 100.0;
+			TextDraw[i][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 		}
 		
 		// Parsing project File
@@ -1283,43 +1311,43 @@ LoadProject(index)
 			VALID_ITER_INDEX(I_TEXTDRAWS, free)
 			{
 				Iter_Add(I_TEXTDRAWS, free);
-				JSON_GetString(tdnode, "string", NTD_TD[free][TD_Text]);
-				JSON_GetFloat(tdnode, "posx", NTD_TD[free][TD_PosX]);
-				JSON_GetFloat(tdnode, "posy", NTD_TD[free][TD_PosY]);
-				JSON_GetInt(tdnode, "font", NTD_TD[free][TD_Font]);
-				JSON_GetBool(tdnode, "public", NTD_TD[free][TD_IsGlobal]);
-				JSON_GetInt(tdnode, "outline", NTD_TD[free][TD_OutlineSize]);
-				JSON_GetInt(tdnode, "shadow", NTD_TD[free][TD_ShadowSize]);
-				JSON_GetFloat(tdnode, "lettersizex", NTD_TD[free][TD_LetterSizeX]);
-				JSON_GetFloat(tdnode, "lettersizey", NTD_TD[free][TD_LetterSizeY]);
-				JSON_GetInt(tdnode, "textcolor", NTD_TD[free][TD_Color]);
-				JSON_GetInt(tdnode, "backgroundcolor", NTD_TD[free][TD_BGColor]);
-				JSON_GetInt(tdnode, "boxcolor", NTD_TD[free][TD_BoxColor]);
-				JSON_GetInt(tdnode, "textcoloralpha", NTD_TD[free][TD_ColorAlpha]);
-				JSON_GetInt(tdnode, "backgroundcoloralpha", NTD_TD[free][TD_BGColorAlpha]);
-				JSON_GetInt(tdnode, "boxcoloralpha", NTD_TD[free][TD_BoxColorAlpha]);
-				JSON_GetBool(tdnode, "usebox", NTD_TD[free][TD_UseBox]);
-				JSON_GetBool(tdnode, "selectable", NTD_TD[free][TD_Selectable]);
-				JSON_GetInt(tdnode, "alignment", NTD_TD[free][TD_Alignment]);
-				JSON_GetFloat(tdnode, "boxsizex", NTD_TD[free][TD_BoxSizeX]);
-				JSON_GetFloat(tdnode, "boxsizey", NTD_TD[free][TD_BoxSizeY]);
-				JSON_GetInt(tdnode, "proportional", NTD_TD[free][TD_Proportional]);
-				JSON_GetInt(tdnode, "previewmodelid", NTD_TD[free][TD_PrevModelID]);
-				JSON_GetInt(tdnode, "previewmodelcolor1", NTD_TD[free][TD_PrevModelC1]);
-				JSON_GetInt(tdnode, "previewmodelcolor2", NTD_TD[free][TD_PrevModelC2]);
-				JSON_GetFloat(tdnode, "previewmodelrotx", NTD_TD[free][TD_PrevRotX]);
-				JSON_GetFloat(tdnode, "previewmodelroty", NTD_TD[free][TD_PrevRotY]);
-				JSON_GetFloat(tdnode, "previewmodelrotz", NTD_TD[free][TD_PrevRotZ]);
-				JSON_GetFloat(tdnode, "previewmodelzoom", NTD_TD[free][TD_PrevRotZoom]);
-				JSON_GetInt(tdnode, "variablename", NTD_TD[free][TD_VarName]);
-				JSON_GetFloat(tdnode, "progressbarmaxpercentage", NTD_TD[free][TD_BarMaxPercentage]);
-				JSON_GetInt(tdnode, "progressbaralignment", NTD_TD[free][TD_BarDirectory]);
-				NTD_TD[free][TD_Created] = true;
+				JSON_GetString(tdnode, "string", TextDraw[free][TD_Text]);
+				JSON_GetFloat(tdnode, "posx", TextDraw[free][TD_PosX]);
+				JSON_GetFloat(tdnode, "posy", TextDraw[free][TD_PosY]);
+				JSON_GetInt(tdnode, "font", TextDraw[free][TD_Font]);
+				JSON_GetBool(tdnode, "public", TextDraw[free][TD_IsGlobal]);
+				JSON_GetInt(tdnode, "outline", TextDraw[free][TD_OutlineSize]);
+				JSON_GetInt(tdnode, "shadow", TextDraw[free][TD_ShadowSize]);
+				JSON_GetFloat(tdnode, "lettersizex", TextDraw[free][TD_LetterSizeX]);
+				JSON_GetFloat(tdnode, "lettersizey", TextDraw[free][TD_LetterSizeY]);
+				JSON_GetInt(tdnode, "textcolor", TextDraw[free][TD_Color]);
+				JSON_GetInt(tdnode, "backgroundcolor", TextDraw[free][TD_BGColor]);
+				JSON_GetInt(tdnode, "boxcolor", TextDraw[free][TD_BoxColor]);
+				JSON_GetInt(tdnode, "textcoloralpha", TextDraw[free][TD_ColorAlpha]);
+				JSON_GetInt(tdnode, "backgroundcoloralpha", TextDraw[free][TD_BGColorAlpha]);
+				JSON_GetInt(tdnode, "boxcoloralpha", TextDraw[free][TD_BoxColorAlpha]);
+				JSON_GetBool(tdnode, "usebox", TextDraw[free][TD_UseBox]);
+				JSON_GetBool(tdnode, "selectable", TextDraw[free][TD_Selectable]);
+				JSON_GetInt(tdnode, "alignment", TextDraw[free][TD_Alignment]);
+				JSON_GetFloat(tdnode, "boxsizex", TextDraw[free][TD_BoxSizeX]);
+				JSON_GetFloat(tdnode, "boxsizey", TextDraw[free][TD_BoxSizeY]);
+				JSON_GetInt(tdnode, "proportional", TextDraw[free][TD_Proportional]);
+				JSON_GetInt(tdnode, "previewmodelid", TextDraw[free][TD_PrevModelID]);
+				JSON_GetInt(tdnode, "previewmodelcolor1", TextDraw[free][TD_PrevModelC1]);
+				JSON_GetInt(tdnode, "previewmodelcolor2", TextDraw[free][TD_PrevModelC2]);
+				JSON_GetFloat(tdnode, "previewmodelrotx", TextDraw[free][TD_PrevRotX]);
+				JSON_GetFloat(tdnode, "previewmodelroty", TextDraw[free][TD_PrevRotY]);
+				JSON_GetFloat(tdnode, "previewmodelrotz", TextDraw[free][TD_PrevRotZ]);
+				JSON_GetFloat(tdnode, "previewmodelzoom", TextDraw[free][TD_PrevRotZoom]);
+				JSON_GetString(tdnode, "variablename", TextDraw[free][TD_VarName]);
+				JSON_GetFloat(tdnode, "progressbarmaxpercentage", TextDraw[free][TD_BarMaxPercentage]);
+				JSON_GetInt(tdnode, "progressbaralignment", TextDraw[free][TD_BarDirectory]);
+				TextDraw[free][TD_Created] = true;
 			}
 			else break;
 		}
-		NTD_User[User_ProjectOpened] = true;
-		NTD_User[User_ProjectIndex] = index;
+		User[User_ProjectOpened] = true;
+		User[User_ProjectIndex] = index;
 		return 1;
 	}
 	return 0;
@@ -1328,11 +1356,11 @@ LoadProject(index)
 GetProjectName(index, bool:withExtension = false)
 {
 	new projectName[258];
-	format(projectName, 258, NTD_Projects[index][Pro_fileName]);
+	format(projectName, 258, Projects[index][Pro_fileName]);
 	if(withExtension)
 	{
 		strcat(projectName, ".");
-		strcat(projectName, Extensions[ NTD_Projects[index][Pro_fileExtensionId] ][fe_extension]);
+		strcat(projectName, Extensions[ Projects[index][Pro_fileExtensionId] ][fe_extension]);
 	}
 	return projectName;
 }
@@ -1368,11 +1396,32 @@ DeleteProject(index, bool:force = true)
     |_|     \___| /_/\_\  \__| |_____/  |_|     \__,_|   \_/\_/     |_|       \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
                                                                                                                                                                                                                                                                
 */
+RedrawTD(playerid, tdid)
+{
+	if(TextDraw[tdid][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+	{
+		TextDrawDestroy(TextDraw[tdid][TD_SelfID]);
+		TextDraw[tdid][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+	}
+	if(TextDraw[tdid][TD_PickerID] != Text:INVALID_TEXT_DRAW)
+	{
+		TextDrawDestroy(TextDraw[tdid][TD_PickerID]);
+		TextDraw[tdid][TD_PickerID] = Text:INVALID_TEXT_DRAW;
+	}
+	if(TextDraw[tdid][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	{
+		DestroyPlayerProgressBar(playerid, TextDraw[tdid][TD_BarID]);
+		TextDraw[tdid][TD_BarID] = INVALID_PLAYER_BAR_ID;
+	}
+	DrawTD(tdid);
+	return 1;
+}
+
 ShowTDOptions(playerid, tdid)
 {
-	NTD_User[User_ChoosenTDID] = tdid;
+	User[User_ChoosenTDID] = tdid;
 	ShowPlayerDialog(playerid, DIALOG_MANAGE2, DIALOG_STYLE_LIST, 
-	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, NTD_TD[ tdid ][TD_Text]), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button2"));
@@ -1385,10 +1434,10 @@ SwapTDLayers(tdid, tolayer)
 	if(tolayer == Iter_Begin(I_TEXTDRAWS) || tolayer == Iter_End(I_TEXTDRAWS)) 
 		return -1;
 	new old_td_data[E_TD];
-	old_td_data = NTD_TD[tdid];
+	old_td_data = TextDraw[tdid];
 	//Swapping enums
-	NTD_TD[tdid] = NTD_TD[tolayer];
-	NTD_TD[tolayer] = old_td_data;
+	TextDraw[tdid] = TextDraw[tolayer];
+	TextDraw[tolayer] = old_td_data;
 	return tolayer;
 }
 
@@ -1396,70 +1445,70 @@ UpdateTD(playerid, td)
 {
 	new red,green,blue,alpha;
 	#pragma unused alpha
-	if(NTD_TD[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+	if(TextDraw[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 	{
-		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 		{
-			DestroyPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
-			NTD_TD[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
+			DestroyPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
+			TextDraw[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
 		}
-		if(NTD_TD[td][TD_SelfID] == Text:INVALID_TEXT_DRAW)
-			NTD_TD[td][TD_SelfID] = TextDrawCreate(NTD_TD[td][TD_PosX], NTD_TD[td][TD_PosY], NTD_TD[td][TD_Text]);
-		TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
-		TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
-		TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
-		TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
-		SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-		NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-		SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-		NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-		SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-		NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
-		TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
-		TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
-		TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
-		TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
-		TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
-		TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
-		TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
-		TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
-		if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
-		else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
+		if(TextDraw[td][TD_SelfID] == Text:INVALID_TEXT_DRAW)
+			TextDraw[td][TD_SelfID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY], TextDraw[td][TD_Text]);
+		TextDrawFont(TextDraw[td][TD_SelfID], TextDraw[td][TD_Font]);
+		TextDrawSetOutline(TextDraw[td][TD_SelfID], TextDraw[td][TD_OutlineSize]);
+		TextDrawSetShadow(TextDraw[td][TD_SelfID], TextDraw[td][TD_ShadowSize]);
+		TextDrawLetterSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_LetterSizeX], TextDraw[td][TD_LetterSizeY]);
+		SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+		TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+		TextDrawColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_Color]);
+		SplitRGBA(TextDraw[td][TD_BGColor],red,green,blue, alpha);
+		TextDraw[td][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BGColorAlpha]);
+		TextDrawBackgroundColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BGColor]);
+		SplitRGBA(TextDraw[td][TD_BoxColor],red,green,blue, alpha); 
+		TextDraw[td][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BoxColorAlpha]);
+		TextDrawBoxColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxColor]);
+		TextDrawUseBox(TextDraw[td][TD_SelfID], TextDraw[td][TD_UseBox]);	
+		TextDrawTextSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxSizeX], TextDraw[td][TD_BoxSizeY]);
+		TextDrawSetSelectable(TextDraw[td][TD_SelfID], TextDraw[td][TD_Selectable]);
+		TextDrawAlignment(TextDraw[td][TD_SelfID], TextDraw[td][TD_Alignment]);
+		TextDrawSetProportional(TextDraw[td][TD_SelfID], TextDraw[td][TD_Proportional]);
+		TextDrawSetPreviewModel(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelID]);
+		TextDrawSetPreviewRot(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevRotX], TextDraw[td][TD_PrevRotY], TextDraw[td][TD_PrevRotZ], TextDraw[td][TD_PrevRotZoom]);
+		TextDrawSetPreviewVehCol(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelC1], TextDraw[td][TD_PrevModelC2]);
+		if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
+		else TextDrawShowForAll(TextDraw[td][TD_SelfID]);
 	}
 	else
 	{
-		if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+		if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 		{
-			TextDrawDestroy(NTD_TD[td][TD_SelfID]);
-			NTD_TD[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+			TextDrawDestroy(TextDraw[td][TD_SelfID]);
+			TextDraw[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
 		}
-		if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
+		if(TextDraw[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
 		{
-			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-			NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
-			NTD_TD[td][TD_PosX], 
-			NTD_TD[td][TD_PosY], 
-			NTD_TD[td][TD_BoxSizeX], 
-			NTD_TD[td][TD_BoxSizeY],
-			NTD_TD[td][TD_Color], 
-			NTD_TD[td][TD_BarMaxPercentage],
-			NTD_TD[td][TD_BarDirectory]);
+			SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+			TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+			TextDraw[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
+			TextDraw[td][TD_PosX], 
+			TextDraw[td][TD_PosY], 
+			TextDraw[td][TD_BoxSizeX], 
+			TextDraw[td][TD_BoxSizeY],
+			TextDraw[td][TD_Color], 
+			TextDraw[td][TD_BarMaxPercentage],
+			TextDraw[td][TD_BarDirectory]);
 		}
-		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 		{
-			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-			SetPlayerProgressBarDirection(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BarDirectory]);
-			SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_Color]);
-			SetPlayerProgressBarWidth(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BoxSizeX]);
-			SetPlayerProgressBarHeight(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BoxSizeY]);
-			SetPlayerProgressBarMaxValue(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_BarMaxPercentage]);
-			SetPlayerProgressBarValue(playerid, NTD_TD[td][TD_BarID], (NTD_TD[td][TD_BarMaxPercentage] / 2.0));
-			ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+			SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+			TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+			SetPlayerProgressBarDirection(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_BarDirectory]);
+			SetPlayerProgressBarColour(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_Color]);
+			SetPlayerProgressBarWidth(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_BoxSizeX]);
+			SetPlayerProgressBarHeight(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_BoxSizeY]);
+			SetPlayerProgressBarMaxValue(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_BarMaxPercentage]);
+			SetPlayerProgressBarValue(playerid, TextDraw[td][TD_BarID], (TextDraw[td][TD_BarMaxPercentage] / 2.0));
+			ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
 		}
 	}
 	return 1;
@@ -1467,26 +1516,26 @@ UpdateTD(playerid, td)
 
 SelectTD(playerid, tdid)
 {
-	if(tdid != NTD_User[User_EditingTDID])
+	if(tdid != User[User_EditingTDID])
 	{
-		new ptdid = NTD_User[User_EditingTDID];
-		NTD_User[User_EditingTDID] = tdid;
+		new ptdid = User[User_EditingTDID];
+		User[User_EditingTDID] = tdid;
 		//
 		new tmp_str[12];
 		format(EditorString, sizeof EditorString, GetLanguageMessage("tdselectedinfo", LANG_TYPE_GAMETEXTS));
-		format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_EditingTDID]);
+		format(tmp_str, sizeof tmp_str, "%i", User[User_EditingTDID]);
 		strreplace(EditorString, "#1", tmp_str);
 		//
 		GameTextForPlayer(playerid, EditorString, 5000, 6);
 		PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
-		HighlightTD(playerid, NTD_User[User_EditingTDID]);
+		HighlightTD(playerid, User[User_EditingTDID]);
 		ShowEditorEx(playerid);
-		TextDrawColor(NTD_TD[tdid][TD_PickerID], TDPICKER_COLOR_ACTIVE);
-		if(EditorQuickSelect) TextDrawShowForPlayer(playerid, NTD_TD[tdid][TD_PickerID]);
+		TextDrawColor(TextDraw[tdid][TD_PickerID], TDPICKER_COLOR_ACTIVE);
+		if(EditorQuickSelect) TextDrawShowForPlayer(playerid, TextDraw[tdid][TD_PickerID]);
 		if(ptdid != -1 && tdid != ptdid)
 		{
-			TextDrawColor(NTD_TD[ptdid][TD_PickerID], TDPICKER_COLOR);
-			if(EditorQuickSelect) TextDrawShowForPlayer(playerid, NTD_TD[ptdid][TD_PickerID]);
+			TextDrawColor(TextDraw[ptdid][TD_PickerID], TDPICKER_COLOR);
+			if(EditorQuickSelect) TextDrawShowForPlayer(playerid, TextDraw[ptdid][TD_PickerID]);
 		}
 		return 1;
 	}
@@ -1495,123 +1544,123 @@ SelectTD(playerid, tdid)
 
 DestroyTD(td, &next)
 {
-	if(NTD_TD[td][TD_Created] == true)
+	if(TextDraw[td][TD_Created] == true)
 	{
-		new playerid = NTD_User[User_PlayerIDInEditor];
-		NTD_TD[td][TD_Created] = false;
-		if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+		new playerid = User[User_PlayerIDInEditor];
+		TextDraw[td][TD_Created] = false;
+		if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 		{
-			TextDrawDestroy(NTD_TD[td][TD_SelfID]);
-			NTD_TD[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+			TextDrawDestroy(TextDraw[td][TD_SelfID]);
+			TextDraw[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
 		}
-		if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+		if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 		{
-			DestroyPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
-			NTD_TD[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
+			DestroyPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
+			TextDraw[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
 		}
-		TextDrawDestroy(NTD_TD[td][TD_PickerID]);
+		TextDrawDestroy(TextDraw[td][TD_PickerID]);
 		Iter_SafeRemove(I_TEXTDRAWS, td, next);
 	}
 }
 
 HighlightTD(playerid, td)
 {
-	if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+	if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 	{
-		TextDrawColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-		TextDrawBoxColor(NTD_TD[td][TD_SelfID], 0xFFFF00FF);
-		TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+		TextDrawColor(TextDraw[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawBackgroundColor(TextDraw[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawBoxColor(TextDraw[td][TD_SelfID], 0xFFFF00FF);
+		TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
 	}
-	else if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	else if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 	{
-		SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], 0xFFFF00FF);
-		ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+		SetPlayerProgressBarColour(playerid, TextDraw[td][TD_BarID], 0xFFFF00FF);
+		ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
 	}
-	if(NTD_TD[td][TD_HighlightTimer] != -1)
-		KillTimer(NTD_TD[td][TD_HighlightTimer]);
-	NTD_TD[td][TD_HighlightTimer] = SetTimerEx("HLTD", 250, false, "ii", playerid, td);
+	if(TextDraw[td][TD_HighlightTimer] != -1)
+		KillTimer(TextDraw[td][TD_HighlightTimer]);
+	TextDraw[td][TD_HighlightTimer] = SetTimerEx("HLTD", 250, false, "ii", playerid, td);
 	return 1;
 }
 
 DrawTD(td)
 {
-	new playerid = NTD_User[User_PlayerIDInEditor];
+	new playerid = User[User_PlayerIDInEditor];
 	new red, green, blue, alpha;
 	#pragma unused alpha
-	if(NTD_TD[td][TD_Created] == true)
+	if(TextDraw[td][TD_Created] == true)
 	{
 		//TD
-		if(NTD_TD[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
-			NTD_TD[td][TD_SelfID] = TextDrawCreate(NTD_TD[td][TD_PosX], NTD_TD[td][TD_PosY], NTD_TD[td][TD_Text]);
-			TextDrawFont(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Font]);
-			TextDrawSetOutline(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_OutlineSize]);
-			TextDrawSetShadow(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_ShadowSize]);
-			TextDrawLetterSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_LetterSizeX], NTD_TD[td][TD_LetterSizeY]);
+			TextDraw[td][TD_SelfID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY], TextDraw[td][TD_Text]);
+			TextDrawFont(TextDraw[td][TD_SelfID], TextDraw[td][TD_Font]);
+			TextDrawSetOutline(TextDraw[td][TD_SelfID], TextDraw[td][TD_OutlineSize]);
+			TextDrawSetShadow(TextDraw[td][TD_SelfID], TextDraw[td][TD_ShadowSize]);
+			TextDrawLetterSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_LetterSizeX], TextDraw[td][TD_LetterSizeY]);
 			//
-			SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-			NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-			TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
+			SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+			TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+			TextDrawColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_Color]);
 			//
-			SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-			NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-			TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
+			SplitRGBA(TextDraw[td][TD_BGColor],red,green,blue, alpha);
+			TextDraw[td][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BGColorAlpha]);
+			TextDrawBackgroundColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BGColor]);
 			//
-			SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-			NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-			TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
+			SplitRGBA(TextDraw[td][TD_BoxColor],red,green,blue, alpha); 
+			TextDraw[td][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BoxColorAlpha]);
+			TextDrawBoxColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxColor]);
 			//
-			TextDrawUseBox(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_UseBox]);	
-			TextDrawTextSize(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxSizeX], NTD_TD[td][TD_BoxSizeY]);
-			TextDrawSetSelectable(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Selectable]);
-			TextDrawAlignment(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Alignment]);
-			TextDrawSetProportional(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Proportional]);
-			TextDrawSetPreviewModel(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelID]);
-			TextDrawSetPreviewRot(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevRotX], NTD_TD[td][TD_PrevRotY], NTD_TD[td][TD_PrevRotZ], NTD_TD[td][TD_PrevRotZoom]);
-			TextDrawSetPreviewVehCol(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_PrevModelC1], NTD_TD[td][TD_PrevModelC2]);
+			TextDrawUseBox(TextDraw[td][TD_SelfID], TextDraw[td][TD_UseBox]);	
+			TextDrawTextSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxSizeX], TextDraw[td][TD_BoxSizeY]);
+			TextDrawSetSelectable(TextDraw[td][TD_SelfID], TextDraw[td][TD_Selectable]);
+			TextDrawAlignment(TextDraw[td][TD_SelfID], TextDraw[td][TD_Alignment]);
+			TextDrawSetProportional(TextDraw[td][TD_SelfID], TextDraw[td][TD_Proportional]);
+			TextDrawSetPreviewModel(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelID]);
+			TextDrawSetPreviewRot(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevRotX], TextDraw[td][TD_PrevRotY], TextDraw[td][TD_PrevRotZ], TextDraw[td][TD_PrevRotZoom]);
+			TextDrawSetPreviewVehCol(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelC1], TextDraw[td][TD_PrevModelC2]);
 			
 			//Show
-			if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
-			else TextDrawShowForAll(NTD_TD[td][TD_SelfID]);
+			if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
+			else TextDrawShowForAll(TextDraw[td][TD_SelfID]);
 		}
 		else
 		{
-			if(NTD_TD[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
+			if(TextDraw[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
 			{
-				SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-				NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-				NTD_TD[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
-				NTD_TD[td][TD_PosX], 
-				NTD_TD[td][TD_PosY], 
-				NTD_TD[td][TD_BoxSizeX], 
-				NTD_TD[td][TD_BoxSizeY],
-				NTD_TD[td][TD_Color], 
-				NTD_TD[td][TD_BarMaxPercentage],
-				NTD_TD[td][TD_BarDirectory]);
+				SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+				TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+				TextDraw[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
+				TextDraw[td][TD_PosX], 
+				TextDraw[td][TD_PosY], 
+				TextDraw[td][TD_BoxSizeX], 
+				TextDraw[td][TD_BoxSizeY],
+				TextDraw[td][TD_Color],
+				TextDraw[td][TD_BarMaxPercentage],
+				TextDraw[td][TD_BarDirectory]);
 			}
 			
 			//Show
-			SetPlayerProgressBarValue(playerid, NTD_TD[td][TD_BarID], (NTD_TD[td][TD_BarMaxPercentage] / 2.0));
-			ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+			SetPlayerProgressBarValue(playerid, TextDraw[td][TD_BarID], (TextDraw[td][TD_BarMaxPercentage] / 2.0));
+			ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
 		}
 		//Picker
-		NTD_TD[td][TD_PickerID] = TextDrawCreate(NTD_TD[td][TD_PosX] - 1, NTD_TD[td][TD_PosY] - 10, TD_PICKER_TEXT);
-		TextDrawFont(NTD_TD[td][TD_PickerID], 1);
-		TextDrawSetOutline(NTD_TD[td][TD_PickerID], 0);
-		TextDrawSetShadow(NTD_TD[td][TD_PickerID], 0);
-		TextDrawLetterSize(NTD_TD[td][TD_PickerID], 0.445833, 1.600000);
-		TextDrawTextSize(NTD_TD[td][TD_PickerID], 15.0, 15.0);
-		TextDrawAlignment(NTD_TD[td][TD_PickerID], 2);
-		TextDrawSetSelectable(NTD_TD[td][TD_PickerID], true);
+		TextDraw[td][TD_PickerID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY] - 10, GetProcessedTDVarName(td));
+		TextDrawFont(TextDraw[td][TD_PickerID], 1);
+		TextDrawSetOutline(TextDraw[td][TD_PickerID], 0);
+		TextDrawSetShadow(TextDraw[td][TD_PickerID], 0);
+		TextDrawLetterSize(TextDraw[td][TD_PickerID], 0.212, 0.850); 
+		TextDrawTextSize(TextDraw[td][TD_PickerID], 10.0, clamp( strlen(GetProcessedTDVarName(td)) * 4 , 10, 500));
+		TextDrawAlignment(TextDraw[td][TD_PickerID], 2);
+		TextDrawSetSelectable(TextDraw[td][TD_PickerID], true);
 		
-		if(NTD_User[User_EditingTDID] != td) 
-			TextDrawColor(NTD_TD[td][TD_PickerID], TDPICKER_COLOR);
+		if(User[User_EditingTDID] != td) 
+			TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR);
 		else
-			TextDrawColor(NTD_TD[td][TD_PickerID], TDPICKER_COLOR_ACTIVE);
+			TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR_ACTIVE);
 
 		if(EditorQuickSelect) 
-			TextDrawShowForPlayer(playerid, NTD_TD[td][TD_PickerID]);
+			TextDrawShowForPlayer(playerid, TextDraw[td][TD_PickerID]);
 		return 1;
 	}
 	return 0;
@@ -1650,25 +1699,25 @@ OpenTDDialog(playerid)
 	AddDialogListitem(playerid, GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "info1"));
 	foreach(new i : I_TEXTDRAWS)
 	{
-		format(formatedtd, MAXFORMATEDTD, NTD_TD[i][TD_Text]);
-		if(strlen(NTD_TD[i][TD_Text]) > MAXFORMATEDTD - 4)
+		format(formatedtd, MAXFORMATEDTD, TextDraw[i][TD_Text]);
+		if(strlen(TextDraw[i][TD_Text]) > MAXFORMATEDTD - 4)
 		{
 			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 			strcat(formatedtd, "...");
 		}
 		format(EditorString, sizeof EditorString, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s", 
-			(i == NTD_User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
+			(i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
 			i, 
 			formatedtd, 
 			GetProcessedTDVarName(i),
-			(NTD_TD[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
-			(NTD_TD[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
+			(TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
+			(TextDraw[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
 		AddDialogListitem(playerid, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
 	
 	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  
-	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_TEXTDRAWS), MAX_NTD_TDS), #, 
+	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_TEXTDRAWS), MAX_TEXTDRAWS), #, 
 	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button2"), 
 	EditorMaxDialogItems);
@@ -1688,114 +1737,114 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 	VALID_ITER_INDEX(I_TEXTDRAWS, index)
 	{
 		Iter_Add(I_TEXTDRAWS, index);
-		NTD_TD[index][TD_Created] = true;
-		NTD_TD[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
-		NTD_TD[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
+		TextDraw[index][TD_Created] = true;
+		TextDraw[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
+		TextDraw[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
 		switch(cloneid)
 		{
 			case -2: //Template
 			{
-				format(NTD_TD[index][TD_Text], 300, Tstring);
-				format(NTD_TD[index][TD_VarName], 35, "");
-				NTD_TD[index][TD_PosX] = TPosX;
-				NTD_TD[index][TD_PosY] = TPosY;
-				NTD_TD[index][TD_Font] = TFont;
-				NTD_TD[index][TD_IsGlobal] = TisPublic;
-				NTD_TD[index][TD_OutlineSize] = TOutlineSize;
-				NTD_TD[index][TD_ShadowSize] = TShadowSize;
-				NTD_TD[index][TD_LetterSizeX] = TLetterSizeX;
-				NTD_TD[index][TD_LetterSizeY] = TLetterSizeY;
-				NTD_TD[index][TD_BoxSizeX] = TBoxSizeX;
-				NTD_TD[index][TD_BoxSizeY] = TBoxSizeY;
-				NTD_TD[index][TD_Color] = TColor;
-				NTD_TD[index][TD_BGColor] = TBGColor;
-				NTD_TD[index][TD_BoxColor] = TBoxColor;
-				NTD_TD[index][TD_ColorAlpha] = TColorA;
-				NTD_TD[index][TD_BGColorAlpha] = TBGColorA;
-				NTD_TD[index][TD_BoxColorAlpha] = TBoxColorA;
-				NTD_TD[index][TD_Alignment] = TAlignment;
-				NTD_TD[index][TD_Selectable] = TSelectable;
-				NTD_TD[index][TD_Proportional] = TProportional;
-				NTD_TD[index][TD_UseBox] = ZUseBox;
-				NTD_TD[index][TD_PrevModelID] = TPrevModel;
-				NTD_TD[index][TD_PrevModelC1] = TPrevModelC1;
-				NTD_TD[index][TD_PrevModelC2] = TPrevModelC2;
-				NTD_TD[index][TD_PrevRotX] = TPrevRotX;
-				NTD_TD[index][TD_PrevRotY] = TPrevRotY;
-				NTD_TD[index][TD_PrevRotZ] = TPrevRotZ;
-				NTD_TD[index][TD_PrevRotZoom] = TPrevRotZoom;
-				NTD_TD[index][TD_BarMaxPercentage] = TBarMaxPercentage;
-				NTD_TD[index][TD_BarDirectory] = TBarDirectory;
+				format(TextDraw[index][TD_Text], 300, Tstring);
+				format(TextDraw[index][TD_VarName], 35, "");
+				TextDraw[index][TD_PosX] = TPosX;
+				TextDraw[index][TD_PosY] = TPosY;
+				TextDraw[index][TD_Font] = TFont;
+				TextDraw[index][TD_IsGlobal] = TisPublic;
+				TextDraw[index][TD_OutlineSize] = TOutlineSize;
+				TextDraw[index][TD_ShadowSize] = TShadowSize;
+				TextDraw[index][TD_LetterSizeX] = TLetterSizeX;
+				TextDraw[index][TD_LetterSizeY] = TLetterSizeY;
+				TextDraw[index][TD_BoxSizeX] = TBoxSizeX;
+				TextDraw[index][TD_BoxSizeY] = TBoxSizeY;
+				TextDraw[index][TD_Color] = TColor;
+				TextDraw[index][TD_BGColor] = TBGColor;
+				TextDraw[index][TD_BoxColor] = TBoxColor;
+				TextDraw[index][TD_ColorAlpha] = TColorA;
+				TextDraw[index][TD_BGColorAlpha] = TBGColorA;
+				TextDraw[index][TD_BoxColorAlpha] = TBoxColorA;
+				TextDraw[index][TD_Alignment] = TAlignment;
+				TextDraw[index][TD_Selectable] = TSelectable;
+				TextDraw[index][TD_Proportional] = TProportional;
+				TextDraw[index][TD_UseBox] = ZUseBox;
+				TextDraw[index][TD_PrevModelID] = TPrevModel;
+				TextDraw[index][TD_PrevModelC1] = TPrevModelC1;
+				TextDraw[index][TD_PrevModelC2] = TPrevModelC2;
+				TextDraw[index][TD_PrevRotX] = TPrevRotX;
+				TextDraw[index][TD_PrevRotY] = TPrevRotY;
+				TextDraw[index][TD_PrevRotZ] = TPrevRotZ;
+				TextDraw[index][TD_PrevRotZoom] = TPrevRotZoom;
+				TextDraw[index][TD_BarMaxPercentage] = TBarMaxPercentage;
+				TextDraw[index][TD_BarDirectory] = TBarDirectory;
 			}
 			case -1: //Normal
 			{
-				format(NTD_TD[index][TD_Text], 300, "TextDraw");
-				format(NTD_TD[index][TD_VarName], 35, "");
-				NTD_TD[index][TD_PosX] = 233.0;
-				NTD_TD[index][TD_PosY] = 225.0;
-				NTD_TD[index][TD_Font] = 1;
-				NTD_TD[index][TD_IsGlobal] = true;
-				NTD_TD[index][TD_OutlineSize] = 1;
-				NTD_TD[index][TD_ShadowSize] = 0;
-				NTD_TD[index][TD_LetterSizeX] = 0.6;
-				NTD_TD[index][TD_LetterSizeY] = 2.0;
-				NTD_TD[index][TD_BoxSizeX] = 400.0;
-				NTD_TD[index][TD_BoxSizeY] = 17.0;
-				NTD_TD[index][TD_Color] = -1;
-				NTD_TD[index][TD_BGColor] = 255;
-				NTD_TD[index][TD_BoxColor] = 100;
-				NTD_TD[index][TD_ColorAlpha] = 255;
-				NTD_TD[index][TD_BGColorAlpha] = 255;
-				NTD_TD[index][TD_BoxColorAlpha] = 50;
-				NTD_TD[index][TD_Alignment] = 1;
-				NTD_TD[index][TD_Selectable] = false;
-				NTD_TD[index][TD_Proportional] = true;
-				NTD_TD[index][TD_UseBox] = true;
-				NTD_TD[index][TD_PrevModelID] = 0;
-				NTD_TD[index][TD_PrevModelC1] = 1;
-				NTD_TD[index][TD_PrevModelC2] = 1;
-				NTD_TD[index][TD_PrevRotX] = -10.0;
-				NTD_TD[index][TD_PrevRotY] = 0.0;
-				NTD_TD[index][TD_PrevRotZ] = -20.0;
-				NTD_TD[index][TD_PrevRotZoom] = 1.0;
-				NTD_TD[index][TD_BarMaxPercentage] = 100.0;
-				NTD_TD[index][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+				format(TextDraw[index][TD_Text], 300, "TextDraw");
+				format(TextDraw[index][TD_VarName], 35, "");
+				TextDraw[index][TD_PosX] = 233.0;
+				TextDraw[index][TD_PosY] = 225.0;
+				TextDraw[index][TD_Font] = 1;
+				TextDraw[index][TD_IsGlobal] = true;
+				TextDraw[index][TD_OutlineSize] = 1;
+				TextDraw[index][TD_ShadowSize] = 0;
+				TextDraw[index][TD_LetterSizeX] = 0.6;
+				TextDraw[index][TD_LetterSizeY] = 2.0;
+				TextDraw[index][TD_BoxSizeX] = 400.0;
+				TextDraw[index][TD_BoxSizeY] = 17.0;
+				TextDraw[index][TD_Color] = -1;
+				TextDraw[index][TD_BGColor] = 255;
+				TextDraw[index][TD_BoxColor] = 100;
+				TextDraw[index][TD_ColorAlpha] = 255;
+				TextDraw[index][TD_BGColorAlpha] = 255;
+				TextDraw[index][TD_BoxColorAlpha] = 50;
+				TextDraw[index][TD_Alignment] = 1;
+				TextDraw[index][TD_Selectable] = false;
+				TextDraw[index][TD_Proportional] = true;
+				TextDraw[index][TD_UseBox] = true;
+				TextDraw[index][TD_PrevModelID] = 0;
+				TextDraw[index][TD_PrevModelC1] = 1;
+				TextDraw[index][TD_PrevModelC2] = 1;
+				TextDraw[index][TD_PrevRotX] = -10.0;
+				TextDraw[index][TD_PrevRotY] = 0.0;
+				TextDraw[index][TD_PrevRotZ] = -20.0;
+				TextDraw[index][TD_PrevRotZoom] = 1.0;
+				TextDraw[index][TD_BarMaxPercentage] = 100.0;
+				TextDraw[index][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 			}
 			default: //Clone
 			{
-				if(NTD_TD[cloneid][TD_Created] == true)
+				if(TextDraw[cloneid][TD_Created] == true)
 				{
-					format(NTD_TD[index][TD_Text], 300, NTD_TD[cloneid][TD_Text]);
-					format(NTD_TD[index][TD_VarName], 35, "");
-					NTD_TD[index][TD_PosX] = NTD_TD[cloneid][TD_PosX];
-					NTD_TD[index][TD_PosY] = NTD_TD[cloneid][TD_PosY];
-					NTD_TD[index][TD_Font] = NTD_TD[cloneid][TD_Font];
-					NTD_TD[index][TD_IsGlobal] = NTD_TD[cloneid][TD_IsGlobal];
-					NTD_TD[index][TD_OutlineSize] = NTD_TD[cloneid][TD_OutlineSize];
-					NTD_TD[index][TD_ShadowSize] = NTD_TD[cloneid][TD_ShadowSize];
-					NTD_TD[index][TD_LetterSizeX] = NTD_TD[cloneid][TD_LetterSizeX];
-					NTD_TD[index][TD_LetterSizeY] = NTD_TD[cloneid][TD_LetterSizeY];
-					NTD_TD[index][TD_BoxSizeX] = NTD_TD[cloneid][TD_BoxSizeX];
-					NTD_TD[index][TD_BoxSizeY] = NTD_TD[cloneid][TD_BoxSizeY];
-					NTD_TD[index][TD_Color] = NTD_TD[cloneid][TD_Color];
-					NTD_TD[index][TD_BGColor] = NTD_TD[cloneid][TD_BGColor];
-					NTD_TD[index][TD_BoxColor] = NTD_TD[cloneid][TD_BoxColor];
-					NTD_TD[index][TD_ColorAlpha] = NTD_TD[cloneid][TD_ColorAlpha];
-					NTD_TD[index][TD_BGColorAlpha] = NTD_TD[cloneid][TD_BGColorAlpha];
-					NTD_TD[index][TD_BoxColorAlpha] = NTD_TD[cloneid][TD_BoxColorAlpha];
-					NTD_TD[index][TD_Alignment] = NTD_TD[cloneid][TD_Alignment];
-					NTD_TD[index][TD_Selectable] = NTD_TD[cloneid][TD_Selectable];
-					NTD_TD[index][TD_Proportional] = NTD_TD[cloneid][TD_Proportional];
-					NTD_TD[index][TD_UseBox] = NTD_TD[cloneid][TD_UseBox];
-					NTD_TD[index][TD_PrevModelID] = NTD_TD[cloneid][TD_PrevModelID];
-					NTD_TD[index][TD_PrevModelC1] = NTD_TD[cloneid][TD_PrevModelC1];
-					NTD_TD[index][TD_PrevModelC2] = NTD_TD[cloneid][TD_PrevModelC2];
-					NTD_TD[index][TD_PrevRotX] = NTD_TD[cloneid][TD_PrevRotX];
-					NTD_TD[index][TD_PrevRotY] = NTD_TD[cloneid][TD_PrevRotY];
-					NTD_TD[index][TD_PrevRotZ] = NTD_TD[cloneid][TD_PrevRotZ];
-					NTD_TD[index][TD_PrevRotZoom] = NTD_TD[cloneid][TD_PrevRotZoom];
-					NTD_TD[index][TD_BarMaxPercentage] = NTD_TD[cloneid][TD_BarMaxPercentage];
-					NTD_TD[index][TD_BarDirectory] = NTD_TD[cloneid][TD_BarDirectory];
+					format(TextDraw[index][TD_Text], 300, TextDraw[cloneid][TD_Text]);
+					format(TextDraw[index][TD_VarName], 35, "");
+					TextDraw[index][TD_PosX] = TextDraw[cloneid][TD_PosX];
+					TextDraw[index][TD_PosY] = TextDraw[cloneid][TD_PosY];
+					TextDraw[index][TD_Font] = TextDraw[cloneid][TD_Font];
+					TextDraw[index][TD_IsGlobal] = TextDraw[cloneid][TD_IsGlobal];
+					TextDraw[index][TD_OutlineSize] = TextDraw[cloneid][TD_OutlineSize];
+					TextDraw[index][TD_ShadowSize] = TextDraw[cloneid][TD_ShadowSize];
+					TextDraw[index][TD_LetterSizeX] = TextDraw[cloneid][TD_LetterSizeX];
+					TextDraw[index][TD_LetterSizeY] = TextDraw[cloneid][TD_LetterSizeY];
+					TextDraw[index][TD_BoxSizeX] = TextDraw[cloneid][TD_BoxSizeX];
+					TextDraw[index][TD_BoxSizeY] = TextDraw[cloneid][TD_BoxSizeY];
+					TextDraw[index][TD_Color] = TextDraw[cloneid][TD_Color];
+					TextDraw[index][TD_BGColor] = TextDraw[cloneid][TD_BGColor];
+					TextDraw[index][TD_BoxColor] = TextDraw[cloneid][TD_BoxColor];
+					TextDraw[index][TD_ColorAlpha] = TextDraw[cloneid][TD_ColorAlpha];
+					TextDraw[index][TD_BGColorAlpha] = TextDraw[cloneid][TD_BGColorAlpha];
+					TextDraw[index][TD_BoxColorAlpha] = TextDraw[cloneid][TD_BoxColorAlpha];
+					TextDraw[index][TD_Alignment] = TextDraw[cloneid][TD_Alignment];
+					TextDraw[index][TD_Selectable] = TextDraw[cloneid][TD_Selectable];
+					TextDraw[index][TD_Proportional] = TextDraw[cloneid][TD_Proportional];
+					TextDraw[index][TD_UseBox] = TextDraw[cloneid][TD_UseBox];
+					TextDraw[index][TD_PrevModelID] = TextDraw[cloneid][TD_PrevModelID];
+					TextDraw[index][TD_PrevModelC1] = TextDraw[cloneid][TD_PrevModelC1];
+					TextDraw[index][TD_PrevModelC2] = TextDraw[cloneid][TD_PrevModelC2];
+					TextDraw[index][TD_PrevRotX] = TextDraw[cloneid][TD_PrevRotX];
+					TextDraw[index][TD_PrevRotY] = TextDraw[cloneid][TD_PrevRotY];
+					TextDraw[index][TD_PrevRotZ] = TextDraw[cloneid][TD_PrevRotZ];
+					TextDraw[index][TD_PrevRotZoom] = TextDraw[cloneid][TD_PrevRotZoom];
+					TextDraw[index][TD_BarMaxPercentage] = TextDraw[cloneid][TD_BarMaxPercentage];
+					TextDraw[index][TD_BarDirectory] = TextDraw[cloneid][TD_BarDirectory];
 				}
 			}
 		}
@@ -1824,7 +1873,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	TextDrawShowForPlayer(playerid, B_Settings);
 	TextDrawShowForPlayer(playerid, E_Box);
 	
-	//TextDrawSetSelectable(B_NewProject, false);
+	TextDrawSetSelectable(B_Groups, false);
 	TextDrawSetSelectable(B_OpenProject, false);
 	TextDrawSetSelectable(B_CloseProject, false);
 	TextDrawSetSelectable(B_Export, false);
@@ -1847,7 +1896,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	#pragma unused alpha
 	SplitRGBA(EditorButtonsColor,red,green,blue, alpha); 
 	unsetcolor = CreateRGBA(red,green,blue,35);
-	//TextDrawColor(B_NewProject, unsetcolor);
+	TextDrawColor(B_Groups, unsetcolor);
 	TextDrawColor(B_OpenProject, unsetcolor);
 	TextDrawColor(B_CloseProject, unsetcolor);
 	TextDrawColor(B_Export, unsetcolor);
@@ -1866,12 +1915,11 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	TextDrawColor(B_Selectable, unsetcolor);
 	TextDrawColor(B_Proportionality, unsetcolor);
 	
-	new tdid = NTD_User[User_EditingTDID];
+	new tdid = User[User_EditingTDID];
 	if(b1_active) 
 	{
-		/*
-		TextDrawSetSelectable(B_NewProject, true),
-		TextDrawColor(B_NewProject, EditorButtonsColor);*/
+		TextDrawSetSelectable(B_Groups, true),
+		TextDrawColor(B_Groups, EditorButtonsColor);
 	}
 		
 	if(b2_active) 
@@ -1891,7 +1939,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 		TextDrawColor(B_Font, EditorButtonsColor);
 	if(b7_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW || NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW || TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_TDSettings, true);
 			TextDrawColor(B_TDSettings, EditorButtonsColor);
@@ -1905,7 +1953,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 		TextDrawColor(B_Size, EditorButtonsColor);
 	if(b10_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_Tekst, true);
 			TextDrawColor(B_Tekst, EditorButtonsColor);
@@ -1916,7 +1964,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 		TextDrawColor(B_Color, EditorButtonsColor);
 	if(b12_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_Outline, true);
 			TextDrawColor(B_Outline, EditorButtonsColor);
@@ -1924,7 +1972,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b13_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_Shadow, true);
 			TextDrawColor(B_Shadow, EditorButtonsColor);
@@ -1932,7 +1980,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b14_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_UseBox, true);
 			TextDrawColor(B_UseBox, EditorButtonsColor);
@@ -1940,7 +1988,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b15_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW)
 		{
 			TextDrawSetSelectable(B_Alignment, true);
 			TextDrawColor(B_Alignment, EditorButtonsColor);
@@ -1948,7 +1996,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b16_active && tdid != -1) 
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_SwitchPublic, true);
 			TextDrawColor(B_SwitchPublic, EditorButtonsColor);
@@ -1956,7 +2004,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b17_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_Selectable, true);
 			TextDrawColor(B_Selectable, EditorButtonsColor);
@@ -1964,14 +2012,14 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	}
 	if(b18_active && tdid != -1)
 	{
-		if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_MODEL_PREVIEW && TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 		{
 			TextDrawSetSelectable(B_Proportionality, true),
 			TextDrawColor(B_Proportionality, EditorButtonsColor);
 		}
 	}
 	
-	//TextDrawShowForPlayer(playerid, B_NewProject);
+	TextDrawShowForPlayer(playerid, B_Groups);
 	TextDrawShowForPlayer(playerid, B_OpenProject);
 	TextDrawShowForPlayer(playerid, B_CloseProject);
 	TextDrawShowForPlayer(playerid, B_Export);
@@ -1989,7 +2037,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	TextDrawShowForPlayer(playerid, B_SwitchPublic);
 	TextDrawShowForPlayer(playerid, B_Selectable);
 	TextDrawShowForPlayer(playerid, B_Proportionality);
-	NTD_User[User_InEditor] = true;
+	User[User_InEditor] = true;
 	return 1;
 }
 
@@ -1998,7 +2046,7 @@ HideEditor(playerid)
 	TextDrawHideForPlayer(playerid, E_Box);
 	TextDrawHideForPlayer(playerid, B_Exit);
 	TextDrawHideForPlayer(playerid, B_Settings);
-	//TextDrawHideForPlayer(playerid, B_NewProject);
+	TextDrawHideForPlayer(playerid, B_Groups);
 	TextDrawHideForPlayer(playerid, B_OpenProject);
 	TextDrawHideForPlayer(playerid, B_CloseProject);
 	TextDrawHideForPlayer(playerid, B_Export);
@@ -2024,7 +2072,7 @@ DestroyEditor()
 	TextDrawDestroy(E_Box);
 	TextDrawDestroy(B_Exit);
 	TextDrawDestroy(B_Settings);
-	//TextDrawDestroy(B_NewProject);
+	TextDrawDestroy(B_Groups);
 	TextDrawDestroy(B_OpenProject);
 	TextDrawDestroy(B_CloseProject);
 	TextDrawDestroy(B_Export);
@@ -2049,31 +2097,31 @@ ShowWelcomeScreen(bool:show)
 {
 	if(show)
 	{
-		if(NTD_User[User_WelcomeScreenAlpha] == -1)
+		if(User[User_WelcomeScreenAlpha] == -1)
 		{
-			NTD_User[User_WelcomeScreenAlpha] = 0;
-			NTD_User[User_WelcomeScreenColor] = 0xFFFFFFFF;
-			NTD_User[User_WelcomeScreenColor] = CreateRGBAWithAlpha(NTD_User[User_WelcomeScreenColor], NTD_User[User_WelcomeScreenAlpha]);
+			User[User_WelcomeScreenAlpha] = 0;
+			User[User_WelcomeScreenColor] = 0xFFFFFFFF;
+			User[User_WelcomeScreenColor] = CreateRGBAWithAlpha(User[User_WelcomeScreenColor], User[User_WelcomeScreenAlpha]);
 			WelcomeScreen = TextDrawCreate(121.000000, 81.000000, WELCOME_SCREEN);
 			TextDrawFont(WelcomeScreen, 4);
 			TextDrawTextSize(WelcomeScreen, 397.500000, 244.000000);
-			TextDrawColor(WelcomeScreen, NTD_User[User_WelcomeScreenColor]);
+			TextDrawColor(WelcomeScreen, User[User_WelcomeScreenColor]);
 		}
-		if(NTD_User[User_WelcomeTimer] != -1)
-			KillTimer(NTD_User[User_WelcomeTimer]);
+		if(User[User_WelcomeTimer] != -1)
+			KillTimer(User[User_WelcomeTimer]);
 			
-		TextDrawShowForPlayer(NTD_User[User_PlayerIDInEditor], WelcomeScreen);
-		NTD_User[User_WelcomeTimer] = SetTimerEx("FadeTimer", 25, true, "b", true);
+		TextDrawShowForPlayer(User[User_PlayerIDInEditor], WelcomeScreen);
+		User[User_WelcomeTimer] = SetTimerEx("FadeTimer", 25, true, "b", true);
 	}
 	else
 	{
-		if(NTD_User[User_WelcomeScreenAlpha] != -1)
+		if(User[User_WelcomeScreenAlpha] != -1)
 		{
-			if(NTD_User[User_WelcomeTimer] != -1)
-				KillTimer(NTD_User[User_WelcomeTimer]);
+			if(User[User_WelcomeTimer] != -1)
+				KillTimer(User[User_WelcomeTimer]);
 				
-			TextDrawShowForPlayer(NTD_User[User_PlayerIDInEditor], WelcomeScreen);
-			NTD_User[User_WelcomeTimer] = SetTimerEx("FadeTimer", 25, true, "b", false);
+			TextDrawShowForPlayer(User[User_PlayerIDInEditor], WelcomeScreen);
+			User[User_WelcomeTimer] = SetTimerEx("FadeTimer", 25, true, "b", false);
 		}
 	}
 	return 1;
@@ -2100,13 +2148,13 @@ CreateEditor()
 	TextDrawColor(B_Settings, 0xFFFFFFFF);
 	TextDrawSetSelectable(B_Settings, true);
 	
-	/*B_NewProject = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, BUTTON_NEW);
-	TextDrawFont(B_NewProject, 4);
-	TextDrawTextSize(B_NewProject, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
-	TextDrawSetSelectable(B_NewProject, true);
-	TextDrawColor(B_NewProject, EditorButtonsColor);*/
+	B_Groups = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, "HUD:fist");
+	TextDrawFont(B_Groups, 4);
+	TextDrawTextSize(B_Groups, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
+	TextDrawSetSelectable(B_Groups, true);
+	TextDrawColor(B_Groups, EditorButtonsColor);
 	
-	B_OpenProject = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), EditorPosY, BUTTON_OPEN);
+	B_OpenProject = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), EditorPosY, BUTTON_PROJECTS);
 	TextDrawFont(B_OpenProject, 4);
 	TextDrawTextSize(B_OpenProject, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_OpenProject, true);
@@ -2214,9 +2262,9 @@ CreateEditor()
 ShowEditorEx(playerid, bool:showmouse = true)
 {
 	PlayerSelectTD(playerid, showmouse);
-	if(NTD_User[User_ProjectOpened] == true)
+	if(User[User_ProjectOpened] == true)
 	{
-		if(NTD_User[User_EditingTDID] != -1)
+		if(User[User_EditingTDID] != -1)
 			ShowEditor(playerid, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 		else 
 			ShowEditor(playerid, false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
@@ -2229,27 +2277,12 @@ ShowEditorEx(playerid, bool:showmouse = true)
 RelayerEditor()
 {
 	DestroyEditor();
-	new playerid = NTD_User[User_PlayerIDInEditor];
+	new playerid = User[User_PlayerIDInEditor];
 	foreach(new i : I_TEXTDRAWS)
 	{
-		if(NTD_TD[i][TD_SelfID] != Text:INVALID_TEXT_DRAW)
-		{
-			TextDrawDestroy(NTD_TD[i][TD_SelfID]);
-			NTD_TD[i][TD_SelfID] = Text:INVALID_TEXT_DRAW;
-		}
-		if(NTD_TD[i][TD_BarID] != INVALID_PLAYER_BAR_ID)
-		{
-			DestroyPlayerProgressBar(playerid, NTD_TD[i][TD_BarID]);
-			NTD_TD[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
-		}
-		TextDrawDestroy(NTD_TD[i][TD_PickerID]);
-	}
-	foreach(new i : I_TEXTDRAWS)
-	{
-		DrawTD(i);
+		RedrawTD(playerid, i);
 	}
 	CreateEditor();
-	
 	return 1;
 }
 
@@ -2267,17 +2300,17 @@ public BlockVarsChanger(bool:block)
 {
 	if(block)
 	{
-		NTD_User[User_BlockVarsTime] = true;
+		User[User_BlockVarsTime] = true;
 		SetTimerEx("BlockVarsChanger", BLOCK_VARS_TIME, false, "b", false);
 	}
-	else NTD_User[User_BlockVarsTime] = false;
+	else User[User_BlockVarsTime] = false;
 	return 1;
 }
 
 bool:VariableExists(const string[])
 {
 	foreach(new i : I_TEXTDRAWS)
-		if(!strcmp(NTD_TD[i][TD_VarName], string, true) && !isnull(NTD_TD[i][TD_VarName]) && NTD_TD[i][TD_Created]) return true;
+		if(!strcmp(TextDraw[i][TD_VarName], string, true) && !isnull(TextDraw[i][TD_VarName]) && TextDraw[i][TD_Created]) return true;
 	return false;
 }
 
@@ -2287,7 +2320,7 @@ CallNTDCommand(playerid)
 	{
 		if(ScriptScriptActive)
 		{
-			if(NTD_User[User_InEditor] == false)
+			if(User[User_InEditor] == false)
 			{
 				LoadLanguages();
 				LoadConfigurations();
@@ -2307,16 +2340,16 @@ CallNTDCommand(playerid)
 					return 1;
 				}
 				CreateEditor();
-				NTD_User[User_InEditor] = true;
-				NTD_User[User_ChangingState] = CH_NONE;
-				NTD_User[User_ProjectOpened] = false;
-				NTD_User[User_PlayerIDInEditor] = playerid;
-				NTD_User[User_ChoosenTDID] = -1;
-				NTD_User[User_EditingTDID] = -1;
-				NTD_User[User_ChangingMColorState] = -1;
-				NTD_User[User_CursorTimer] = -1;
-				NTD_User[User_WelcomeTimer] = -1;
-				NTD_User[User_WelcomeScreenAlpha] = -1;
+				User[User_InEditor] = true;
+				User[User_ChangingState] = CH_NONE;
+				User[User_ProjectOpened] = false;
+				User[User_PlayerIDInEditor] = playerid;
+				User[User_ChoosenTDID] = -1;
+				User[User_EditingTDID] = -1;
+				User[User_ChangingMColorState] = -1;
+				User[User_CursorTimer] = -1;
+				User[User_WelcomeTimer] = -1;
+				User[User_WelcomeScreenAlpha] = -1;
 				ShowWelcomeScreen(true);
 				TogglePlayerControllable(playerid, false);
 				ShowEditorEx(playerid);
@@ -2326,34 +2359,34 @@ CallNTDCommand(playerid)
 			}
 			else
 			{
-				if(NTD_User[User_PlayerIDInEditor] == playerid)
+				if(User[User_PlayerIDInEditor] == playerid)
 				{
 					SaveConfigurations();
 					HideEditor(playerid);
 					DestroyEditor();
-					NTD_User[User_InEditor] = false;
-					NTD_User[User_ChangingState] = CH_NONE;
-					NTD_User[User_ChoosenTDID] = -1;
-					NTD_User[User_EditingTDID] = -1;
-					NTD_User[User_ChangingMColorState] = -1;
+					User[User_InEditor] = false;
+					User[User_ChangingState] = CH_NONE;
+					User[User_ChoosenTDID] = -1;
+					User[User_EditingTDID] = -1;
+					User[User_ChangingMColorState] = -1;
 					PlayerSelectTD(playerid, false);
 					TextDrawDestroy(WelcomeScreen);
-					if(NTD_User[User_WelcomeTimer] != -1)
+					if(User[User_WelcomeTimer] != -1)
 					{
 						
-						NTD_User[User_WelcomeScreenAlpha] = -1;
-						KillTimer(NTD_User[User_WelcomeTimer]);
-						NTD_User[User_WelcomeTimer] = -1;
+						User[User_WelcomeScreenAlpha] = -1;
+						KillTimer(User[User_WelcomeTimer]);
+						User[User_WelcomeTimer] = -1;
 					}
 					TogglePlayerControllable(playerid, true);
 					format(EditorString, sizeof EditorString, HEX_PALETTE_1"NTD: {FFFFFF}%s", GetLanguageMessage("editordisabled", LANG_TYPE_MESSAGES));
 					SendClientMessage(playerid, -1, EditorString);
-					if(NTD_User[User_ProjectOpened])
+					if(User[User_ProjectOpened])
 					{
-						SaveProject(NTD_User[User_ProjectIndex]);
+						SaveProject(User[User_ProjectIndex]);
 						foreach(new i : I_TEXTDRAWS)
 							DestroyTD(i, i);
-						NTD_User[User_ProjectOpened] = false;
+						User[User_ProjectOpened] = false;
 					}
 				}
 				else 
@@ -2390,50 +2423,50 @@ EnableVarChangeTimer(bool:starttimer)
 {
 	if(starttimer)
 	{
-		if(NTD_User[User_ChangingVarsTimer] != -1)
-			KillTimer(NTD_User[User_ChangingVarsTimer]);
-		NTD_User[User_ChangingVarsTimer] = SetTimer("ChangingVarsTime", CHANGING_VAR_TIME, true);
+		if(User[User_ChangingVarsTimer] != -1)
+			KillTimer(User[User_ChangingVarsTimer]);
+		User[User_ChangingVarsTimer] = SetTimer("ChangingVarsTime", CHANGING_VAR_TIME, true);
 	}
 	else
 	{
-		if(NTD_User[User_ChangingVarsTimer] != -1)
-			KillTimer(NTD_User[User_ChangingVarsTimer]);
-		NTD_User[User_ChangingVarsTimer] = -1;
+		if(User[User_ChangingVarsTimer] != -1)
+			KillTimer(User[User_ChangingVarsTimer]);
+		User[User_ChangingVarsTimer] = -1;
 	}
 	return 1;
 }
 
 ShowManualVarChangeDialog(playerid)
 {
-	new tdid = NTD_User[User_EditingTDID];
+	new tdid = User[User_EditingTDID];
 	ClearDialogListitems(playerid);
 	AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info0"));
-	switch(NTD_User[User_ChangingState])
+	switch(User[User_ChangingState])
 	{
 		case CH_POSITION:
 		{
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", NTD_TD[tdid][TD_PosX]));
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", NTD_TD[tdid][TD_PosY]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", TextDraw[tdid][TD_PosX]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", TextDraw[tdid][TD_PosY]));
 		}
 		case CH_SIZE:
 		{
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeX]) : (NTD_TD[tdid][TD_BoxSizeX])));
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeY]) : (NTD_TD[tdid][TD_BoxSizeY])));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", (User[User_ChangingSizeState] == 0) ? (TextDraw[tdid][TD_LetterSizeX]) : (TextDraw[tdid][TD_BoxSizeX])));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", (User[User_ChangingSizeState] == 0) ? (TextDraw[tdid][TD_LetterSizeY]) : (TextDraw[tdid][TD_BoxSizeY])));
 		}
 		case CH_MODEL_ROTATION:
 		{
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", NTD_TD[tdid][TD_PrevRotX]));
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", NTD_TD[tdid][TD_PrevRotY]));
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info3", "f", NTD_TD[tdid][TD_PrevRotZ]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info1", "f", TextDraw[tdid][TD_PrevRotX]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info2", "f", TextDraw[tdid][TD_PrevRotY]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info3", "f", TextDraw[tdid][TD_PrevRotZ]));
 		}
 		case CH_MODEL_ZOOM:
 		{
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info4", "f", NTD_TD[tdid][TD_PrevRotZoom]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info4", "f", TextDraw[tdid][TD_PrevRotZoom]));
 		}
 		case CH_MODEL_COLOR:
 		{
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info5", "i", NTD_TD[tdid][TD_PrevModelC1]));
-			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info6", "i", NTD_TD[tdid][TD_PrevModelC2]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info5", "i", TextDraw[tdid][TD_PrevModelC1]));
+			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info6", "i", TextDraw[tdid][TD_PrevModelC2]));
 		}
 	}
 	ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE, DIALOG_STYLE_TABLIST_HEADERS, 
@@ -2463,17 +2496,17 @@ ResetConfiguration(playerid)
 
 QuickSelectionShow(playerid, bool:enable)
 {
-	if(NTD_User[User_ProjectOpened] == true)
+	if(User[User_ProjectOpened] == true)
 	{
 		if(enable)
 		{
 			foreach(new i : I_TEXTDRAWS)
-				TextDrawShowForPlayer(playerid, NTD_TD[i][TD_PickerID]);
+				TextDrawShowForPlayer(playerid, TextDraw[i][TD_PickerID]);
 		}
 		else
 		{
 			foreach(new i : I_TEXTDRAWS)
-				TextDrawHideForPlayer(playerid, NTD_TD[i][TD_PickerID]);
+				TextDrawHideForPlayer(playerid, TextDraw[i][TD_PickerID]);
 		}
 	}
 	return 1;
@@ -2491,7 +2524,7 @@ ColorDialog(playerid, cstate)
 {
 	if(cstate == 0)
 	{
-		NTD_User[User_ChangingColorBar] = false;
+		User[User_ChangingColorBar] = false;
 		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, 
 		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "caption"), 
 		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "infos"),
@@ -2501,11 +2534,11 @@ ColorDialog(playerid, cstate)
 	}
 	else
 	{
-		NTD_User[User_ChangingColorBar] = false;
+		User[User_ChangingColorBar] = false;
 		if(cstate == 2)
 		{
-			NTD_User[User_ChangingMColorState] = 0;
-			NTD_User[User_ChangingColorBar] = true;
+			User[User_ChangingMColorState] = 0;
+			User[User_ChangingColorBar] = true;
 		}
 		ShowPlayerDialog(playerid, DIALOG_COLOR2, DIALOG_STYLE_LIST, 
 		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "caption"), 
@@ -2524,18 +2557,18 @@ ToggleTextDrawShowForAll(bool:toggle)
 	{
 		foreach(new i : I_TEXTDRAWS)
 		{
-			if(NTD_TD[i][TD_Created])
-				TextDrawShowForAll(NTD_TD[i][TD_SelfID]);
+			if(TextDraw[i][TD_Created])
+				TextDrawShowForAll(TextDraw[i][TD_SelfID]);
 		}
 	}
 	else
 	{
 		foreach(new i : I_TEXTDRAWS)
 		{
-			if(NTD_TD[i][TD_Created])
+			if(TextDraw[i][TD_Created])
 			{
-				TextDrawHideForAll(NTD_TD[i][TD_SelfID]);
-				TextDrawShowForPlayer(NTD_User[User_PlayerIDInEditor], NTD_TD[i][TD_SelfID]);
+				TextDrawHideForAll(TextDraw[i][TD_SelfID]);
+				TextDrawShowForPlayer(User[User_PlayerIDInEditor], TextDraw[i][TD_SelfID]);
 			}
 		}
 	}
@@ -2591,15 +2624,15 @@ SaveConfigurations()
 GetProcessedTDVarName(tdid)
 {
 	new string[64] = "ERROR";
-	if(NTD_TD[tdid][TD_Created])
+	if(TextDraw[tdid][TD_Created])
 	{
-		if(strlen(NTD_TD[tdid][TD_VarName]) > 0)
-			format(string, sizeof string, NTD_TD[tdid][TD_VarName]);
+		if(strlen(TextDraw[tdid][TD_VarName]) > 0)
+			format(string, sizeof string, TextDraw[tdid][TD_VarName]);
 		else
 		{
-			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 				format(string, sizeof string, "playerprogressbar_%i", tdid);
-			else if(!NTD_TD[tdid][TD_IsGlobal])
+			else if(!TextDraw[tdid][TD_IsGlobal])
 				format(string, sizeof string, "playertextdraw_%i", tdid);
 			else 
 				format(string, sizeof string, "textdraw_%i", tdid);

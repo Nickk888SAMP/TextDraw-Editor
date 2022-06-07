@@ -21,20 +21,24 @@ enum
 	FILE_EXTENSION_NTD, // Nickk's Text Draw Editor
 	FILE_EXTENSION_NTD_LEGACY, // Nickk's Text Draw Editor
 	FILE_EXTENSION_ZTD, // Zamaroht's Text Draw Editor
-	FILE_EXTENSION_ITD // iPLEOMAX's Text Draw Editor
+	FILE_EXTENSION_ITD, // iPLEOMAX's Text Draw Editor
+	FILE_EXTENSION_RAW // Raw
 };
 
 enum E_EXTENSIONS
 {
 	fe_extension[16],
-	fe_extensionName[16],
+	fe_extensionName[24],
 	fe_extensionId
 };
 
 new Extensions[][E_EXTENSIONS] = 
 {
 	{ "ntd", "NTD", FILE_EXTENSION_NTD },
-	{ "ntdp", "NTD Legacy", FILE_EXTENSION_NTD_LEGACY }
+	{ "ntdp", "NTD Legacy", FILE_EXTENSION_NTD_LEGACY },
+	{ "tde", "ZTD (Zamaroth's)", FILE_EXTENSION_ZTD },
+	{ "itd", "ITD (iPLEOMAX's)", FILE_EXTENSION_ITD },
+	{ "pwn", "Raw Textdraws", FILE_EXTENSION_RAW }
 };
 
 // Colors
@@ -428,7 +432,7 @@ enum E_SPRITE
 	Sprite_Lib[50],
 	Sprite_Name[50]
 }
-new Sprite_Library[MAX_NTD_SPRITES][E_SPRITE]; //Sprites Data
+new Sprite_Library[MAX_SPRITES][E_SPRITE]; //Sprites Data
 
 
 // Templates Data
@@ -437,7 +441,7 @@ enum E_TEMPLATE
 	Template_Name[64],
 	Template_Data[258]
 };
-new Template[MAX_NTD_TEMPLATES][E_TEMPLATE];
+new Template[MAX_TEMPLATES][E_TEMPLATE];
 
 // Language
 enum E_LANGUAGE
@@ -449,7 +453,7 @@ enum E_LANGUAGE
 	Node:l_gametextsNode,
 	Node:l_dialogsNode
 }
-new Language[MAX_NTD_LANGUAGES][E_LANGUAGE]; //Languages List
+new Language[MAX_LANGUAGES][E_LANGUAGE]; //Languages List
 
 //TextDraw Data
 enum E_TD
@@ -491,7 +495,7 @@ enum E_TD
 	TD_HighlightTimer,
 	TD_BarDirectory
 }
-new NTD_TD[MAX_NTD_TDS][E_TD]; //Textdraws Data
+new TextDraw[MAX_TEXTDRAWS][E_TD]; //Textdraws Data
 
 //Player Data
 enum E_USER
@@ -518,7 +522,7 @@ enum E_USER
 	User_EditingTDID,
 	User_ChangingMColorState
 }
-new NTD_User[E_USER]; //User Data
+new User[E_USER]; //User Data
 
 //Project data
 enum E_PROJECT
@@ -526,7 +530,7 @@ enum E_PROJECT
 	Pro_fileName[128],
 	Pro_fileExtensionId
 }
-new NTD_Projects[MAX_NTD_PROJECTS][E_PROJECT]; //Projects Data
+new Projects[MAX_PROJECTS][E_PROJECT]; //Projects Data
 
 enum
 {

@@ -142,7 +142,8 @@
     },
 	"projectslist": {
       "caption": "My Projects (#1/#2)",
-	  "info0": "Create new Project",
+	  "info0": "Name#tFile Type",
+	  "info1": "Create new Project",
       "button1": "Confirm",
       "button2": "Back"
     },

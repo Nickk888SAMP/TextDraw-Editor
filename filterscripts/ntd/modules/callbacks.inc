@@ -53,8 +53,8 @@ public OnFilterScriptExit()
 {
 	foreach(new i : Player)
 	{
-		if(ScriptScriptActive && NTD_User[User_InEditor])
-			if(NTD_User[User_PlayerIDInEditor] == i)
+		if(ScriptScriptActive && User[User_InEditor])
+			if(User[User_PlayerIDInEditor] == i)
 			{
 				CallNTDCommand(i);
 				ShowPlayerDialog(i, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
@@ -75,13 +75,13 @@ public OnPlayerCommandText(playerid, cmdtext[])
 
 public OnPlayerConnect(playerid)
 {
-	if(ScriptScriptActive && NTD_User[User_InEditor])
+	if(ScriptScriptActive && User[User_InEditor])
 	{
 		if(EditorTextDrawShowForAll)
 		{
 			foreach(new i : I_TEXTDRAWS)
 			{
-				TextDrawShowForPlayer(playerid, NTD_TD[i][TD_SelfID]);
+				TextDrawShowForPlayer(playerid, TextDraw[i][TD_SelfID]);
 			}
 		}
 	}
@@ -90,31 +90,31 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerDeath(playerid, killerid)
 {
-	if(ScriptScriptActive && NTD_User[User_InEditor])
-		if(NTD_User[User_PlayerIDInEditor] == playerid)
+	if(ScriptScriptActive && User[User_InEditor])
+		if(User[User_PlayerIDInEditor] == playerid)
 			CallNTDCommand(playerid);
 	return 1;
 }
 
 public OnPlayerDisconnect(playerid, reason)
 {
-	if(ScriptScriptActive && NTD_User[User_InEditor])
-		if(NTD_User[User_PlayerIDInEditor] == playerid)
+	if(ScriptScriptActive && User[User_InEditor])
+		if(User[User_PlayerIDInEditor] == playerid)
 			CallNTDCommand(playerid);
 	return 1;
 }
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {		
-	if(ScriptScriptActive && NTD_User[User_InEditor])
+	if(ScriptScriptActive && User[User_InEditor])
 	{
 		if(newkeys & EditorAcceptKey)
 		{
-			if(playerid == NTD_User[User_PlayerIDInEditor])
+			if(playerid == User[User_PlayerIDInEditor])
 			{
-				if(NTD_User[User_ChangingState] != CH_NONE)
+				if(User[User_ChangingState] != CH_NONE)
 				{
-					NTD_User[User_ChangingState] = CH_NONE;
+					User[User_ChangingState] = CH_NONE;
 					ShowEditorEx(playerid);
 					EnableVarChangeTimer(false);
 					PlayerSelectTD(playerid, true);
@@ -123,23 +123,23 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		}
 		if(newkeys & EditorFasterKey)
 		{
-			if(NTD_User[User_ChangingState] != CH_NONE)
+			if(User[User_ChangingState] != CH_NONE)
 			{
-				if(playerid == NTD_User[User_PlayerIDInEditor])
+				if(playerid == User[User_PlayerIDInEditor])
 				{
-					NTD_User[User_Accelerate] = true;
+					User[User_Accelerate] = true;
 				}
 			}
 		}
 		if(oldkeys & EditorFasterKey)
-			NTD_User[User_Accelerate] = false;
+			User[User_Accelerate] = false;
 		if(newkeys & KEY_WALK)
 		{
-			switch(NTD_User[User_ChangingState])
+			switch(User[User_ChangingState])
 			{
 				case CH_POSITION, CH_SIZE, CH_MODEL_ROTATION, CH_MODEL_ZOOM, CH_MODEL_COLOR:
 				{
-					if(playerid == NTD_User[User_PlayerIDInEditor])
+					if(playerid == User[User_PlayerIDInEditor])
 					{
 						ShowManualVarChangeDialog(playerid);
 					}
@@ -166,7 +166,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 		}
 	}
-	if(dialogid == DIALOG_SETTINGRESET && !NTD_User[User_InEditor])
+	if(dialogid == DIALOG_SETTINGRESET && !User[User_InEditor])
 	{
 		if(response)
 		{
@@ -180,9 +180,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		}
 		CallNTDCommand(playerid);
 	}
-	else if(ScriptScriptActive && NTD_User[User_InEditor])
+	else if(ScriptScriptActive && User[User_InEditor])
 	{
-		new tdid = NTD_User[User_EditingTDID];
+		new tdid = User[User_EditingTDID];
 		switch(dialogid)
 		{
 			case DIALOG_MANUALVARCHANGE1:
@@ -191,62 +191,62 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(!isnull(inputtext))
 					{
-						switch(NTD_User[User_ChangingState])
+						switch(User[User_ChangingState])
 						{
 							case CH_POSITION:
 							{
-								switch(NTD_User[User_ManualChangeType])
+								switch(User[User_ManualChangeType])
 								{
 									case 0: //X
-										NTD_TD[tdid][TD_PosX] = floatstr(inputtext);
+										TextDraw[tdid][TD_PosX] = floatstr(inputtext);
 									case 1: //Y
-										NTD_TD[tdid][TD_PosY] = floatstr(inputtext);
+										TextDraw[tdid][TD_PosY] = floatstr(inputtext);
 								}
 							}
 							case CH_SIZE:
 							{
-								switch(NTD_User[User_ManualChangeType])
+								switch(User[User_ManualChangeType])
 								{
 									case 0: //X
 									{
-										if(NTD_User[User_ChangingSizeState] == 0)
-											NTD_TD[tdid][TD_LetterSizeX] = floatstr(inputtext);
+										if(User[User_ChangingSizeState] == 0)
+											TextDraw[tdid][TD_LetterSizeX] = floatstr(inputtext);
 										else 
-											NTD_TD[tdid][TD_BoxSizeX] = floatstr(inputtext);
+											TextDraw[tdid][TD_BoxSizeX] = floatstr(inputtext);
 									}
 									case 1: //Y
 									{
-										if(NTD_User[User_ChangingSizeState] == 0)
-											NTD_TD[tdid][TD_LetterSizeY] = floatstr(inputtext);
+										if(User[User_ChangingSizeState] == 0)
+											TextDraw[tdid][TD_LetterSizeY] = floatstr(inputtext);
 										else 
-											NTD_TD[tdid][TD_BoxSizeY] = floatstr(inputtext);
+											TextDraw[tdid][TD_BoxSizeY] = floatstr(inputtext);
 									}
 								}
 							}
 							case CH_MODEL_ROTATION:
 							{
-								switch(NTD_User[User_ManualChangeType])
+								switch(User[User_ManualChangeType])
 								{
 									case 0: //X
-										NTD_TD[tdid][TD_PrevRotX] = floatstr(inputtext);
+										TextDraw[tdid][TD_PrevRotX] = floatstr(inputtext);
 									case 1: //Y
-										NTD_TD[tdid][TD_PrevRotY] = floatstr(inputtext);
+										TextDraw[tdid][TD_PrevRotY] = floatstr(inputtext);
 									case 2: //Z
-										NTD_TD[tdid][TD_PrevRotZ] = floatstr(inputtext);
+										TextDraw[tdid][TD_PrevRotZ] = floatstr(inputtext);
 								}
 							}
 							case CH_MODEL_ZOOM: //Zoom
 							{
-								NTD_TD[tdid][TD_PrevRotZoom] = floatstr(inputtext);
+								TextDraw[tdid][TD_PrevRotZoom] = floatstr(inputtext);
 							}
 							case CH_MODEL_COLOR:
 							{
-								switch(NTD_User[User_ManualChangeType])
+								switch(User[User_ManualChangeType])
 								{
 									case 0: //TD_Color 1
-										NTD_TD[tdid][TD_PrevModelC1] = strval(inputtext);
+										TextDraw[tdid][TD_PrevModelC1] = strval(inputtext);
 									case 1: //TD_Color 2
-										NTD_TD[tdid][TD_PrevModelC2] = strval(inputtext);
+										TextDraw[tdid][TD_PrevModelC2] = strval(inputtext);
 								}
 							}
 						}
@@ -259,66 +259,66 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					NTD_User[User_ManualChangeType] = listitem;
-					switch(NTD_User[User_ChangingState])
+					User[User_ManualChangeType] = listitem;
+					switch(User[User_ChangingState])
 					{
 						case CH_POSITION:
 						{
-							switch(NTD_User[User_ManualChangeType])
+							switch(User[User_ManualChangeType])
 							{
 								case 0: //X
 								{
 									strreplace(EditorLString, "#1", "X");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PosX]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PosX]);
 								}
 								case 1: //Y
 								{
 									strreplace(EditorLString, "#1", "Y");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PosY]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PosY]);
 								}
 							}
 						}
 						case CH_SIZE:
 						{
-							switch(NTD_User[User_ManualChangeType])
+							switch(User[User_ManualChangeType])
 							{
 								case 0: //X
 								{
 									strreplace(EditorLString, "#1", "X");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeX]) : (NTD_TD[tdid][TD_BoxSizeX]));
+									format(EditorLString, sizeof EditorLString, EditorLString, (User[User_ChangingSizeState] == 0) ? (TextDraw[tdid][TD_LetterSizeX]) : (TextDraw[tdid][TD_BoxSizeX]));
 								}
 								case 1: //Y
 								{
 									strreplace(EditorLString, "#1", "Y");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, (NTD_User[User_ChangingSizeState] == 0) ? (NTD_TD[tdid][TD_LetterSizeY]) : (NTD_TD[tdid][TD_BoxSizeY]));
+									format(EditorLString, sizeof EditorLString, EditorLString, (User[User_ChangingSizeState] == 0) ? (TextDraw[tdid][TD_LetterSizeY]) : (TextDraw[tdid][TD_BoxSizeY]));
 								}
 							}
 						}
 						case CH_MODEL_ROTATION:
 						{
-							switch(NTD_User[User_ManualChangeType])
+							switch(User[User_ManualChangeType])
 							{
 								case 0: //X
 								{
 									strreplace(EditorLString, "#1", "X");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotX]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevRotX]);
 								}
 								case 1: //Y
 								{
 									strreplace(EditorLString, "#1", "Y");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotY]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevRotY]);
 								}
 								case 2: //Z
 								{
 									strreplace(EditorLString, "#1", "Z");
 									strreplace(EditorLString, "#2", "%f");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotZ]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevRotZ]);
 								}
 							}
 						}
@@ -326,23 +326,23 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							strreplace(EditorLString, "#1", GetLanguageMessage("manualchangetypemzoom", LANG_TYPE_MESSAGES));
 							strreplace(EditorLString, "#2", "%f");
-							format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevRotZoom]);
+							format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevRotZoom]);
 						}
 						case CH_MODEL_COLOR:
 						{
-							switch(NTD_User[User_ManualChangeType])
+							switch(User[User_ManualChangeType])
 							{
 								case 0: //TD_Color 1
 								{
 									strreplace(EditorLString, "#1",  GetLanguageMessage("manualchangetypemcolor1", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#2", "%i");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevModelC1]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevModelC1]);
 								}
 								case 1: //TD_Color 2
 								{
 									strreplace(EditorLString, "#1", GetLanguageMessage("manualchangetypemcolor2", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#2", "%i");
-									format(EditorLString, sizeof EditorLString, EditorLString, NTD_TD[tdid][TD_PrevModelC2]);
+									format(EditorLString, sizeof EditorLString, EditorLString, TextDraw[tdid][TD_PrevModelC2]);
 								}
 							}
 						}
@@ -368,9 +368,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							sindex++;
 						}
 					}
-					NTD_User[User_SpriteIndex] = sindex;
-					NTD_User[User_SpritePicker] = 0;
-					NTD_User[User_ChangingState] = CH_SPRITE;
+					User[User_SpriteIndex] = sindex;
+					User[User_SpritePicker] = 0;
+					User[User_ChangingState] = CH_SPRITE;
 					EnableVarChangeTimer(true);
 					PlayerSelectTD(playerid, false);
 					HideEditor(playerid);
@@ -470,7 +470,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						case 0: //Pozycja Edytora
 						{
-							NTD_User[User_ChangingState] = CH_EDITOR_POS;
+							User[User_ChangingState] = CH_EDITOR_POS;
 							EnableVarChangeTimer(true);
 							PlayerSelectTD(playerid, false);
 						}
@@ -563,7 +563,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if((IsNumeric(inputtext) || IsFloat(inputtext)) && strval(inputtext) >= 0 && (floatstr(inputtext) > 0.0 && floatstr(inputtext) < cellmax))
 					{
-						NTD_TD[tdid][TD_BarMaxPercentage] = floatstr(inputtext);
+						TextDraw[tdid][TD_BarMaxPercentage] = floatstr(inputtext);
 						UpdateTD(playerid, tdid);
 						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					}
@@ -576,7 +576,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(IsNumeric(inputtext) && strval(inputtext) >= 0)
 					{
-						NTD_TD[tdid][TD_PrevModelID] = strval(inputtext);
+						TextDraw[tdid][TD_PrevModelID] = strval(inputtext);
 						UpdateTD(playerid, tdid);
 						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 						ShowEditorEx(playerid);
@@ -602,9 +602,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					else if(listitem > 0)
 					{
-						if(listitem == 1) NTD_User[User_ChangingState] = CH_MODEL_ROTATION;
-						else if(listitem == 2) NTD_User[User_ChangingState] = CH_MODEL_ZOOM;
-						else if(listitem == 3) NTD_User[User_ChangingState] = CH_MODEL_COLOR;
+						if(listitem == 1) User[User_ChangingState] = CH_MODEL_ROTATION;
+						else if(listitem == 2) User[User_ChangingState] = CH_MODEL_ZOOM;
+						else if(listitem == 3) User[User_ChangingState] = CH_MODEL_COLOR;
 						EnableVarChangeTimer(true);
 						PlayerSelectTD(playerid, false);
 						HideEditor(playerid);
@@ -614,10 +614,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 			case DIALOG_EXPORT2:
 			{
-				if(ExportProject(NTD_User[User_ProjectIndex], NTD_User[User_ExportType], bool:response))
+				if(ExportProject(User[User_ProjectIndex], User[User_ExportType], bool:response))
 				{
 					format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES));
-					format(EditorString, sizeof EditorString, " "HEX_PALETTE_3"scriptfiles/"EXPORTS_DIRECTORYPATH"%s.pwn", GetProjectName(NTD_User[User_ProjectIndex]));
+					format(EditorString, sizeof EditorString, " "HEX_PALETTE_2"%s/%s.pwn", MakePath(EXPORTS_DIRECTORYPATH, true), GetProjectName(User[User_ProjectIndex]));
 					strcat(EditorLString, EditorString);
 					ShowInfo(playerid, EditorLString);
 				}
@@ -628,7 +628,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					NTD_User[User_ExportType] = listitem;
+					User[User_ExportType] = listitem;
 					ShowPlayerDialog(playerid, DIALOG_EXPORT2, DIALOG_STYLE_MSGBOX, 
 					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "caption"), 
 					GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "infos"), 
@@ -641,8 +641,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					NTD_User[User_ChangingSizeState] = listitem;
-					NTD_User[User_ChangingState] = CH_SIZE;
+					User[User_ChangingSizeState] = listitem;
+					User[User_ChangingState] = CH_SIZE;
 					EnableVarChangeTimer(true);
 					PlayerSelectTD(playerid, false);
 					HideEditor(playerid);
@@ -656,25 +656,25 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					new red, green, blue, alpha;
 					SplitRGBA(Premade_Colors[listitem][0],red,green,blue, alpha); 
 					#pragma unused alpha
-					switch(NTD_User[User_ChangingMColorState])
+					switch(User[User_ChangingMColorState])
 					{
 						case 0: //Tekst TD_Color
 						{
-							NTD_TD[tdid][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_ColorAlpha]);
+							TextDraw[tdid][TD_Color] = CreateRGBA(red,green,blue,TextDraw[tdid][TD_ColorAlpha]);
 						}
 						case 1: //BG TD_Color
 						{
-							NTD_TD[tdid][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_BGColorAlpha]);
+							TextDraw[tdid][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[tdid][TD_BGColorAlpha]);
 						}
 						case 2: //Box TD_Color
 						{
-							NTD_TD[tdid][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[tdid][TD_BoxColorAlpha]);
+							TextDraw[tdid][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[tdid][TD_BoxColorAlpha]);
 						}
 					}
 					UpdateTD(playerid, tdid);
 					ShowEditorEx(playerid);
 				}
-				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 1);
+				else if(!User[User_ChangingColorBar]) ColorDialog(playerid, 1);
 				else ColorDialog(playerid, 2);
 			}
 			case DIALOG_COLOR4:
@@ -692,29 +692,29 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							color[0] = HexToInt(inputtext);
 						}
-						switch(NTD_User[User_ChangingMColorState])
+						switch(User[User_ChangingMColorState])
 						{
 							case 0: //Tekst TD_Color
 							{
-								NTD_TD[tdid][TD_Color] = color[0];
-								NTD_TD[tdid][TD_ColorAlpha] = CreateAFromRGBA(color[0]);
+								TextDraw[tdid][TD_Color] = color[0];
+								TextDraw[tdid][TD_ColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 							case 1: //BG TD_Color
 							{
-								NTD_TD[tdid][TD_BGColor] = color[0];
-								NTD_TD[tdid][TD_BGColorAlpha] = CreateAFromRGBA(color[0]);
+								TextDraw[tdid][TD_BGColor] = color[0];
+								TextDraw[tdid][TD_BGColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 							case 2: //Box TD_Color
 							{
-								NTD_TD[tdid][TD_BoxColor] = color[0];
-								NTD_TD[tdid][TD_BoxColorAlpha] = CreateAFromRGBA(color[0]);
+								TextDraw[tdid][TD_BoxColor] = color[0];
+								TextDraw[tdid][TD_BoxColorAlpha] = CreateAFromRGBA(color[0]);
 							}
 						}
 						UpdateTD(playerid, tdid);
 						ShowEditorEx(playerid);
 					}
 				}
-				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 1);
+				else if(!User[User_ChangingColorBar]) ColorDialog(playerid, 1);
 				else ColorDialog(playerid, 2);
 			}
 			case DIALOG_COLOR2:
@@ -736,27 +736,27 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					else if(listitem == 1) //Kombinator
 					{
 						new color[4];
-						switch(NTD_User[User_ChangingMColorState])
+						switch(User[User_ChangingMColorState])
 						{
-							case 0: SplitRGBA(NTD_TD[tdid][TD_Color],color[0],color[1],color[2],color[3]);
-							case 1: SplitRGBA(NTD_TD[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
-							case 2: SplitRGBA(NTD_TD[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
+							case 0: SplitRGBA(TextDraw[tdid][TD_Color],color[0],color[1],color[2],color[3]);
+							case 1: SplitRGBA(TextDraw[tdid][TD_BGColor],color[0],color[1],color[2],color[3]);
+							case 2: SplitRGBA(TextDraw[tdid][TD_BoxColor],color[0],color[1],color[2],color[3]);
 						}
 						ShowPlayerDialog(playerid, DIALOG_COLOR4, DIALOG_STYLE_INPUT, 
 						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "caption"), 
-						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "infos", color[0], color[1], color[2], color[3], NTD_TD[tdid][TD_Color]), 
+						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "infos", color[0], color[1], color[2], color[3], TextDraw[tdid][TD_Color]), 
 						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "button1"), 
 						GetLanguageMessage("colorchange", LANG_TYPE_DIALOGS, "button2"));
 					}
 					else if(listitem == 2) //Przezroczystosc
 					{
-						NTD_User[User_ChangingState] = CH_ALPHA;
+						User[User_ChangingState] = CH_ALPHA;
 						EnableVarChangeTimer(true);
 						PlayerSelectTD(playerid, false);
 						HideEditor(playerid);
 					}
 				}
-				else if(!NTD_User[User_ChangingColorBar]) ColorDialog(playerid, 0);
+				else if(!User[User_ChangingColorBar]) ColorDialog(playerid, 0);
 				else PlayerSelectTD(playerid, true);
 			}
 			case DIALOG_COLOR1:
@@ -767,17 +767,17 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						case 0: //Tekst kolor
 						{
-							NTD_User[User_ChangingMColorState] = 0;
+							User[User_ChangingMColorState] = 0;
 							ColorDialog(playerid, 1);
 						}
 						case 1: //Kolor tla
 						{
-							NTD_User[User_ChangingMColorState] = 1;
+							User[User_ChangingMColorState] = 1;
 							ColorDialog(playerid, 1);
 						}
 						case 2: //Box TD_Color
 						{
-							NTD_User[User_ChangingMColorState] = 2;
+							User[User_ChangingMColorState] = 2;
 							ColorDialog(playerid, 1);
 						}
 					}
@@ -790,10 +790,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(strlen(inputtext))
 					{
-						format(NTD_TD[tdid][TD_Text], 300, inputtext);
-						TextDrawDestroy(NTD_TD[tdid][TD_SelfID]);
-						TextDrawDestroy(NTD_TD[tdid][TD_PickerID]);
-						DrawTD(tdid);
+						format(TextDraw[tdid][TD_Text], 300, inputtext);
+						RedrawTD(playerid, tdid);
 						ShowEditorEx(playerid);
 						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					}
@@ -813,12 +811,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							{
 								if(VariableExists(inputtext) == false)
 								{
-									format(NTD_TD[NTD_User[User_ChoosenTDID]][TD_VarName], 35, inputtext);
+									format(TextDraw[User[User_ChoosenTDID]][TD_VarName], 35, inputtext);
 									format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoparamnamechange", LANG_TYPE_MESSAGES));
 									strreplace(EditorLString, "#n", "\n");
-									strreplace(EditorLString, "#1", NTD_TD[NTD_User[User_ChoosenTDID]][TD_VarName]);
-									strreplace(EditorLString, "#2", NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
+									strreplace(EditorLString, "#1", TextDraw[User[User_ChoosenTDID]][TD_VarName]);
+									strreplace(EditorLString, "#2", TextDraw[User[User_ChoosenTDID]][TD_Text]);
 									ShowInfo(playerid, EditorLString);
+									RedrawTD(playerid, User[User_ChoosenTDID]);
 								}
 								else ShowInfo(playerid, GetLanguageMessage("infoparamnamechangetaken", LANG_TYPE_MESSAGES));
 							}
@@ -828,11 +827,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					else
 					{
-						format(NTD_TD[NTD_User[User_ChoosenTDID]][TD_VarName], 35, "");
+						format(TextDraw[User[User_ChoosenTDID]][TD_VarName], 35, "");
 						ShowEditorEx(playerid);
 					}
 				}
-				else ShowEditorEx(playerid), ShowTDOptions(playerid, NTD_User[User_ChoosenTDID]);
+				else ShowEditorEx(playerid), ShowTDOptions(playerid, User[User_ChoosenTDID]);
 			}
 			case DIALOG_MANAGE2:
 			{
@@ -842,12 +841,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						case 0: //Modyfikuj
 						{
-							SelectTD(playerid, NTD_User[User_ChoosenTDID]);
+							SelectTD(playerid, User[User_ChoosenTDID]);
 							ShowEditorEx(playerid);
 						}
 						case 1: //Sklonuj
 						{
-							tdid = CreateNewTD(NTD_User[User_ChoosenTDID]);
+							tdid = CreateNewTD(User[User_ChoosenTDID]);
 							if(tdid != -1)
 							{
 								DrawTD(tdid);
@@ -855,7 +854,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								//
 								new tmp_str[12];
 								format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS));
-								format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
+								format(tmp_str, sizeof tmp_str, "%i", User[User_ChoosenTDID]);
 								strreplace(EditorString, "#1", tmp_str);
 								//
 								GameTextForPlayer(playerid, EditorString, 5000, 6);
@@ -867,7 +866,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						}
 						case 2: //Zmien warstwe
 						{
-							NTD_User[User_ChangingState] = CH_LAYER;
+							User[User_ChangingState] = CH_LAYER;
 							EnableVarChangeTimer(true);
 							PlayerSelectTD(playerid, false);
 							HideEditor(playerid);
@@ -876,15 +875,15 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							ShowPlayerDialog(playerid, DIALOG_CHANGEPARAMNAME, DIALOG_STYLE_INPUT, 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "caption"), 
-							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "infos", GetProcessedTDVarName(NTD_User[User_ChoosenTDID]), NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]), 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "infos", GetProcessedTDVarName(User[User_ChoosenTDID]), TextDraw[User[User_ChoosenTDID]][TD_Text]), 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button1"), 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button2"));
 						}
 						case 4: //Usun
 						{
 							new formatedtd[MAXFORMATEDTD];
-							format(formatedtd, MAXFORMATEDTD, NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]);
-							if(strlen(NTD_TD[NTD_User[User_ChoosenTDID]][TD_Text]) > MAXFORMATEDTD - 4)
+							format(formatedtd, MAXFORMATEDTD, TextDraw[User[User_ChoosenTDID]][TD_Text]);
+							if(strlen(TextDraw[User[User_ChoosenTDID]][TD_Text]) > MAXFORMATEDTD - 4)
 							{
 								strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 								strcat(formatedtd, "...");
@@ -905,21 +904,21 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					new next;
-					DestroyTD(NTD_User[User_ChoosenTDID], next);
-					Iter_Remove(I_TEXTDRAWS, NTD_User[User_ChoosenTDID]);
-					if(NTD_User[User_EditingTDID] == NTD_User[User_ChoosenTDID])
-						NTD_User[User_EditingTDID] = -1;
+					DestroyTD(User[User_ChoosenTDID], next);
+					Iter_Remove(I_TEXTDRAWS, User[User_ChoosenTDID]);
+					if(User[User_EditingTDID] == User[User_ChoosenTDID])
+						User[User_EditingTDID] = -1;
 					//
 					new tmp_str[12];
 					format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS));
-					format(tmp_str, sizeof tmp_str, "%i", NTD_User[User_ChoosenTDID]);
+					format(tmp_str, sizeof tmp_str, "%i", User[User_ChoosenTDID]);
 					strreplace(EditorString, "#1", tmp_str);
 					//
 					GameTextForPlayer(playerid, EditorString, 5000, 6);
 					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					ShowEditorEx(playerid, true);
 				}
-				else ShowEditorEx(playerid), ShowTDOptions(playerid, NTD_User[User_ChoosenTDID]);
+				else ShowEditorEx(playerid), ShowTDOptions(playerid, User[User_ChoosenTDID]);
 			}
 			case DIALOG_MANAGE4:
 			{
@@ -1015,8 +1014,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				if(response)
 				{
 					new oldproname[64];
-					format(oldproname, 64, GetProjectName(NTD_User[User_ProjectIndex]));
-					new changepn = RenameProject(NTD_User[User_ProjectIndex], inputtext);
+					format(oldproname, 64, GetProjectName(User[User_ProjectIndex]));
+					new changepn = RenameProject(User[User_ProjectIndex], inputtext);
 					switch(changepn)
 					{
 						case 1:
@@ -1040,24 +1039,32 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					return 0;
 				if(response)
 				{
+					new projectindex = User[User_ProjectIndex];
 					switch(listitem)
 					{
 						case 0: //Wczytaj
 						{
-							if(LoadProject(NTD_User[User_ProjectIndex]))
+							if(Projects[projectindex][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
 							{
-								ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, GetProjectName(NTD_User[User_ProjectIndex])));
-								ShowWelcomeScreen(false);
-								RelayerEditor();
+								if(LoadProject(projectindex))
+								{
+									ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, GetProjectName(projectindex)));
+									ShowWelcomeScreen(false);
+									RelayerEditor();
+									ShowEditorEx(playerid);
+								}
+								else ShowInfo(playerid, GetLanguageMessage("projectloaderror", LANG_TYPE_MESSAGES));
+							}
+							else
+							{
 								ShowEditorEx(playerid);
 							}
-							else ShowInfo(playerid, GetLanguageMessage("projectloaderror", LANG_TYPE_MESSAGES));
 						}
 						case 1: //Zmien nazwe
 						{
 							ShowPlayerDialog(playerid, DIALOG_RENAMEPROJECT, DIALOG_STYLE_INPUT, 
 							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "caption"), 
-							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "infos", "s", GetProjectName(NTD_User[User_ProjectIndex])), 
+							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "infos", "s", GetProjectName(projectindex)), 
 							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "button1"), 
 							GetLanguageMessage("changeprojectname", LANG_TYPE_DIALOGS, "button2"));
 							PlayerSelectTD(playerid, false);
@@ -1085,14 +1092,19 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						case INVALID_LISTITEM: return 0;
 						case 0: 
 						{
-
+							ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, 
+							GetLanguageMessage("newproject", LANG_TYPE_DIALOGS, "caption"), 
+							GetLanguageMessage("newproject", LANG_TYPE_DIALOGS, "infos"), 
+							GetLanguageMessage("newproject", LANG_TYPE_DIALOGS, "button1"), 
+							GetLanguageMessage("newproject", LANG_TYPE_DIALOGS, "button2"));
+							PlayerSelectTD(playerid, false);
 						}
 						default:
 						{
 							new index = Iter_Index(I_PROJECTS, (listitem - 1));
-							NTD_User[User_ProjectIndex] = index;
+							User[User_ProjectIndex] = index;
 							ShowPlayerDialog(playerid, DIALOG_OPEN2, DIALOG_STYLE_LIST, 
-							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", NTD_Projects[index][Pro_fileName]), 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", Projects[index][Pro_fileName]), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "infos"), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button1"), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button2"));
@@ -1105,10 +1117,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					if(DeleteProject(NTD_User[User_ProjectIndex]))
+					if(DeleteProject(User[User_ProjectIndex]))
 					{
 						format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectdeleted", LANG_TYPE_MESSAGES));
-						strreplace(EditorLString, "#1", GetProjectName(NTD_User[User_ProjectIndex]));
+						strreplace(EditorLString, "#1", GetProjectName(User[User_ProjectIndex]));
 						ShowInfo(playerid, EditorLString);
 					}
 					else ShowInfo(playerid, GetLanguageMessage("projectdeleteerror", LANG_TYPE_MESSAGES));
@@ -1122,9 +1134,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					if(strlen(inputtext) > 0 && strlen(inputtext) < 40 && IsValidString(inputtext))
 					{
 						new pid = CreateProject(inputtext);
-						if(pid != 0)
+						if(pid != -1)
 						{
-							if(LoadProject(NTD_User[User_ProjectIndex]))
+							if( LoadProject(pid) )
 							{
 								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectcreated", LANG_TYPE_MESSAGES));
 								strreplace(EditorLString, "#1", inputtext);
@@ -1147,14 +1159,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 public OnPlayerClickTextDraw(playerid, Text:clickedid)
 {
-	if(ScriptScriptActive && NTD_User[User_InEditor])
+	if(ScriptScriptActive && User[User_InEditor])
 	{
-		new tdid = NTD_User[User_EditingTDID];
-		if(NTD_User[User_ProjectOpened] && EditorQuickSelect)
+		new tdid = User[User_EditingTDID];
+		if(User[User_ProjectOpened] && EditorQuickSelect)
 		{
 			foreach(new i : I_TEXTDRAWS)
 			{
-				if(clickedid == NTD_TD[i][TD_PickerID])
+				if(clickedid == TextDraw[i][TD_PickerID])
 				{
 					if(SelectTD(playerid, i) == 0)
 					{
@@ -1196,7 +1208,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_TDSettings)
 		{
-			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
+			if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_MODEL_PREVIEW)
 			{
 				ShowPlayerDialog(playerid, DIALOG_PREVIEWMODEL, DIALOG_STYLE_LIST,
 				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "caption"), 
@@ -1205,11 +1217,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				GetLanguageMessage("previewmodelchangelist", LANG_TYPE_DIALOGS, "button2"));
 				PlayerSelectTD(playerid, false);
 			}
-			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			else if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
 				ShowPlayerDialog(playerid, DIALOG_MAXBARPERCCHANGE, DIALOG_STYLE_INPUT, 
 				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "caption"), 
-				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "infos", "f", NTD_TD[tdid][TD_BarMaxPercentage]), 
+				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "infos", "f", TextDraw[tdid][TD_BarMaxPercentage]), 
 				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "button1"), 
 				GetLanguageMessage("barmaxpercentagechange", LANG_TYPE_DIALOGS, "button2"));
 				PlayerSelectTD(playerid, false);
@@ -1218,49 +1230,49 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Proportionality)
 		{
-			NTD_TD[tdid][TD_Proportional] = !NTD_TD[tdid][TD_Proportional];
-			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_Proportional] ? "tdproportionality_true" : "tdproportionality_false") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			TextDraw[tdid][TD_Proportional] = !TextDraw[tdid][TD_Proportional];
+			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_Proportional] ? "tdproportionality_true" : "tdproportionality_false") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_Alignment)
 		{
-			if(NTD_TD[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+			if(TextDraw[tdid][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				if(NTD_TD[tdid][TD_Alignment] == 3)
-					NTD_TD[tdid][TD_Alignment] = 0;
+				if(TextDraw[tdid][TD_Alignment] == 3)
+					TextDraw[tdid][TD_Alignment] = 0;
 				
-				NTD_TD[tdid][TD_Alignment]++;
+				TextDraw[tdid][TD_Alignment]++;
 				
-				switch(NTD_TD[tdid][TD_Alignment])
+				switch(TextDraw[tdid][TD_Alignment])
 				{
 					case 1: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_left", LANG_TYPE_GAMETEXTS), 1500, 6);
 					case 2: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_center", LANG_TYPE_GAMETEXTS), 1500, 6);
 					case 3: GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_right", LANG_TYPE_GAMETEXTS), 1500, 6);
 				}
 			}
-			else if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			else if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 			{
-				switch(NTD_TD[tdid][TD_BarDirectory])
+				switch(TextDraw[tdid][TD_BarDirectory])
 				{
 					case BAR_DIRECTION_DOWN:
 					{
-						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+						TextDraw[tdid][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
 						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_right", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_RIGHT:
 					{
-						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_LEFT;
+						TextDraw[tdid][TD_BarDirectory] = BAR_DIRECTION_LEFT;
 						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_left", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_LEFT:
 					{
-						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_UP;
+						TextDraw[tdid][TD_BarDirectory] = BAR_DIRECTION_UP;
 						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_up", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 					case BAR_DIRECTION_UP:
 					{
-						NTD_TD[tdid][TD_BarDirectory] = BAR_DIRECTION_DOWN;
+						TextDraw[tdid][TD_BarDirectory] = BAR_DIRECTION_DOWN;
 						GameTextForPlayer(playerid, GetLanguageMessage("tdalignment_down", LANG_TYPE_GAMETEXTS), 1500, 6);
 					}
 				}
@@ -1270,55 +1282,56 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_SwitchPublic)
 		{
-			NTD_TD[tdid][TD_IsGlobal] = !NTD_TD[tdid][TD_IsGlobal];
-			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_IsGlobal] ? "tdpublic" : "tdperplayer") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			TextDraw[tdid][TD_IsGlobal] = !TextDraw[tdid][TD_IsGlobal];
+			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_IsGlobal] ? "tdpublic" : "tdperplayer") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			RedrawTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_Selectable)
 		{
-			NTD_TD[tdid][TD_Selectable] = !NTD_TD[tdid][TD_Selectable];
-			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_Selectable] ? "tdclickable" : "tdnotclickable") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			TextDraw[tdid][TD_Selectable] = !TextDraw[tdid][TD_Selectable];
+			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_Selectable] ? "tdclickable" : "tdnotclickable") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_Shadow)
 		{
 			new tmp_str[5];
-			if(NTD_TD[tdid][TD_ShadowSize] == 4)
-				NTD_TD[tdid][TD_ShadowSize] = -1;
+			if(TextDraw[tdid][TD_ShadowSize] == 4)
+				TextDraw[tdid][TD_ShadowSize] = -1;
 			
-			NTD_TD[tdid][TD_ShadowSize]++;
+			TextDraw[tdid][TD_ShadowSize]++;
 			UpdateTD(playerid, tdid);
 			format(EditorString, sizeof EditorString, GetLanguageMessage("tdshadowsize", LANG_TYPE_GAMETEXTS));
-			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_ShadowSize]);
+			format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_ShadowSize]);
 			strreplace(EditorString, "#1", tmp_str);
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
 			return 1;
 		}
 		else if(clickedid == B_UseBox)
 		{
-			NTD_TD[tdid][TD_UseBox] = !NTD_TD[tdid][TD_UseBox];
-			GameTextForPlayer(playerid, GetLanguageMessage( (NTD_TD[tdid][TD_UseBox] ? "tdboxenabled" : "tdboxdisabled") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			TextDraw[tdid][TD_UseBox] = !TextDraw[tdid][TD_UseBox];
+			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_UseBox] ? "tdboxenabled" : "tdboxdisabled") , LANG_TYPE_GAMETEXTS), 1500, 6);
 			UpdateTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_Outline)
 		{
 			new tmp_str[5];
-			if(NTD_TD[tdid][TD_OutlineSize] == 4)
-				NTD_TD[tdid][TD_OutlineSize] = -1;
+			if(TextDraw[tdid][TD_OutlineSize] == 4)
+				TextDraw[tdid][TD_OutlineSize] = -1;
 			
-			NTD_TD[tdid][TD_OutlineSize]++;
+			TextDraw[tdid][TD_OutlineSize]++;
 			UpdateTD(playerid, tdid);
 			format(EditorString, sizeof EditorString, GetLanguageMessage("tdoutlinesize", LANG_TYPE_GAMETEXTS));
-			format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_OutlineSize]);
+			format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_OutlineSize]);
 			strreplace(EditorString, "#1", tmp_str);
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
 			return 1;
 		}
 		else if(clickedid == B_Color)
 		{
-			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 				ColorDialog(playerid, 2);
 			else 
 				ColorDialog(playerid, 0);
@@ -1327,7 +1340,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Tekst)
 		{
-			if(NTD_TD[tdid][TD_Font] != 4 && NTD_TD[tdid][TD_Font] != 5) 
+			if(TextDraw[tdid][TD_Font] != 4 && TextDraw[tdid][TD_Font] != 5) 
 			{
 				ShowPlayerDialog(playerid, DIALOG_TEKST, DIALOG_STYLE_INPUT, 
 				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "caption"), 
@@ -1335,7 +1348,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "button1"), 
 				GetLanguageMessage("textchange", LANG_TYPE_DIALOGS, "button2"));
 			}
-			else if(NTD_TD[tdid][TD_Font] == 4) 
+			else if(TextDraw[tdid][TD_Font] == 4) 
 			{
 				ShowPlayerDialog(playerid, DIALOG_SPRITES1, DIALOG_STYLE_LIST, 
 				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "caption"), 
@@ -1343,7 +1356,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "button1"), 
 				GetLanguageMessage("spritechangelist", LANG_TYPE_DIALOGS, "button2"));
 			}
-			else if(NTD_TD[tdid][TD_Font] == 5) 
+			else if(TextDraw[tdid][TD_Font] == 5) 
 			{
 				ShowInfo(playerid, GetLanguageMessage("modeltexterror", LANG_TYPE_MESSAGES));
 			}
@@ -1352,12 +1365,12 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Size)
 		{
-			switch(NTD_TD[tdid][TD_Font])
+			switch(TextDraw[tdid][TD_Font])
 			{
 				case 4, 5, TEXT_DRAW_FONT_PROGRESS_BAR:
 				{
-					NTD_User[User_ChangingSizeState] = 1;
-					NTD_User[User_ChangingState] = CH_SIZE;
+					User[User_ChangingSizeState] = 1;
+					User[User_ChangingState] = CH_SIZE;
 					EnableVarChangeTimer(true);
 					HideEditor(playerid);
 				}
@@ -1375,7 +1388,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Position)
 		{
-			NTD_User[User_ChangingState] = CH_POSITION;
+			User[User_ChangingState] = CH_POSITION;
 			EnableVarChangeTimer(true);
 			PlayerSelectTD(playerid, false);
 			HideEditor(playerid);
@@ -1383,13 +1396,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Font)
 		{
-			if(NTD_TD[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
-				NTD_TD[tdid][TD_Font] = 0;
+			if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+				TextDraw[tdid][TD_Font] = 0;
 			else
-				NTD_TD[tdid][TD_Font]++;
+				TextDraw[tdid][TD_Font]++;
 			//
-			UpdateTD(playerid, tdid);
-			switch(NTD_TD[tdid][TD_Font])
+			RedrawTD(playerid, tdid);
+			switch(TextDraw[tdid][TD_Font])
 			{
 				case 4: GameTextForPlayer(playerid, GetLanguageMessage("tdfontspriteinfo", LANG_TYPE_GAMETEXTS), 1500, 6);
 				case TEXT_DRAW_FONT_MODEL_PREVIEW: GameTextForPlayer(playerid, GetLanguageMessage("tdfontprevmodelinfo", LANG_TYPE_GAMETEXTS), 1500, 6);
@@ -1398,7 +1411,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				{
 					new tmp_str[12];
 					format(EditorString, sizeof EditorString, GetLanguageMessage("tdfontinfo", LANG_TYPE_GAMETEXTS));
-					format(tmp_str, sizeof tmp_str, "%i", NTD_TD[tdid][TD_Font]);
+					format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_Font]);
 					strreplace(EditorString, "#1", tmp_str);
 					GameTextForPlayer(playerid, EditorString, 1500, 6);
 				}
@@ -1406,27 +1419,17 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			ShowEditorEx(playerid);
 			return 1;
 		}
-		/*else if(clickedid == B_NewProject)
-		{
-			if(Iter_Count(I_PROJECTS) < MAX_NTD_PROJECTS)
-			{
-				//ShowPlayerDialog(playerid, DIALOG_NEW, DIALOG_STYLE_INPUT, EditorString, EditorLString, DLS[DL_NEWPROJECT][d_s_button1], DLS[DL_NEWPROJECT][d_s_button2]);
-				PlayerSelectTD(playerid, false);
-			}
-			else ShowInfo(playerid, GetLanguageMessage("infoprojectlimit", LANG_TYPE_MESSAGES));
-			return 1;
-		}*/
 		else if(clickedid == B_CloseProject)
 		{
-			if(SaveProject(NTD_User[User_ProjectIndex]) == 0) 
+			if(SaveProject(User[User_ProjectIndex]) == 0) 
 				ShowInfo(playerid, GetLanguageMessage("infoprojectsaveerror", LANG_TYPE_MESSAGES));
 			else 
 				ShowInfo(playerid, GetLanguageMessage("infoprojectclosed", LANG_TYPE_MESSAGES));
 			
 			foreach(new i : I_TEXTDRAWS)
 				DestroyTD(i, i);
-			NTD_User[User_ProjectOpened] = false;
-			NTD_User[User_EditingTDID] = -1;
+			User[User_ProjectOpened] = false;
+			User[User_EditingTDID] = -1;
 			
 			ShowWelcomeScreen(true);
 			ShowEditorEx(playerid);
@@ -1471,23 +1474,23 @@ public HLTD(playerid, td)
 {
 	new red, green, blue, alpha;
 	#pragma unused alpha
-	if(NTD_TD[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
+	if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 	{
-		SplitRGBA(NTD_TD[td][TD_Color],red,green,blue, alpha); 
-		NTD_TD[td][TD_Color] = CreateRGBA(red,green,blue,NTD_TD[td][TD_ColorAlpha]);
-		TextDrawColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_Color]);
-		SplitRGBA(NTD_TD[td][TD_BGColor],red,green,blue, alpha);
-		NTD_TD[td][TD_BGColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BGColorAlpha]);
-		TextDrawBackgroundColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BGColor]);
-		SplitRGBA(NTD_TD[td][TD_BoxColor],red,green,blue, alpha); 
-		NTD_TD[td][TD_BoxColor] = CreateRGBA(red,green,blue,NTD_TD[td][TD_BoxColorAlpha]);
-		TextDrawBoxColor(NTD_TD[td][TD_SelfID], NTD_TD[td][TD_BoxColor]);
-		TextDrawShowForPlayer(playerid, NTD_TD[td][TD_SelfID]);
+		SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+		TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+		TextDrawColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_Color]);
+		SplitRGBA(TextDraw[td][TD_BGColor],red,green,blue, alpha);
+		TextDraw[td][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BGColorAlpha]);
+		TextDrawBackgroundColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BGColor]);
+		SplitRGBA(TextDraw[td][TD_BoxColor],red,green,blue, alpha); 
+		TextDraw[td][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BoxColorAlpha]);
+		TextDrawBoxColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxColor]);
+		TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
 	}
-	else if(NTD_TD[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	else if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
 	{
-		SetPlayerProgressBarColour(playerid, NTD_TD[td][TD_BarID], NTD_TD[td][TD_Color]);
-		ShowPlayerProgressBar(playerid, NTD_TD[td][TD_BarID]);
+		SetPlayerProgressBarColour(playerid, TextDraw[td][TD_BarID], TextDraw[td][TD_Color]);
+		ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
 	}
 	return 1;
 }
@@ -1497,16 +1500,16 @@ public PlayerSelectTD(playerid, bool:select)
 	if(select)
 	{
 		SelectTextDraw(playerid, EditorCursorColor);
-		if(NTD_User[User_CursorTimer] == -1)
-			NTD_User[User_CursorTimer] = SetTimerEx("PlayerSelectTD", 1000, true, "ib", playerid, true);
+		if(User[User_CursorTimer] == -1)
+			User[User_CursorTimer] = SetTimerEx("PlayerSelectTD", 1000, true, "ib", playerid, true);
 	}
 	else
 	{
 		CancelSelectTextDraw(playerid);
-		if(NTD_User[User_CursorTimer] != -1)
+		if(User[User_CursorTimer] != -1)
 		{
-			KillTimer(NTD_User[User_CursorTimer]);
-			NTD_User[User_CursorTimer] = -1;
+			KillTimer(User[User_CursorTimer]);
+			User[User_CursorTimer] = -1;
 		}
 	}
 	return 1;
