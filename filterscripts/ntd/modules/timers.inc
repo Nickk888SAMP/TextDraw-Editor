@@ -409,7 +409,16 @@ public ChangingVarsTime()
 			strreplace(EditorString, "#2", tmp_str);
 		}
 	}
-	GameTextForPlayer(playerid, EditorString, 200, 4);
+	if((User[User_ChangingState] == CH_EDITOR_POS ? (EditorPosY < 224) : (TextDraw[tdid][TD_PosY] < 224)))
+	{
+		strins(EditorString, "~n~ ~n~ ~n~ ~n~ ~n~ ~n~", 0);
+		GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 3);
+	}	
+	else
+	{
+		GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 4);
+	}
+	
 	if(EditorVarUpdated)
 	{
 		EditorVarUpdated = false;

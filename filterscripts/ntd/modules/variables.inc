@@ -13,6 +13,7 @@ new Iterator:I_TEMPLATES<MAX_TEMPLATES>;
 new Iterator:I_LANGUAGES<MAX_LANGUAGES>;
 new Iterator:I_PROJECTS<MAX_PROJECTS>;
 new Iterator:I_TEXTDRAWS<MAX_TEXTDRAWS>;
+new Iterator:I_GROUPS<MAX_GROUPS>;
 
 /*
   _______                 _     _____                                  
@@ -73,5 +74,4 @@ new EditorLanguage = -1;
 new EditorVersion[10];
 new EditorLString[1000];
 new EditorString[500];
-new EditorLanguageFile[32];
 new EditorMaxDialogItems;

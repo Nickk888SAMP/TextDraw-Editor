@@ -455,6 +455,13 @@ enum E_LANGUAGE
 }
 new Language[MAX_LANGUAGES][E_LANGUAGE]; //Languages List
 
+// Groups
+enum E_GROUPS
+{
+	g_name[32]
+}
+new Group[MAX_GROUPS][E_GROUPS];
+
 //TextDraw Data
 enum E_TD
 {

@@ -30,18 +30,7 @@ public OnFilterScriptInit()
 	}
 	if(!Exists( MakePath(SETTINGS_FILEPATH, true) ))
 	{
-		EditorPosX = 0;
-		EditorPosY = BUTTON_MAXHEIGHT;
-		EditorCursorColor = CURSOR_COLOR;
-		EditorButtonsColor = BUTTON_TD_COLOR;
-		EditorFasterKey = KEY_JUMP;
-		EditorAcceptKey = KEY_SPRINT;
-		EditorQuickSelect = true;
-		EditorTextDrawShowForAll = false;
-		EditorCompactMode = false;
-		EditorLanguage = -1;
-		EditorMaxDialogItems = DEFAULT_DIALOG_ITEMS_PER_PAGE;
-		format(EditorVersion, sizeof EditorVersion, SCRIPT_VERSION_CHECK);
+		ResetConfiguration(INVALID_PLAYER_ID);
 		SaveConfigurations();
 	}
 	else LoadConfigurations();
@@ -51,15 +40,9 @@ public OnFilterScriptInit()
 
 public OnFilterScriptExit()
 {
-	foreach(new i : Player)
+	if(ScriptScriptActive && User[User_InEditor])
 	{
-		if(ScriptScriptActive && User[User_InEditor])
-			if(User[User_PlayerIDInEditor] == i)
-			{
-				CallNTDCommand(i);
-				ShowPlayerDialog(i, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
-				break;
-			}
+		CallNTDCommand(User[User_PlayerIDInEditor]);
 	}
 	return 1;
 }
@@ -163,6 +146,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				new index = Iter_Index(I_LANGUAGES, listitem);
 				ChangeEditorLanguage(index);
 				SaveConfigurations();
+				if(!User[User_InEditor] && EditorLanguage != -1)
+					CallNTDCommand(playerid);
 			}
 		}
 	}
@@ -616,9 +601,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(ExportProject(User[User_ProjectIndex], User[User_ExportType], bool:response))
 				{
-					format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES));
-					format(EditorString, sizeof EditorString, " "HEX_PALETTE_2"%s/%s.pwn", MakePath(EXPORTS_DIRECTORYPATH, true), GetProjectName(User[User_ProjectIndex]));
-					strcat(EditorLString, EditorString);
+					format(EditorString, sizeof EditorString, HEX_PALETTE_2"%s/%s.pwn", MakePath(EXPORTS_DIRECTORYPATH, true), GetProjectName(User[User_ProjectIndex]));
+					format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES, "", "s", EditorString));
 					ShowInfo(playerid, EditorLString);
 				}
 				else 
@@ -812,11 +796,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								if(VariableExists(inputtext) == false)
 								{
 									format(TextDraw[User[User_ChoosenTDID]][TD_VarName], 35, inputtext);
-									format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoparamnamechange", LANG_TYPE_MESSAGES));
-									strreplace(EditorLString, "#n", "\n");
-									strreplace(EditorLString, "#1", TextDraw[User[User_ChoosenTDID]][TD_VarName]);
-									strreplace(EditorLString, "#2", TextDraw[User[User_ChoosenTDID]][TD_Text]);
-									ShowInfo(playerid, EditorLString);
+									ShowInfo(playerid, GetLanguageMessage("infoparamnamechange", LANG_TYPE_MESSAGES, "", "ss", GetProcessedTDVarName(User[User_ChoosenTDID]), TextDraw[User[User_ChoosenTDID]][TD_Text]));
 									RedrawTD(playerid, User[User_ChoosenTDID]);
 								}
 								else ShowInfo(playerid, GetLanguageMessage("infoparamnamechangetaken", LANG_TYPE_MESSAGES));
@@ -853,9 +833,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								SelectTD(playerid, tdid);
 								//
 								new tmp_str[12];
-								format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS));
-								format(tmp_str, sizeof tmp_str, "%i", User[User_ChoosenTDID]);
-								strreplace(EditorString, "#1", tmp_str);
+								format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS, "", "i", User[User_ChoosenTDID]));
 								//
 								GameTextForPlayer(playerid, EditorString, 5000, 6);
 								PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
@@ -875,7 +853,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							ShowPlayerDialog(playerid, DIALOG_CHANGEPARAMNAME, DIALOG_STYLE_INPUT, 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "caption"), 
-							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "infos", GetProcessedTDVarName(User[User_ChoosenTDID]), TextDraw[User[User_ChoosenTDID]][TD_Text]), 
+							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "infos", "ss", GetProcessedTDVarName(User[User_ChoosenTDID]), TextDraw[User[User_ChoosenTDID]][TD_Text]), 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button1"), 
 							GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button2"));
 						}
@@ -910,9 +888,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						User[User_EditingTDID] = -1;
 					//
 					new tmp_str[12];
-					format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS));
-					format(tmp_str, sizeof tmp_str, "%i", User[User_ChoosenTDID]);
-					strreplace(EditorString, "#1", tmp_str);
+					format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS, "", "i", User[User_ChoosenTDID]));
 					//
 					GameTextForPlayer(playerid, EditorString, 5000, 6);
 					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
@@ -931,9 +907,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						SelectTD(playerid, tdid);
 						//
 						new tmp_str[12];
-						format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS));
-						format(tmp_str, sizeof tmp_str, "%i", tdid);
-						strreplace(EditorString, "#1", tmp_str);
+						format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
 						//
 						GameTextForPlayer(playerid, EditorString, 5000, 6);
 						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
@@ -958,9 +932,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							SelectTD(playerid, tdid);
 							//
 							new tmp_str[12];
-							format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS));
-							format(tmp_str, sizeof tmp_str, "%i", tdid);
-							strreplace(EditorString, "#1", tmp_str);
+							format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
 							//
 							PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 							GameTextForPlayer(playerid, EditorString, 5000, 6);
@@ -1020,10 +992,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					{
 						case 1:
 						{
-							format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectrenamed", LANG_TYPE_MESSAGES));
-							strreplace(EditorLString, "#n", "\n");
-							strreplace(EditorLString, "#1", oldproname);
-							strreplace(EditorLString, "#2", inputtext);
+							format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectrenamed", LANG_TYPE_MESSAGES, "", "ss", oldproname, inputtext));
 							ShowInfo(playerid, EditorLString);
 						} 
 						case 2: ShowInfo(playerid, GetLanguageMessage("projectnamechangecharerr", LANG_TYPE_MESSAGES));
@@ -1048,7 +1017,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							{
 								if(LoadProject(projectindex))
 								{
-									ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, GetProjectName(projectindex)));
+									ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, "", "s", GetProjectName(projectindex)));
 									ShowWelcomeScreen(false);
 									RelayerEditor();
 									ShowEditorEx(playerid);
@@ -1104,7 +1073,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							new index = Iter_Index(I_PROJECTS, (listitem - 1));
 							User[User_ProjectIndex] = index;
 							ShowPlayerDialog(playerid, DIALOG_OPEN2, DIALOG_STYLE_LIST, 
-							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", Projects[index][Pro_fileName]), 
+							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", "s", Projects[index][Pro_fileName]), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "infos"), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button1"), 
 							GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button2"));
@@ -1119,8 +1088,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				{
 					if(DeleteProject(User[User_ProjectIndex]))
 					{
-						format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectdeleted", LANG_TYPE_MESSAGES));
-						strreplace(EditorLString, "#1", GetProjectName(User[User_ProjectIndex]));
+						format(EditorLString, sizeof EditorLString, GetLanguageMessage("projectdeleted", LANG_TYPE_MESSAGES, "", "s", GetProjectName(User[User_ProjectIndex])));
 						ShowInfo(playerid, EditorLString);
 					}
 					else ShowInfo(playerid, GetLanguageMessage("projectdeleteerror", LANG_TYPE_MESSAGES));
@@ -1138,8 +1106,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						{
 							if( LoadProject(pid) )
 							{
-								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectcreated", LANG_TYPE_MESSAGES));
-								strreplace(EditorLString, "#1", inputtext);
+								format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectcreated", LANG_TYPE_MESSAGES, "", "s", inputtext));
 								ShowInfo(playerid, EditorLString);
 								ShowWelcomeScreen(false);
 								ShowEditorEx(playerid);
@@ -1189,16 +1156,17 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Settings)
 		{
-			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60];
+			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60], langstr[30];
 			if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
 				format(invertedstr, sizeof invertedstr, "%s%s", HEX_PALETTE_3, GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
 				
 			format(quickselectstr, sizeof quickselectstr, "%s%s", (EditorQuickSelect ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
 			format(tdvisistr, sizeof tdvisistr, "%s%s", (EditorTextDrawShowForAll ? HEX_PALETTE_3 : HEX_PALETTE_2), GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
 			format(compmodestr, sizeof compmodestr, "%s%s", (EditorCompactMode ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+			format(langstr, sizeof langstr, "%s%s", HEX_PALETTE_1"%s", (EditorLanguage == -1 ? "" : GetLanguageName(EditorLanguage)));
 			
-			format(EditorLString, sizeof EditorLString, GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "ssss", invertedstr, quickselectstr, tdvisistr, compmodestr));
-			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST, 
+			format(EditorLString, sizeof EditorLString, GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "sssss", invertedstr, quickselectstr, tdvisistr, compmodestr, langstr));
+			ShowPlayerDialog(playerid, DIALOG_SETTINGS, DIALOG_STYLE_TABLIST_HEADERS, 
 				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
 				EditorLString, 
 				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button1"), 
@@ -1302,9 +1270,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			
 			TextDraw[tdid][TD_ShadowSize]++;
 			UpdateTD(playerid, tdid);
-			format(EditorString, sizeof EditorString, GetLanguageMessage("tdshadowsize", LANG_TYPE_GAMETEXTS));
-			format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_ShadowSize]);
-			strreplace(EditorString, "#1", tmp_str);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdshadowsize", LANG_TYPE_GAMETEXTS, "", "i", TextDraw[tdid][TD_ShadowSize]));
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
 			return 1;
 		}
@@ -1323,9 +1289,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			
 			TextDraw[tdid][TD_OutlineSize]++;
 			UpdateTD(playerid, tdid);
-			format(EditorString, sizeof EditorString, GetLanguageMessage("tdoutlinesize", LANG_TYPE_GAMETEXTS));
-			format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_OutlineSize]);
-			strreplace(EditorString, "#1", tmp_str);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdoutlinesize", LANG_TYPE_GAMETEXTS, "", "i", TextDraw[tdid][TD_OutlineSize]));
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
 			return 1;
 		}
@@ -1410,9 +1374,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				default: 
 				{
 					new tmp_str[12];
-					format(EditorString, sizeof EditorString, GetLanguageMessage("tdfontinfo", LANG_TYPE_GAMETEXTS));
-					format(tmp_str, sizeof tmp_str, "%i", TextDraw[tdid][TD_Font]);
-					strreplace(EditorString, "#1", tmp_str);
+					format(EditorString, sizeof EditorString, GetLanguageMessage("tdfontinfo", LANG_TYPE_GAMETEXTS, "", "i", TextDraw[tdid][TD_Font]));
 					GameTextForPlayer(playerid, EditorString, 1500, 6);
 				}
 			}

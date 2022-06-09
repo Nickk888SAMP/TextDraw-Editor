@@ -32,8 +32,9 @@
 #define MAX_TEXTDRAWS			                      (512 - 1)	                //Max TextDraws that can be created and loaded
 #define MAX_LANGUAGES				                    30						            //Max languages that can be loaded
 #define MAX_SPRITES 				                    100						            //Max sprites that can be loaded into library.
+#define MAX_GROUPS                              100                       //Max groups that can be loaded
 
-#define CHANGING_VAR_TIME 				              35						            //The Update time for the editor
+#define CHANGING_VAR_TIME 				              15						            //The Update time for the editor
 #define MAXFORMATEDTD 					                32						            //Clamps the TextDraw name in the Dialogs
 #define CURSOR_COLOR 					                  -8388353				          //Default Cursor Color
 #define BUTTON_TD_COLOR 				                -1						            //Default Buttons Color

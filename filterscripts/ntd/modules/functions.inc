@@ -2359,14 +2359,17 @@ CallNTDCommand(playerid)
 	{
 		if(ScriptScriptActive)
 		{
+			ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
 			if(User[User_InEditor] == false)
 			{
 				LoadLanguages();
 				LoadConfigurations();
-				ChangeEditorLanguage(GetLanguageIndexFromName(EditorLanguageFile));
 				if(EditorLanguage == -1)
 				{
-					ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE);
+					if(ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE) == 0)
+					{
+						ShowInfo(playerid, "{FF0000}No language files found. \n{FFFFFF}Please add languages to the 'languages' directory.");
+					}
 					return 1;
 				}
 				else if(strcmp(EditorVersion, SCRIPT_VERSION_CHECK, false) != 0)
@@ -2535,6 +2538,8 @@ ResetConfiguration(playerid)
 
 QuickSelectionShow(playerid, bool:enable)
 {
+	if(playerid == INVALID_PLAYER_ID)
+		return 0;
 	if(User[User_ProjectOpened] == true)
 	{
 		if(enable)
@@ -2619,7 +2624,7 @@ LoadConfigurations()
 	printf("Loading Configuration: %s", MakePath(SETTINGS_FILEPATH, true));
 	if(Exists( MakePath(SETTINGS_FILEPATH, true) ))
 	{
-		new Node:node;
+		new Node:node, tmplangname[32];
 		JSON_ParseFile( MakePath(SETTINGS_FILEPATH, true) , node);
 		JSON_GetInt(node, "x", EditorPosX);
 		JSON_GetInt(node, "y", EditorPosY);
@@ -2631,9 +2636,10 @@ LoadConfigurations()
 		JSON_GetBool(node, "tdshowforall", EditorTextDrawShowForAll);
 		JSON_GetBool(node, "compactmode", EditorCompactMode);
 		JSON_GetString(node, "scriptversion", EditorVersion);
-		JSON_GetString(node, "languagefile", EditorLanguageFile);
+		JSON_GetString(node, "languagefile", tmplangname);
 		JSON_GetInt(node, "maxdialogitems", EditorMaxDialogItems);
 		EditorMaxDialogItems = clamp(EditorMaxDialogItems, 1, NDP_AUTO);
+		EditorLanguage = GetLanguageIndexFromName(tmplangname);
 		return 1;
 	}
 	return SaveConfigurations();
@@ -2652,7 +2658,7 @@ SaveConfigurations()
 		"tdshowforall", JSON_Bool(EditorTextDrawShowForAll),
 		"compactmode", JSON_Bool(EditorCompactMode),
 		"scriptversion", JSON_String(EditorVersion),
-		"languagefile", JSON_String(EditorLanguageFile),
+		"languagefile", JSON_String(GetLanguageName(EditorLanguage)),
 		"maxdialogitems", JSON_Int(EditorMaxDialogItems)
 	);
 	JSON_SaveFile(MakePath(SETTINGS_FILEPATH, true), node);
@@ -2704,6 +2710,9 @@ MakePath(const path[], bool:addScriptfiles)
 
 GetLanguageIndexFromName(const langName[])
 {
+	if(isnull(langName))
+		return -1;
+	printf("Language: %s", langName);
 	foreach(new i : I_LANGUAGES)
 	{
 		if(!strcmp(Language[i][l_name], langName, false))
@@ -2747,7 +2756,7 @@ LoadLanguages()
 		{
 			PathBase(langFilePath, langFile);
 			PathExt(langFile, fileExtension);
-			if(!strcmp(fileExtension, ".json", true))
+			if(!isnull(fileExtension) && !strcmp(fileExtension, ".json", true))
 			{
 				langChecksum = "\1";
 				JSON_ParseFile(langFilePath, languageNode);
@@ -2755,7 +2764,7 @@ LoadLanguages()
 				JSON_GetString(languageNode, "author", langAuthor);
 				JSON_GetString(languageNode, "version", langVersion);
 				JSON_GetString(languageNode, "checksum", langChecksum);
-				if(!strcmp(langChecksum, LANGUAGES_CHECKSUM, false))
+				if(!isnull(langChecksum) && !strcmp(langChecksum, LANGUAGES_CHECKSUM, false))
 				{
 					JSON_GetObject(languageNode, "messages", messagesnode);
 					JSON_GetObject(languageNode, "gametexts", gametextsnode);
@@ -2771,15 +2780,27 @@ LoadLanguages()
 	return 1;
 }
 
+GetLanguageName(index)
+{
+	new tmpLangName[32];
+	if(index != -1)
+		format(tmpLangName, 32, Language[index][l_name]);
+
+	return tmpLangName;
+}
+
 ChangeEditorLanguage(index)
 {
-	EditorLanguage = GetLanguageIndexFromName(Language[index][l_name]);
-	format(EditorLanguageFile, sizeof EditorLanguageFile, Language[index][l_name]);
+	if(index == -1)
+		return 0;
+	EditorLanguage = index;
 	return 1;
 }
 
 ShowLanguageChangeDialog(playerid, ondialogid)
 {
+	if(Iter_Count(I_LANGUAGES) == 0)
+		return 0;
 	ClearDialogListitems(playerid);
 	EditorLString = "";
 	foreach(new i : I_LANGUAGES)
@@ -2790,17 +2811,25 @@ ShowLanguageChangeDialog(playerid, ondialogid)
 	ShowPlayerDialog(playerid, ondialogid, DIALOG_STYLE_TABLIST, CAPTION_TEXT"Language", #, "OK", #, 10);
 	return 1;
 }
+#define SEARCH_REPLACE_ARGUMENTS(%1); \ 
+	if(args > 4) \
+	{ \
+		for(new a = 0; a < (args - 4); a++) \
+		{ \
+			format(tmpArgsMacroStr, 10, "#%i", (a + 1)); \
+			strreplace(%1, tmpArgsMacroStr, argumentString[a]); \
+		} \
+	}
 
 stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] = "", GLOBAL_TAG_TYPES:...)
 {
-	new langMessageStr[258];
-	new langID = EditorLanguage;
+	new langMessageStr[512];
 	new argumentString[10][128];
 	new args = numargs();
 	new tmpArgsMacroStr[10];
 	if(EditorLanguage == -1)
 	{
-		langMessageStr = "Language Data Error";
+		langMessageStr = "Error";
 		return langMessageStr;
 	}
 	if(args > 4)
@@ -2814,16 +2843,31 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 				case 'f': format(argumentString[a - 4], 128, "%f", getarg(a));
 				case 'x': format(argumentString[a - 4], 128, "%x", getarg(a));
 			}
+			print(argumentString[a - 4]);
 		}
 	}
 	switch(type)
 	{
-		case LANG_TYPE_MESSAGES: JSON_GetString(Language[langID][l_messagesNode], key, langMessageStr);
-		case LANG_TYPE_GAMETEXTS: JSON_GetString(Language[langID][l_gametextsNode], key, langMessageStr);
+		case LANG_TYPE_MESSAGES: 
+		{
+			if(JSON_GetString(Language[EditorLanguage][l_messagesNode], key, langMessageStr) == 0)
+			{
+				SEARCH_REPLACE_ARGUMENTS(langMessageStr);
+			}
+			else langMessageStr = "Language Data Error";
+		}
+		case LANG_TYPE_GAMETEXTS: 
+		{
+			if(JSON_GetString(Language[EditorLanguage][l_gametextsNode], key, langMessageStr) == 0)
+			{
+				SEARCH_REPLACE_ARGUMENTS(langMessageStr);
+			}
+			else langMessageStr = "Language Data Error";
+		}
 		case LANG_TYPE_DIALOGS: 
 		{
 			new Node:tmpDialogNode;
-			JSON_GetObject(Language[langID][l_dialogsNode], key, tmpDialogNode);
+			JSON_GetObject(Language[EditorLanguage][l_dialogsNode], key, tmpDialogNode);
 			if(!strcmp(subKey, "infos", true))
 			{
 				new tmpDialogInfoKey[8], tmpDialogInfoStr[128];
@@ -2834,14 +2878,7 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 					{
 						if(i > 0)
 							strcat(langMessageStr, "\n");
-						if(args > 4)
-						{
-							for(new a = 0; a < (args - 4); a++)
-							{
-								format(tmpArgsMacroStr, 10, "#%i", (a + 1));
-								strreplace(tmpDialogInfoStr, tmpArgsMacroStr, argumentString[a]);
-							}
-						}
+						SEARCH_REPLACE_ARGUMENTS(tmpDialogInfoStr);
 						strcat(langMessageStr,  tmpDialogInfoStr);
 					}
 					else break;
@@ -2851,6 +2888,7 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 			{
 				if(JSON_GetString(tmpDialogNode, subKey, langMessageStr) == 0)
 				{
+					SEARCH_REPLACE_ARGUMENTS(langMessageStr);
 					strins(langMessageStr, CAPTION_TEXT, 0);
 				}
 				else langMessageStr = "Language Data Error";

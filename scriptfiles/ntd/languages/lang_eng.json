@@ -13,7 +13,7 @@
     "infoeditorreset": "Settings have been restored!",
     "infoinvalidmodelid": "Model ID is incorrect!",
     "languagefilenotfound": "Language file not found!",
-    "infoprojectexported": "The project has been successfully exported! #nProject exported to",
+    "infoprojectexported": "The project has been successfully exported! #nProject exported to #1",
     "infoprojectexporterror": "An error occurred while exporting...",
     "infoparamnamechange": "The variable name has been changed!#nNew variable name: #1#nTextDraw text: #2",
     "infoparamnamechangetaken": "This variable name has already been used!",
@@ -46,7 +46,8 @@
     "modeltexterror": "Cannot change model preview text",
     "manualchangetypemzoom": "Zoom",
     "manualchangetypemcolor1": "Color 1",
-    "manualchangetypemcolor2": "Color 2"
+    "manualchangetypemcolor2": "Color 2",
+	"infoprojectconverted" : "Project has been converted."
   },
   "gametexts": {
     "tdclonedinfo": "CLONNED_ID_#1",
@@ -85,15 +86,16 @@
   "dialogs": {
     "dialogsettings": {
       "caption": "Editor Settings",
-      "info0": "Change editor position#t",
-      "info1": "Change highlight color#t",
-      "info2": "Change buttons color#t",
-      "info3": "Switch SHIFT with SPACEBAR#t#1",
-      "info4": "Quick Select#t#2",
-      "info5": "TextDraw display#t#3",
-      "info6": "Compact mode#t#4",
-      "info7": "Change language#t",
-      "info8": "Restore default settings#t",
+      "info0": "Option#tValue",
+      "info1": "Change editor position#t",
+      "info2": "Change highlight color#t",
+      "info3": "Change buttons color#t",
+      "info4": "Switch SHIFT with SPACEBAR#t#1",
+      "info5": "Quick Select#t#2",
+      "info6": "TextDraw display#t#3",
+      "info7": "Compact mode#t#4",
+      "info8": "Change language#t#5",
+      "info9": "Restore default settings#t",
       "button1": "Confirm",
       "button2": "Back"
     },
@@ -169,7 +171,7 @@
       "button2": "No"
     },
 	"tdoptions": {
-      "caption": "ID #1 '#2'",
+      "caption": "ID #1 \"#2\"",
       "info0": "Modify",
 	  "info1": "Clone",
 	  "info2": "Change layer",
@@ -179,7 +181,7 @@
       "button2": "Back"
     },
 	"projectsoptions": {
-      "caption": "Project '#1'",
+      "caption": "Project \"#1\"",
       "info0": "Open",
 	  "info1": "Change name",
 	  "info2": "Delete",
@@ -214,7 +216,7 @@
 	"deletedconfirm": {
       "caption": "Deleting",
       "info0": "Are you sure you want to delete this TextDraw?",
-	  "info1": "Text: '#1'",
+	  "info1": "Text: \"#1\"",
       "button1": "Yes",
       "button2": "No"
     },
@@ -272,7 +274,7 @@
 	"changeprojectname": {
       "caption": "Change project name",
 	  "info0": "Enter new name of project.",
-	  "info1": "Current name: '#1'",
+	  "info1": "Current name: \"#1\"",
       "button1": "Confirm",
       "button2": "Back"
     },
@@ -323,6 +325,15 @@
 	  "info1": "Current maximum value: #1%",
       "button1": "Confirm",
       "button2": "Back"
+    },
+	"infoprojectneedconvert": {
+      "caption": "Convert project",
+	  "info0": "This project file need to be converted in order to work within this editor.",
+	  "info1": "Conversion: #1 > #2",
+	  "info2": "The original file will be placed in inside #3",
+	  "info3": "Do you want to procees with the conversion?",
+      "button1": "Yes",
+      "button2": "No"
     }
   }
 }
