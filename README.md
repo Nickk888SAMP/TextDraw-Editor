@@ -1,5 +1,6 @@
 # TextDrawEditor
-NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few years ago, the goal was to make a easy to use, straight forward TextDraw editor, the script contains a lot of cool features, more then the original editor by iPLEOMAX!
+NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor. 
+The goal was to make a easy to use, straight forward TextDraw editor, the script contains a lot of cool features, more then the original editor by iPLEOMAX!
 
 - Clickable interface.
 - Multilanguage support (English, Polish and German natively included)
@@ -20,19 +21,10 @@ NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor he made a few y
 - TextDraw layering (Change the layer of a TextDraw In-Game!).
 - Editor Compact mode (Creates a smaller version of the interface to make working easier!).
 
-Video:
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=WMVVbm_XBhw
-" target="_blank"><img src="http://img.youtube.com/vi/WMVVbm_XBhw/0.jpg" width="400" height="300" border="0" /></a>
-
-Screenshots(Beta 4.45): https://imgur.com/a/Bs8Je
-
 ## Dependencies
 * SSCANF2: https://github.com/maddinat0r/sscanf
 ### For the Source Code
-* ZCMD: https://github.com/Southclaws/zcmd
 * YSI Library: https://github.com/pawn-lang/YSI-Includes
-* DFILE: https://github.com/Nickk888SAMP/TextDraw-Editor/blob/master/filterscripts/ntd/includes/dfile.inc
 * NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
 * Progress2: https://github.com/Nickk888SAMP/progress2
 

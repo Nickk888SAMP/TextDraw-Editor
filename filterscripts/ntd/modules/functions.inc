@@ -43,7 +43,6 @@ CreateProject(const projectname[])
 	new filePath[256];
 	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s.ntd", projectname);	
 	format(filePath, 256, MakePath(filePath, true));
-	print(filePath);
 	if(!Exists(filePath))
 	{
 		JSON_SaveFile(filePath, JSON_Object());
@@ -57,7 +56,6 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 {
 	new filename[128], bool:clickableTD, publiccount, nonpubliccount, barscount;
 	format(filename, 128, EXPORTS_DIRECTORYPATH"/%s.pwn", GetProjectName(index));
-	print(filename);
 	if(Exists(MakePath(filename, true)))
 		fremove(filename);
 	
@@ -337,7 +335,8 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					fwrite(file, "\n/*Player Progress Bars\n");
 					fwrite(file, "Requires \"progress2\" include by Southclaws\n");
-					fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
+					fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+					fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -457,7 +456,8 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					}
 					fwrite(file, "\n/*Player Progress Bars\n");
 					fwrite(file, "Requires \"progress2\" include by Southclaws\n");
-					fwrite(file, "Download: https://github.com/Southclaws/progress2/releases */\n");
+					fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+					fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -480,7 +480,8 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					{
 						fwrite(file, "#include <progress2>\n");
 						fwrite(file, "//Requires \"progress2\" include by Southclaws\n");
-						fwrite(file, "//Download: https://github.com/Southclaws/progress2/releases\n");
+						fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+						fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
 						break;
 					}
 				}
@@ -2621,7 +2622,6 @@ ToggleTextDrawShowForAll(bool:toggle)
 
 LoadConfigurations()
 {
-	printf("Loading Configuration: %s", MakePath(SETTINGS_FILEPATH, true));
 	if(Exists( MakePath(SETTINGS_FILEPATH, true) ))
 	{
 		new Node:node, tmplangname[32];
@@ -2662,7 +2662,6 @@ SaveConfigurations()
 		"maxdialogitems", JSON_Int(EditorMaxDialogItems)
 	);
 	JSON_SaveFile(MakePath(SETTINGS_FILEPATH, true), node);
-	printf("Saving Configuration: %s", MakePath(SETTINGS_FILEPATH, true));
 	return 1;
 }
 
@@ -2712,7 +2711,7 @@ GetLanguageIndexFromName(const langName[])
 {
 	if(isnull(langName))
 		return -1;
-	printf("Language: %s", langName);
+
 	foreach(new i : I_LANGUAGES)
 	{
 		if(!strcmp(Language[i][l_name], langName, false))
@@ -2843,7 +2842,6 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 				case 'f': format(argumentString[a - 4], 128, "%f", getarg(a));
 				case 'x': format(argumentString[a - 4], 128, "%x", getarg(a));
 			}
-			print(argumentString[a - 4]);
 		}
 	}
 	switch(type)

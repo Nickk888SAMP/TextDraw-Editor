@@ -1,4 +1,0 @@
-- New TextDraw Manage dialog containing more information about the TextDraws.
-- New improved Settings Dialog.
-- New color palette for the Editor.
-- New Text layout.
