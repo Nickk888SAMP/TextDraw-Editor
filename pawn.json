@@ -5,10 +5,10 @@
 	"output": "gamemodes\\empty.amx",
 	"dependencies": [
 		"sampctl/samp-stdlib",
+		"Zeex/samp-plugin-crashdetect:v4.20",
 		"maddinat0r/sscanf",
 		"Southclaws/samp-fsutil:1.3.0",
-		"Southclaws/pawn-json:1.2.0",
-		"Zeex/samp-plugin-crashdetect:v4.20"
+		"Southclaws/pawn-json:1.2.0"
 	],
 	"local": true,
 	"runtime": {
@@ -20,9 +20,9 @@
 		],
 		"rcon_password": "ntd",
 		"port": 7778,
-		"hostname": "Nickk's TextDraw Editor",
-		"maxplayers": 25,
-		"language": "",
+		"hostname": "Nickks TextDraw Editor",
+		"maxplayers": 5,
+		"language": "Unknown",
 		"mapname": "San Andreas",
 		"weburl": "www.github.com/Nickk888SAMP/TextDraw-Editor",
 		"gamemodetext": "Unknown",

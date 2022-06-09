@@ -1916,8 +1916,7 @@ ShowEditor(playerid, bool:b1_active, bool:b2_active, bool:b3_active, bool:b4_act
 	TextDrawColor(B_Proportionality, unsetcolor);
 	
 	new tdid = User[User_EditingTDID];
-	if(b1_active) 
-	{
+	if(b1_active) {
 		TextDrawSetSelectable(B_Groups, true),
 		TextDrawColor(B_Groups, EditorButtonsColor);
 	}
@@ -2129,13 +2128,16 @@ ShowWelcomeScreen(bool:show)
 
 CreateEditor()
 {
+	// Box
+
 	E_Box = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, BACKGROUND_BAR);
 	TextDrawFont(E_Box, 4);
 	TextDrawLetterSize(E_Box, 0.600000, 2.000000);
 	TextDrawTextSize(E_Box, 640.000000 / ((EditorCompactMode) ? (EditorCompactSize) : (1.0)), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawBoxColor(E_Box, 0xFFFFFFFF);
-	//TextDrawUseBox(E_Box, 1);
-	
+
+	// Top Buttons
+
 	B_Exit = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY - 12, BUTTON_EXIT);
 	TextDrawFont(B_Exit, 4);
 	TextDrawTextSize(B_Exit, BUTTON_TD_SIZE / 3, BUTTON_TD_SIZE / 3);
@@ -2148,109 +2150,146 @@ CreateEditor()
 	TextDrawColor(B_Settings, 0xFFFFFFFF);
 	TextDrawSetSelectable(B_Settings, true);
 	
-	B_Groups = TextDrawCreate((EditorCompactMode) ? (EditorPosX) : (0), EditorPosY, "HUD:fist");
-	TextDrawFont(B_Groups, 4);
-	TextDrawTextSize(B_Groups, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
-	TextDrawSetSelectable(B_Groups, true);
-	TextDrawColor(B_Groups, EditorButtonsColor);
-	
-	B_OpenProject = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), EditorPosY, BUTTON_PROJECTS);
+	// Buttons
+	new btns_pos_offset;
+
+	B_OpenProject = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_OPEN);
 	TextDrawFont(B_OpenProject, 4);
 	TextDrawTextSize(B_OpenProject, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_OpenProject, true);
 	TextDrawColor(B_OpenProject, EditorButtonsColor);
-	
-	B_CloseProject = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 2, EditorPosY, BUTTON_CLOSE);
+
+	btns_pos_offset++;
+
+	B_CloseProject = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_SAVE);
 	TextDrawFont(B_CloseProject, 4);
 	TextDrawTextSize(B_CloseProject, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_CloseProject, true);
 	TextDrawColor(B_CloseProject, EditorButtonsColor);
 	
-	B_Export = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 3, EditorPosY, BUTTON_EXPORT);
+	btns_pos_offset++;
+	
+	B_Export = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_EXPORT);
 	TextDrawFont(B_Export, 4);
 	TextDrawTextSize(B_Export, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Export, true);
 	TextDrawColor(B_Export, EditorButtonsColor);
-	
-	B_Manage = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 4, EditorPosY, BUTTON_MANAGE);
+
+	btns_pos_offset++;
+
+	B_Manage = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_MANAGE);
 	TextDrawFont(B_Manage, 4);
 	TextDrawTextSize(B_Manage, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Manage, true);
 	TextDrawColor(B_Manage, EditorButtonsColor);
-	
-	B_Font = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 5, EditorPosY, BUTTON_FONT);
+
+	btns_pos_offset++;
+
+	B_Groups = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_GROUPS);
+	TextDrawFont(B_Groups, 4);
+	TextDrawTextSize(B_Groups, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
+	TextDrawSetSelectable(B_Groups, true);
+	TextDrawColor(B_Groups, EditorButtonsColor);
+
+	btns_pos_offset++;
+
+	B_Font = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_FONT);
 	TextDrawFont(B_Font, 4);
 	TextDrawTextSize(B_Font, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Font, true);
 	TextDrawColor(B_Font, EditorButtonsColor);
 	
-	B_TDSettings = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 6, EditorPosY, BUTTON_TDSETTINGS);
+	btns_pos_offset++;
+
+	B_TDSettings = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_TDSETTINGS);
 	TextDrawFont(B_TDSettings, 4);
 	TextDrawTextSize(B_TDSettings, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_TDSettings, true);
 	TextDrawColor(B_TDSettings, EditorButtonsColor);
 	
-	B_Position = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 7, EditorPosY, BUTTON_POSITION);
+	btns_pos_offset++;
+
+	B_Position = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_POSITION);
 	TextDrawFont(B_Position, 4);
 	TextDrawTextSize(B_Position, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Position, true);
 	TextDrawColor(B_Position, EditorButtonsColor);
 	
-	B_Size = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 8, EditorPosY, BUTTON_SIZE);
+	btns_pos_offset++;
+
+	B_Size = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_SIZE);
 	TextDrawFont(B_Size, 4);
 	TextDrawTextSize(B_Size, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Size, true);
 	TextDrawColor(B_Size, EditorButtonsColor);
 	
-	B_Tekst = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 9, EditorPosY, BUTTON_TEKST);
+	btns_pos_offset++;
+
+	B_Tekst = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_TEXT);
 	TextDrawFont(B_Tekst, 4);
 	TextDrawTextSize(B_Tekst, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Tekst, true);
 	TextDrawColor(B_Tekst, EditorButtonsColor);
 	
-	B_Color = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 10, EditorPosY, BUTTON_COLOR);
+	btns_pos_offset++;
+
+	B_Color = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_COLOR);
 	TextDrawFont(B_Color, 4);
 	TextDrawTextSize(B_Color, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Color, true);
 	TextDrawColor(B_Color, EditorButtonsColor);
 	
-	B_Outline = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 11, EditorPosY, BUTTON_OUTLINE);
+	btns_pos_offset++;
+
+	B_Outline = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_OUTLINE);
 	TextDrawFont(B_Outline, 4);
 	TextDrawTextSize(B_Outline, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Outline, true);
 	TextDrawColor(B_Outline, EditorButtonsColor);
 	
-	B_Shadow = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 12, EditorPosY, BUTTON_SHADOW);
+	btns_pos_offset++;
+
+	B_Shadow = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_SHADOW);
 	TextDrawFont(B_Shadow, 4);
 	TextDrawTextSize(B_Shadow, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Shadow, true);
 	TextDrawColor(B_Shadow, EditorButtonsColor);
 	
-	B_UseBox = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 13, EditorPosY, BUTTON_USEBOX);
+	btns_pos_offset++;
+
+	B_UseBox = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_BOXON);
 	TextDrawFont(B_UseBox, 4);
 	TextDrawTextSize(B_UseBox, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_UseBox, true);
 	TextDrawColor(B_UseBox, EditorButtonsColor);
 	
-	B_Alignment = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 14, EditorPosY, BUTTON_ALIGNMENT);
+	btns_pos_offset++;
+
+	B_Alignment = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_ALIGNMENTCENTER);
 	TextDrawFont(B_Alignment, 4);
 	TextDrawTextSize(B_Alignment, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Alignment, true);
 	TextDrawColor(B_Alignment, EditorButtonsColor);
 	
-	B_SwitchPublic = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 15, EditorPosY, BUTTON_SWITCHPUBLIC);
+	btns_pos_offset++;
+
+	B_SwitchPublic = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_PUBLICTD);
 	TextDrawFont(B_SwitchPublic, 4);
 	TextDrawTextSize(B_SwitchPublic, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_SwitchPublic, true);
 	TextDrawColor(B_SwitchPublic, EditorButtonsColor);
 	
-	B_Selectable = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 16, EditorPosY, BUTTON_SELECTABLE);
+	btns_pos_offset++;
+
+	B_Selectable = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_SELECTABLE);
 	TextDrawFont(B_Selectable, 4);
 	TextDrawTextSize(B_Selectable, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Selectable, true);
 	TextDrawColor(B_Selectable, EditorButtonsColor);
 	
-	B_Proportionality = TextDrawCreate(((EditorCompactMode) ? (EditorPosX) : (0)) + (BUTTON_TD_SPACER / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))) * 17, EditorPosY, BUTTON_PROPORTIONALITY);
+	btns_pos_offset++;
+
+	B_Proportionality = TextDrawCreate(BUTTON_POS_X, EditorPosY, BUTTON_PROPORTIONALITY);
 	TextDrawFont(B_Proportionality, 4);
 	TextDrawTextSize(B_Proportionality, (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))), (BUTTON_TD_SIZE / ((EditorCompactMode) ? (EditorCompactSize) : (1.0))));
 	TextDrawSetSelectable(B_Proportionality, true);
@@ -2265,12 +2304,12 @@ ShowEditorEx(playerid, bool:showmouse = true)
 	if(User[User_ProjectOpened] == true)
 	{
 		if(User[User_EditingTDID] != -1)
-			ShowEditor(playerid, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+			ShowEditor(playerid, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 		else 
-			ShowEditor(playerid, false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
+			ShowEditor(playerid, true, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false);
 	}
 	else 
-		ShowEditor(playerid, true, true, false, false, false, false, false, false ,false, false, false, false, false, false, false, false, false, false);
+		ShowEditor(playerid, false, true, false, false, false, false, false, false ,false, false, false, false, false, false, false, false, false, false);
 	return 1;
 }
 

@@ -69,12 +69,12 @@
                                                                                                                            
 */
 
-#define NTD_DIRECTORYPATH				          "ntd"					//Directory
-#define EXPORTS_DIRECTORYPATH			        "ntd/exports"			//Directory
-#define PROJECTS_DIRECTORYPATH            "ntd/projects"			//Directory
-#define LANGUAGES_DIRECTORYPATH           "ntd/languages"			//Directory
-#define TEMPLATESLIST_FILEPATH			      "ntd/templates.xml"		//File
-#define SETTINGS_FILEPATH 				        "ntd/editor.json"		//File
+#define NTD_DIRECTORYPATH				       "ntd"					//Directory
+#define EXPORTS_DIRECTORYPATH			     "ntd/exports"			//Directory
+#define PROJECTS_DIRECTORYPATH         "ntd/projects"			//Directory
+#define LANGUAGES_DIRECTORYPATH        "ntd/languages"			//Directory
+#define TEMPLATESLIST_FILEPATH			   "ntd/templates.xml"		//File
+#define SETTINGS_FILEPATH 				     "ntd/editor.json"		//File
 
 /*
   _____                                                              _   _                            
@@ -85,28 +85,36 @@
  |_|  \_\  \___| |___/  \___/   \__,_| |_|     \___|  \___| |___/   |_| \_|  \__,_| |_| |_| |_|  \___|
                                                                                                                                                                                                     
 */
-#define WELCOME_SCREEN 					"NTD_RESOURCES:Welcome_Screen"
-#define BACKGROUND_BAR					"NTD_RESOURCES:BG_Bar"
-#define BUTTON_EXIT 					"NTD_RESOURCES:Button_Exit"
-#define BUTTON_SETTINGS 				"NTD_RESOURCES:Button_Settings"
-#define BUTTON_GROUPS 						"NTD_RESOURCES:Button_Groups"
-#define BUTTON_PROJECTS 					"NTD_RESOURCES:Button_Open"
-#define BUTTON_CLOSE 					"NTD_RESOURCES:Button_Close"
-#define BUTTON_EXPORT 					"NTD_RESOURCES:Button_Export"
-#define BUTTON_MANAGE 					"NTD_RESOURCES:Button_Manage"
-#define BUTTON_FONT 					"NTD_RESOURCES:Button_Font"
-#define BUTTON_POSITION 				"NTD_RESOURCES:Button_Position"
-#define BUTTON_SIZE 					"NTD_RESOURCES:Button_Size"
-#define BUTTON_TEKST 					"NTD_RESOURCES:Button_Tekst"
-#define BUTTON_COLOR 					"NTD_RESOURCES:Button_Color"
-#define BUTTON_OUTLINE 					"NTD_RESOURCES:Button_Outline"
-#define BUTTON_SHADOW 					"NTD_RESOURCES:Button_Shadow"
-#define BUTTON_USEBOX 					"NTD_RESOURCES:Button_UseBox"
-#define BUTTON_ALIGNMENT 				"NTD_RESOURCES:Button_Alignment"
-#define BUTTON_SWITCHPUBLIC 			"NTD_RESOURCES:Button_SwitchPublic"
-#define BUTTON_SELECTABLE 				"NTD_RESOURCES:Button_Selectable"
-#define BUTTON_PROPORTIONALITY 			"NTD_RESOURCES:Button_Proportionality"
-#define BUTTON_TDSETTINGS 				"NTD_RESOURCES:Button_TDSettings"
+#define WELCOME_SCREEN 					      "NTD_RESOURCES:Welcome_Screen"
+#define BACKGROUND_BAR					      "NTD_RESOURCES:BG_Bar"
+
+#define BUTTON_TDSETTINGS					    "NTD_RESOURCES:Button_TDSettings"
+#define BUTTON_TEXT 					        "NTD_RESOURCES:Button_Text"
+#define BUTTON_SHADOW 					      "NTD_RESOURCES:Button_Shadow"
+#define BUTTON_SIZE 				        	"NTD_RESOURCES:Button_Size"
+#define BUTTON_ALIGNMENTCENTER 				"NTD_RESOURCES:Button_AlignmentCenter"
+#define BUTTON_ALIGNMENTDOWN 					"NTD_RESOURCES:Button_AlignmentDown"
+#define BUTTON_ALIGNMENTLEFT 				  "NTD_RESOURCES:Button_AlignmentLeft"
+#define BUTTON_ALIGNMENTRIGHT 				"NTD_RESOURCES:Button_AlignmentRight"
+#define BUTTON_ALIGNMENTTOP 					"NTD_RESOURCES:Button_AlignmentTop"
+#define BUTTON_BOXOFF 					      "NTD_RESOURCES:Button_BoxOff"
+#define BUTTON_BOXON 					        "NTD_RESOURCES:Button_BoxOn"
+#define BUTTON_SAVE 					        "NTD_RESOURCES:Button_Save"
+#define BUTTON_COLOR 					        "NTD_RESOURCES:Button_Color"
+#define BUTTON_EXIT 			        	  "NTD_RESOURCES:Button_Exit"
+#define BUTTON_EXPORT 					      "NTD_RESOURCES:Button_Export"
+#define BUTTON_FONT 					        "NTD_RESOURCES:Button_Font"
+#define BUTTON_GROUPS 					      "NTD_RESOURCES:Button_Groups"
+#define BUTTON_MANAGE 					      "NTD_RESOURCES:Button_Manage"
+#define BUTTON_NOTSELECTABLE 					"NTD_RESOURCES:Button_NotSelectable"
+#define BUTTON_OPEN					          "NTD_RESOURCES:Button_Open"
+#define BUTTON_OUTLINE 				        "NTD_RESOURCES:Button_Outline"
+#define BUTTON_PERPLAYERTD 			      "NTD_RESOURCES:Button_PerPlayerTD"
+#define BUTTON_POSITION 				      "NTD_RESOURCES:Button_Position"
+#define BUTTON_PROPORTIONALITY 			  "NTD_RESOURCES:Button_Proportionality"
+#define BUTTON_PUBLICTD 				      "NTD_RESOURCES:Button_PublicTD"
+#define BUTTON_SELECTABLE 				    "NTD_RESOURCES:Button_Selectable"
+#define BUTTON_SETTINGS 				      "NTD_RESOURCES:Button_Settings"
 
 /*
   _____           _                                   _       
@@ -117,15 +125,15 @@
  |_____| |_| |_|  \__|  \___| |_|    |_| |_|  \__,_| |_| |___/
 
 */
-#define MAX_NTD_LANGUAGE_DIALOGS		40						//Do NOT change!
-#define MAX_NTD_DIALOG_INFO				10						//Do NOT change!
-#define DEFAULT_LANG_STRING_SIZE		328						//Do NOT change!
-#define BUTTON_TD_SIZE					35.5					//Do NOT change!
-#define BUTTON_TD_SPACER				35.5					//Do NOT change!
-#define BUTTON_MINHEIGHT				15						//Do NOT change!
-#define BUTTON_MAXHEIGHT				412						//Do NOT change!
-#define BLOCK_VARS_TIME 				100						//Do NOT change!
-#define TEXT_DRAW_FONT_PROGRESS_BAR		6 						//Do NOT change!
+#define MAX_NTD_LANGUAGE_DIALOGS		  40						//Do NOT change!
+#define MAX_NTD_DIALOG_INFO				    10						//Do NOT change!
+#define DEFAULT_LANG_STRING_SIZE		  328						//Do NOT change!
+#define BUTTON_TD_SIZE					      35.5					//Do NOT change!
+#define BUTTON_TD_SPACER				      35.5					//Do NOT change!
+#define BUTTON_MINHEIGHT				      15						//Do NOT change!
+#define BUTTON_MAXHEIGHT				      412						//Do NOT change!
+#define BLOCK_VARS_TIME 				      100						//Do NOT change!
+#define TEXT_DRAW_FONT_PROGRESS_BAR	  6 						//Do NOT change!
 
 /*
   _____    _           _                       
