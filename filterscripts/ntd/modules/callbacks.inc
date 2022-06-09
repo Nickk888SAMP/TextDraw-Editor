@@ -559,17 +559,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(response)
 				{
-					if(IsNumeric(inputtext) && strval(inputtext) >= 0)
-					{
-						TextDraw[tdid][TD_PrevModelID] = strval(inputtext);
-						UpdateTD(playerid, tdid);
-						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
-						ShowEditorEx(playerid);
-					}
-					else 
-					{
-						ShowInfo(playerid, GetLanguageMessage("previewmodelidinvalid", LANG_TYPE_MESSAGES));
-					}
+					TextDraw[tdid][TD_PrevModelID] = strval(inputtext);
+					UpdateTD(playerid, tdid);
+					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+					ShowEditorEx(playerid);
 				}
 				else ShowEditorEx(playerid);
 			}
@@ -832,7 +825,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 								DrawTD(tdid);
 								SelectTD(playerid, tdid);
 								//
-								new tmp_str[12];
 								format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS, "", "i", User[User_ChoosenTDID]));
 								//
 								GameTextForPlayer(playerid, EditorString, 5000, 6);
@@ -887,9 +879,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					if(User[User_EditingTDID] == User[User_ChoosenTDID])
 						User[User_EditingTDID] = -1;
 					//
-					new tmp_str[12];
 					format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS, "", "i", User[User_ChoosenTDID]));
-					//
 					GameTextForPlayer(playerid, EditorString, 5000, 6);
 					PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 					ShowEditorEx(playerid, true);
@@ -906,9 +896,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						DrawTD(tdid);
 						SelectTD(playerid, tdid);
 						//
-						new tmp_str[12];
 						format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
-						//
 						GameTextForPlayer(playerid, EditorString, 5000, 6);
 						PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 						RelayerEditor();
@@ -931,9 +919,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 							DrawTD(tdid);
 							SelectTD(playerid, tdid);
 							//
-							new tmp_str[12];
 							format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
-							//
 							PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 							GameTextForPlayer(playerid, EditorString, 5000, 6);
 							//
@@ -1264,7 +1250,6 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Shadow)
 		{
-			new tmp_str[5];
 			if(TextDraw[tdid][TD_ShadowSize] == 4)
 				TextDraw[tdid][TD_ShadowSize] = -1;
 			
@@ -1283,7 +1268,6 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Outline)
 		{
-			new tmp_str[5];
 			if(TextDraw[tdid][TD_OutlineSize] == 4)
 				TextDraw[tdid][TD_OutlineSize] = -1;
 			
@@ -1373,7 +1357,6 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				case TEXT_DRAW_FONT_PROGRESS_BAR: GameTextForPlayer(playerid, GetLanguageMessage("tdfontplayerprogressbar", LANG_TYPE_GAMETEXTS), 1500, 6);
 				default: 
 				{
-					new tmp_str[12];
 					format(EditorString, sizeof EditorString, GetLanguageMessage("tdfontinfo", LANG_TYPE_GAMETEXTS, "", "i", TextDraw[tdid][TD_Font]));
 					GameTextForPlayer(playerid, EditorString, 1500, 6);
 				}
