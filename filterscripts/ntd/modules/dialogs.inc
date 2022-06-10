@@ -8,6 +8,25 @@
                                     __/ |      
                                    |___/       
 */
+Dialog:D_ConvertProject(DIALOG_CALLBACK_PARAMETERS)
+{
+    new projectindex = User[User_ProjectIndex];
+    new amount = TryConvertProject(projectindex);
+    new filePathFrom[258], filePathTo[258];
+    if(amount != -1)
+    {
+        if(!Exists( MakePath(PROJECTS_ORIGINAL_DIRPATH, true)))
+            CreateDir(MakePath(PROJECTS_ORIGINAL_DIRPATH, true));
+        
+	    format(filePathFrom, sizeof filePathFrom, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(projectindex, true));
+	    format(filePathTo, sizeof filePathTo, PROJECTS_ORIGINAL_DIRPATH"/%s", GetProjectName(projectindex, true));
+        MoveFile( MakePath(filePathFrom, true), MakePath(filePathTo, true) );
+        ShowInfo(playerid, GetLanguageMessage("infoprojectconverted", LANG_TYPE_MESSAGES, "", "i", amount));
+    } 
+    else ShowInfo(playerid, GetLanguageMessage("infoprojecterror", LANG_TYPE_MESSAGES));
+    return 1;
+}
+
 Dialog:D_SettingsReset2(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
@@ -706,7 +725,16 @@ Dialog:D_OpenProject(DIALOG_CALLBACK_PARAMETERS)
                 }
                 else
                 {
-                    ShowEditorEx(playerid);
+                    
+                    new tmp_str[128];
+                    format(tmp_str, sizeof tmp_str, "%s.%s", GetProjectName(projectindex), Extensions[ FILE_EXTENSION_NTD ][fe_extension]);
+                    //print(tmp_str);
+                    Dialog_Show(playerid, "D_ConvertProject", DIALOG_STYLE_MSGBOX, 
+                    GetLanguageMessage("infoprojectneedconvert", LANG_TYPE_DIALOGS, "caption"), 
+                    GetLanguageMessage("infoprojectneedconvert", LANG_TYPE_DIALOGS, "infos", "sss", GetProjectName(projectindex, true), tmp_str, MakePath(PROJECTS_ORIGINAL_DIRPATH, true)), 
+                    GetLanguageMessage("infoprojectneedconvert", LANG_TYPE_DIALOGS, "button1"), 
+                    GetLanguageMessage("infoprojectneedconvert", LANG_TYPE_DIALOGS, "button2"));
+                    PlayerSelectTD(playerid, false);
                 }
             }
             case 1: // Change Name

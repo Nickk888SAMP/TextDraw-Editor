@@ -535,7 +535,8 @@ new User[E_USER]; //User Data
 enum E_PROJECT
 {
 	Pro_fileName[128],
-	Pro_fileExtensionId
+	Pro_fileExtensionId,
+	Pro_TDAmounts
 }
 new Projects[MAX_PROJECTS][E_PROJECT]; //Projects Data
 

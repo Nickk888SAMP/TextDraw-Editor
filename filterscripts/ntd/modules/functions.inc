@@ -8,6 +8,40 @@
                           _/ |                                                                                      
                          |__/                                                                                       
 */
+TryConvertProject(index)
+{
+	new filePath[258], toFile[258];
+	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
+	format(toFile, sizeof toFile, "%s.%s", GetProjectName(index, false), Extensions[FILE_EXTENSION_NTD][fe_extension]);
+
+	if(!Exists( MakePath(filePath, true) ))
+		return -1;
+	
+	switch(Projects[index][Pro_fileExtensionId])
+	{
+		case FILE_EXTENSION_NTD_LEGACY:
+		{
+			return ConvertNTDLegacy(filePath, toFile);
+		}
+		case FILE_EXTENSION_ITD:
+		{
+			
+			return -1;
+		}
+		case FILE_EXTENSION_ZTD:
+		{
+			
+			return -1;
+		}
+		case FILE_EXTENSION_RAW:
+		{
+			
+			return -1;
+		}
+	}
+	return -1;
+}
+
 RenameProject(index, const newprojectname[])
 {
 	new string1[128], string2[128];
@@ -1103,9 +1137,12 @@ AddProjectToList(const file[])
 {
 	new index = Iter_Free(I_PROJECTS);
 	new extension[16];
+	new Node:node;
+	new filePath[258];
 	VALID_ITER_INDEX(I_PROJECTS, index)
 	{
 		Projects[index][Pro_fileExtensionId] = -1;
+		Projects[index][Pro_TDAmounts] = -1;
 		sscanf(file, "P<.>s[128]s[16]", Projects[index][Pro_fileName], extension);
 		for(new i; i < sizeof Extensions; i++)
 		{
@@ -1113,6 +1150,18 @@ AddProjectToList(const file[])
 			{
 				Projects[index][Pro_fileExtensionId] = Extensions[i][fe_extensionId];
 				break;
+			}
+		}
+		if(Projects[index][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
+		{
+			format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
+			filePath = MakePath(filePath, true);
+			if(Exists(filePath))
+			{
+				JSON_ParseFile(filePath, node);
+				JSON_GetArray(node, "textdraws", node);
+				JSON_ArrayLength(node, Projects[index][Pro_TDAmounts]);
+				JSON_Cleanup(node, true);
 			}
 		}
 		//printf("File: %s | Extension: %s | Extension ID: %i | name: %s", Projects[index][Pro_fileName], extension, Projects[index][Pro_fileExtensionId]);
@@ -1169,11 +1218,12 @@ OpenProjectDialog(playerid)
 		{
 			if(Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
 			{
-				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s", 
+				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s\t%i", 
 					i,
 					(IsProjectFileValid(i) ? HEX_PALETTE_4 : "{FF0000}"), 
 					GetProjectName(i, true), 
-					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName]);
+					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName],
+					Projects[i][Pro_TDAmounts]);
 			}
 			else 
 			{
@@ -1202,70 +1252,66 @@ OpenProjectDialog(playerid)
 	return 1;
 }
 
-SaveProject(index)
+SaveProject(const projectFile[])
 {
-	if(User[User_ProjectOpened])
+	new filePath[300];
+
+	//Project File Path
+	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", projectFile);
+	filePath = MakePath(filePath, true);
+
+	// Node
+	new Node:node;
+	node = JSON_Object(
+		"textdraws", JSON_Array()
+	);
+
+	// TextDraws
+	foreach(new i : I_TEXTDRAWS)
 	{
-		new filePath[300];
-	
-		//Project File Path
-		format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
-		filePath = MakePath(filePath, true);
-
-		// Node
-		new Node:node;
-		node = JSON_Object(
-			"textdraws", JSON_Array()
-		);
-
-		// TextDraws
-		foreach(new i : I_TEXTDRAWS)
+		if(TextDraw[i][TD_Created])
 		{
-			if(TextDraw[i][TD_Created])
-			{
-				new Node:tdNode = JSON_Object(
-				"string", JSON_String(TextDraw[i][TD_Text]),
-				"posx", JSON_Float(TextDraw[i][TD_PosX]),
-				"posy", JSON_Float(TextDraw[i][TD_PosY]),
-				"font", JSON_Int(TextDraw[i][TD_Font]),
-				"public", JSON_Bool(TextDraw[i][TD_IsGlobal]),
-				"outline", JSON_Int(TextDraw[i][TD_OutlineSize]),
-				"shadow", JSON_Int(TextDraw[i][TD_ShadowSize]),
-				"lettersizex", JSON_Float(TextDraw[i][TD_LetterSizeX]),
-				"lettersizey", JSON_Float(TextDraw[i][TD_LetterSizeY]),
-				"textcolor", JSON_Int(TextDraw[i][TD_Color]),
-				"backgroundcolor", JSON_Int(TextDraw[i][TD_BGColor]),
-				"boxcolor", JSON_Int(TextDraw[i][TD_BoxColor]),
-				"textcoloralpha", JSON_Int(TextDraw[i][TD_ColorAlpha]),
-				"backgroundcoloralpha", JSON_Int(TextDraw[i][TD_BGColorAlpha]),
-				"boxcoloralpha", JSON_Int(TextDraw[i][TD_BoxColorAlpha]),
-				"usebox", JSON_Bool(TextDraw[i][TD_UseBox]),
-				"boxsizex", JSON_Float(TextDraw[i][TD_BoxSizeX]),
-				"boxsizey", JSON_Float(TextDraw[i][TD_BoxSizeY]),
-				"selectable", JSON_Bool(TextDraw[i][TD_Selectable]),
-				"alignment", JSON_Int(TextDraw[i][TD_Alignment]),
-				"proportional", JSON_Bool(TextDraw[i][TD_Proportional]),
-				"previewmodelid", JSON_Int(TextDraw[i][TD_PrevModelID]),
-				"previewmodelcolor1", JSON_Int(TextDraw[i][TD_PrevModelC1]),
-				"previewmodelcolor2", JSON_Int(TextDraw[i][TD_PrevModelC2]),
-				"previewmodelrotx", JSON_Float(TextDraw[i][TD_PrevRotX]),
-				"previewmodelroty", JSON_Float(TextDraw[i][TD_PrevRotY]),
-				"previewmodelrotz", JSON_Float(TextDraw[i][TD_PrevRotZ]),
-				"previewmodelzoom", JSON_Float(TextDraw[i][TD_PrevRotZoom]),
-				"variablename", JSON_String(TextDraw[i][TD_VarName]),
-				"progressbarmaxpercentage", JSON_Float(TextDraw[i][TD_BarMaxPercentage]),
-				"progressbaralignment", JSON_Int(TextDraw[i][TD_BarDirectory])
-				);
-				// Append current textdraw to array.
-				JSON_ArrayAppend(node, "textdraws", tdNode);
-			}
+			new Node:tdNode = JSON_Object(
+			"string", JSON_String(TextDraw[i][TD_Text]),
+			"posx", JSON_Float(TextDraw[i][TD_PosX]),
+			"posy", JSON_Float(TextDraw[i][TD_PosY]),
+			"font", JSON_Int(TextDraw[i][TD_Font]),
+			"public", JSON_Bool(TextDraw[i][TD_IsGlobal]),
+			"outline", JSON_Int(TextDraw[i][TD_OutlineSize]),
+			"shadow", JSON_Int(TextDraw[i][TD_ShadowSize]),
+			"lettersizex", JSON_Float(TextDraw[i][TD_LetterSizeX]),
+			"lettersizey", JSON_Float(TextDraw[i][TD_LetterSizeY]),
+			"textcolor", JSON_Int(TextDraw[i][TD_Color]),
+			"backgroundcolor", JSON_Int(TextDraw[i][TD_BGColor]),
+			"boxcolor", JSON_Int(TextDraw[i][TD_BoxColor]),
+			"textcoloralpha", JSON_Int(TextDraw[i][TD_ColorAlpha]),
+			"backgroundcoloralpha", JSON_Int(TextDraw[i][TD_BGColorAlpha]),
+			"boxcoloralpha", JSON_Int(TextDraw[i][TD_BoxColorAlpha]),
+			"usebox", JSON_Bool(TextDraw[i][TD_UseBox]),
+			"boxsizex", JSON_Float(TextDraw[i][TD_BoxSizeX]),
+			"boxsizey", JSON_Float(TextDraw[i][TD_BoxSizeY]),
+			"selectable", JSON_Bool(TextDraw[i][TD_Selectable]),
+			"alignment", JSON_Int(TextDraw[i][TD_Alignment]),
+			"proportional", JSON_Bool(TextDraw[i][TD_Proportional]),
+			"previewmodelid", JSON_Int(TextDraw[i][TD_PrevModelID]),
+			"previewmodelcolor1", JSON_Int(TextDraw[i][TD_PrevModelC1]),
+			"previewmodelcolor2", JSON_Int(TextDraw[i][TD_PrevModelC2]),
+			"previewmodelrotx", JSON_Float(TextDraw[i][TD_PrevRotX]),
+			"previewmodelroty", JSON_Float(TextDraw[i][TD_PrevRotY]),
+			"previewmodelrotz", JSON_Float(TextDraw[i][TD_PrevRotZ]),
+			"previewmodelzoom", JSON_Float(TextDraw[i][TD_PrevRotZoom]),
+			"variablename", JSON_String(TextDraw[i][TD_VarName]),
+			"progressbarmaxpercentage", JSON_Float(TextDraw[i][TD_BarMaxPercentage]),
+			"progressbaralignment", JSON_Int(TextDraw[i][TD_BarDirectory])
+			);
+			// Append current textdraw to array.
+			JSON_ArrayAppend(node, "textdraws", tdNode);
 		}
-
-		// Save File
-		JSON_SaveFile(filePath, node);
-		return 1;
 	}
-	return 0;
+
+	// Save File
+	JSON_SaveFile(filePath, node);
+	return 1;
 }
 
 LoadProject(index)
@@ -2426,7 +2472,7 @@ CallNTDCommand(playerid)
 					SendClientMessage(playerid, -1, EditorString);
 					if(User[User_ProjectOpened])
 					{
-						SaveProject(User[User_ProjectIndex]);
+						SaveProject(GetProjectName(User[User_ProjectIndex], true));
 						foreach(new i : I_TEXTDRAWS)
 							DestroyTD(i, i);
 						User[User_ProjectOpened] = false;
@@ -2813,7 +2859,7 @@ ShowLanguageChangeDialog(playerid, type)
 stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] = "", GLOBAL_TAG_TYPES:...)
 {
 	new langMessageStr[512];
-	new argumentString[10][128];
+	new argumentString[10][64];
 	new args = numargs();
 	new tmpArgsMacroStr[10];
 	if(EditorLanguage == -1)
@@ -2832,7 +2878,6 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 				case 'f': format(argumentString[a - 4], 128, "%f", getarg(a));
 				case 'x': format(argumentString[a - 4], 128, "%x", getarg(a));
 			}
-			printf("1: %s", argumentString[a - 4]);
 		}
 	}
 	switch(type)
@@ -2863,10 +2908,8 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 				for(new i; i < MAX_NTD_DIALOG_INFO; i++)
 				{
 					format(tmpDialogInfoKey, 10, "info%i", i);
-					printf("2: %s", tmpDialogInfoKey);
 					if(JSON_GetString(tmpDialogNode, tmpDialogInfoKey, tmpDialogInfoStr) == 0)
 					{
-						printf("3: %s", tmpDialogInfoStr);
 						if(i > 0)
 							strcat(langMessageStr, "\n");
 						SEARCH_REPLACE_ARGUMENTS(tmpDialogInfoStr);

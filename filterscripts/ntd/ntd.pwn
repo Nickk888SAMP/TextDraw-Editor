@@ -65,6 +65,7 @@ forward FadeTimer(bool:fadein);
 #include <enumerators>
 #include <utils>
 #include <functions>
+#include <converters>
 #include <callbacks>
 #include <timers>
 #include <dialogs>

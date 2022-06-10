@@ -44,7 +44,8 @@
     "manualchangetypemzoom": "Zoom",
     "manualchangetypemcolor1": "Color 1",
     "manualchangetypemcolor2": "Color 2",
-	"infoprojectconverted" : "Project has been converted."
+	"infoprojectconverted": "Project has been converted.#nAmount of converted TextDraws: #1",
+	"infoprojecterror": "An error occured while converting the project."
   },
   "gametexts": {
     "tdclonedinfo": "DUPLICATED_ID_#1",
@@ -141,7 +142,7 @@
     },
 	"projectslist": {
       "caption": "My Projects (#1/#2)",
-	  "info0": "Name#tFile Type",
+	  "info0": "Name#tFile Type#tTextDraw Amount",
 	  "info1": "Create new Project",
       "button1": "Confirm",
       "button2": "Back"
@@ -327,7 +328,7 @@
       "caption": "Convert project",
 	  "info0": "This project file need to be converted in order to work within this editor.",
 	  "info1": "Conversion: #1 > #2",
-	  "info2": "The original file will be placed in inside #3",
+	  "info2": "The original file will be placed inside #3",
 	  "info3": "Do you want to procees with the conversion?",
       "button1": "Yes",
       "button2": "No"

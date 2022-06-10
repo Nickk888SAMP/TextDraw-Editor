@@ -394,7 +394,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_CloseProject)
 		{
-			if(SaveProject(User[User_ProjectIndex]) == 0) 
+			if(SaveProject(GetProjectName(User[User_ProjectIndex], true)) == 0) 
 				ShowInfo(playerid, GetLanguageMessage("infoprojectsaveerror", LANG_TYPE_MESSAGES));
 			else 
 				ShowInfo(playerid, GetLanguageMessage("infoprojectclosed", LANG_TYPE_MESSAGES));

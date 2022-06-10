@@ -75,6 +75,7 @@
 #define LANGUAGES_DIRECTORYPATH        "ntd/languages"			//Directory
 #define TEMPLATESLIST_FILEPATH			   "ntd/templates.xml"		//File
 #define SETTINGS_FILEPATH 				     "ntd/editor.json"		//File
+#define PROJECTS_ORIGINAL_DIRPATH      PROJECTS_DIRECTORYPATH"/original" //Directory
 
 /*
   _____                                                              _   _                            
