@@ -10,12 +10,6 @@
 */
 TryConvertProject(index)
 {
-	new filePath[258];
-	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
-
-	if(!Exists( MakePath(filePath, true) ))
-		return -1;
-	
 	switch(Projects[index][Pro_fileExtensionId])
 	{
 		case FILE_EXTENSION_NTD_LEGACY:
