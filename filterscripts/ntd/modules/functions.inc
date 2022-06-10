@@ -8,7 +8,7 @@
                           _/ |                                                                                      
                          |__/                                                                                       
 */
-RenameProject(index, newprojectname[])
+RenameProject(index, const newprojectname[])
 {
 	new string1[128], string2[128];
 	format(string1, sizeof string1, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));	
@@ -1188,8 +1188,8 @@ OpenProjectDialog(playerid)
 		}
 		//
 		
-		ShowPlayerDialog(playerid, DIALOG_OPEN, DIALOG_STYLE_TABLIST_HEADERS, 
-		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_PROJECTS), #, 
+		ShowPlayerDialogPages(playerid, "DP_ProjectsList", DIALOG_STYLE_TABLIST_HEADERS, 
+		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_PROJECTS), 
 		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button1"), 
 		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button2"), 
 		EditorMaxDialogItems);
@@ -1421,7 +1421,7 @@ RedrawTD(playerid, tdid)
 ShowTDOptions(playerid, tdid)
 {
 	User[User_ChoosenTDID] = tdid;
-	ShowPlayerDialog(playerid, DIALOG_MANAGE2, DIALOG_STYLE_LIST, 
+	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_LIST, 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
@@ -1706,22 +1706,22 @@ OpenTDDialog(playerid)
 			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
 			strcat(formatedtd, "...");
 		}
-		format(EditorString, sizeof EditorString, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s", 
+		AddDialogListitem(playerid, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s",
 			(i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
 			i, 
 			formatedtd, 
 			GetProcessedTDVarName(i),
 			(TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
 			(TextDraw[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
-		AddDialogListitem(playerid, EditorString);
 	}
 	PlayerSelectTD(playerid, false);
 	
-	ShowPlayerDialog(playerid, DIALOG_MANAGE, DIALOG_STYLE_TABLIST_HEADERS,  
-	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_TEXTDRAWS), MAX_TEXTDRAWS), #, 
+	ShowPlayerDialogPages(playerid, "DP_TextDrawList", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_TEXTDRAWS), MAX_TEXTDRAWS), 
 	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "button2"), 
 	EditorMaxDialogItems);
+	
 	return 1;
 }
 
@@ -2367,7 +2367,7 @@ CallNTDCommand(playerid)
 				LoadConfigurations();
 				if(EditorLanguage == -1)
 				{
-					if(ShowLanguageChangeDialog(playerid, DIALOG_LANGUAGE) == 0)
+					if(ShowLanguageChangeDialog(playerid, 1) == 0)
 					{
 						ShowInfo(playerid, "{FF0000}No language files found. \n{FFFFFF}Please add languages to the 'languages' directory.");
 					}
@@ -2375,7 +2375,7 @@ CallNTDCommand(playerid)
 				}
 				else if(strcmp(EditorVersion, SCRIPT_VERSION_CHECK, false) != 0)
 				{
-					ShowPlayerDialog(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, 
+					Dialog_Show(playerid, "D_SettingsReset", DIALOG_STYLE_MSGBOX, 
 					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "caption"), 
 					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "infos"), 
 					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "button1"), 
@@ -2512,11 +2512,11 @@ ShowManualVarChangeDialog(playerid)
 			AddDialogListitem(playerid, GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "info6", "i", TextDraw[tdid][TD_PrevModelC2]));
 		}
 	}
-	ShowPlayerDialog(playerid, DIALOG_MANUALVARCHANGE, DIALOG_STYLE_TABLIST_HEADERS, 
-	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "caption"), #, 
+	ShowPlayerDialogPages(playerid, "DP_ManualVariableChange", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "caption"), 
 	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("manualvarchange", LANG_TYPE_DIALOGS, "button2"),
-	NDP_AUTO);
+	EditorMaxDialogItems);
 	return 1;
 }
 
@@ -2560,7 +2560,7 @@ QuickSelectionShow(playerid, bool:enable)
 ShowInfo(playerid, const text[])
 {
 	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", GetLanguageMessage("infodialogcaption", LANG_TYPE_MESSAGES));
-	ShowPlayerDialog(playerid, DIALOG_INFO, DIALOG_STYLE_MSGBOX, EditorString, text, "OK", #);
+	Dialog_Show(playerid, "D_Info", DIALOG_STYLE_MSGBOX, EditorString, text, "OK", #);
 	PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
 	return 1;
 }
@@ -2570,7 +2570,7 @@ ColorDialog(playerid, cstate)
 	if(cstate == 0)
 	{
 		User[User_ChangingColorBar] = false;
-		ShowPlayerDialog(playerid, DIALOG_COLOR1, DIALOG_STYLE_LIST, 
+		Dialog_Show(playerid, "D_ColorChange1", DIALOG_STYLE_LIST, 
 		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "caption"), 
 		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "infos"),
 		GetLanguageMessage("colorchangelist1", LANG_TYPE_DIALOGS, "button1"), 
@@ -2585,7 +2585,7 @@ ColorDialog(playerid, cstate)
 			User[User_ChangingMColorState] = 0;
 			User[User_ChangingColorBar] = true;
 		}
-		ShowPlayerDialog(playerid, DIALOG_COLOR2, DIALOG_STYLE_LIST, 
+		Dialog_Show(playerid, "D_ColorChange2", DIALOG_STYLE_LIST, 
 		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "caption"), 
 		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "infos"),
 		GetLanguageMessage("colorchangelist2", LANG_TYPE_DIALOGS, "button1"), 
@@ -2796,29 +2796,19 @@ ChangeEditorLanguage(index)
 	return 1;
 }
 
-ShowLanguageChangeDialog(playerid, ondialogid)
+ShowLanguageChangeDialog(playerid, type)
 {
 	if(Iter_Count(I_LANGUAGES) == 0)
 		return 0;
+
 	ClearDialogListitems(playerid);
-	EditorLString = "";
 	foreach(new i : I_LANGUAGES)
 	{
-		format(EditorLString, sizeof EditorLString, "{8080FF}%s", Language[i][l_name]);
-		AddDialogListitem(playerid, EditorLString);
+		AddDialogListitem(playerid, Language[i][l_name]);
 	}
-	ShowPlayerDialog(playerid, ondialogid, DIALOG_STYLE_TABLIST, CAPTION_TEXT"Language", #, "OK", #, 10);
+	ShowPlayerDialogPages(playerid, (type == 1 ? "DP_ChangeLanguage1" : "DP_ChangeLanguage2"), DIALOG_STYLE_TABLIST, CAPTION_TEXT"Language", "OK", #, EditorMaxDialogItems);
 	return 1;
 }
-#define SEARCH_REPLACE_ARGUMENTS(%1); \ 
-	if(args > 4) \
-	{ \
-		for(new a = 0; a < (args - 4); a++) \
-		{ \
-			format(tmpArgsMacroStr, 10, "#%i", (a + 1)); \
-			strreplace(%1, tmpArgsMacroStr, argumentString[a]); \
-		} \
-	}
 
 stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] = "", GLOBAL_TAG_TYPES:...)
 {
@@ -2842,6 +2832,7 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 				case 'f': format(argumentString[a - 4], 128, "%f", getarg(a));
 				case 'x': format(argumentString[a - 4], 128, "%x", getarg(a));
 			}
+			printf("1: %s", argumentString[a - 4]);
 		}
 	}
 	switch(type)
@@ -2868,12 +2859,14 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 			JSON_GetObject(Language[EditorLanguage][l_dialogsNode], key, tmpDialogNode);
 			if(!strcmp(subKey, "infos", true))
 			{
-				new tmpDialogInfoKey[8], tmpDialogInfoStr[128];
+				new tmpDialogInfoKey[10], tmpDialogInfoStr[128];
 				for(new i; i < MAX_NTD_DIALOG_INFO; i++)
 				{
-					format(tmpDialogInfoKey, 8, "info%i", i);
+					format(tmpDialogInfoKey, 10, "info%i", i);
+					printf("2: %s", tmpDialogInfoKey);
 					if(JSON_GetString(tmpDialogNode, tmpDialogInfoKey, tmpDialogInfoStr) == 0)
 					{
+						printf("3: %s", tmpDialogInfoStr);
 						if(i > 0)
 							strcat(langMessageStr, "\n");
 						SEARCH_REPLACE_ARGUMENTS(tmpDialogInfoStr);

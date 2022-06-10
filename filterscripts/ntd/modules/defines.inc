@@ -25,7 +25,6 @@
 */
 #define SCRIPT_VERSION 					                "v7.0"
 #define SCRIPT_VERSION_CHECK 			              "7.0"
-#define TD_PICKER_TEXT					                "S"
 
 #define MAX_TEMPLATES				                    50						            //Max templates that can be loaded
 #define MAX_PROJECTS 			  	                  (124)					            //Max projects that can be created and loaded
@@ -135,52 +134,6 @@
 #define BUTTON_MAXHEIGHT				      412						//Do NOT change!
 #define BLOCK_VARS_TIME 				      100						//Do NOT change!
 #define TEXT_DRAW_FONT_PROGRESS_BAR	  6 						//Do NOT change!
-
-/*
-  _____    _           _                       
- |  __ \  (_)         | |                      
- | |  | |  _    __ _  | |   ___     __ _   ___ 
- | |  | | | |  / _` | | |  / _ \   / _` | / __|
- | |__| | | | | (_| | | | | (_) | | (_| | \__ \ 
- |_____/  |_|  \__,_| |_|  \___/   \__, | |___/
-                                    __/ |      
-                                   |___/       
-*/
-#define DIALOG_LANGUAGE 				(0 + DIALOG_DIALOG_ADDER)
-#define DIALOG_NEW 						(1 + DIALOG_DIALOG_ADDER)
-#define DIALOG_OPEN 					(2 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANAGE 					(3 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANAGE2 					(4 + DIALOG_DIALOG_ADDER)
-#define DIALOG_FONT 					(5 + DIALOG_DIALOG_ADDER)
-#define DIALOG_TEKST 					(6 + DIALOG_DIALOG_ADDER)
-#define DIALOG_COLOR1 					(7 + DIALOG_DIALOG_ADDER)
-#define DIALOG_COLOR2 					(8 + DIALOG_DIALOG_ADDER)
-#define DIALOG_COLOR3 					(9 + DIALOG_DIALOG_ADDER)
-#define DIALOG_COLOR4 					(10 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SIZE 					(11 + DIALOG_DIALOG_ADDER)
-#define DIALOG_OPEN2 					(12 + DIALOG_DIALOG_ADDER)
-#define DIALOG_EXPORT 					(13 + DIALOG_DIALOG_ADDER)
-#define DIALOG_INFO 					(14 + DIALOG_DIALOG_ADDER)
-#define DIALOG_PREVIEWMODEL 			(15 + DIALOG_DIALOG_ADDER)
-#define DIALOG_PREVIEWMODEL1 			(16 + DIALOG_DIALOG_ADDER)
-#define DIALOG_EXIT 					(17 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SETTINGS 				(18 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SETTINGSCOLOR 			(19 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SETTINGSCOLOR1 			(20 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SETTINGRESET 			(21 + DIALOG_DIALOG_ADDER)
-#define DIALOG_DELETEPROJECT 			(22 + DIALOG_DIALOG_ADDER)
-#define DIALOG_DELETETD 				(23 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SPRITES1 				(24 + DIALOG_DIALOG_ADDER)
-#define DIALOG_SPRITES2 				(25 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANAGE3 					(26 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANAGE4 					(27 + DIALOG_DIALOG_ADDER)
-#define DIALOG_CHANGEPARAMNAME 			(28 + DIALOG_DIALOG_ADDER)
-#define DIALOG_LANGUAGE_SETTINGS 		(29 + DIALOG_DIALOG_ADDER)
-#define DIALOG_RENAMEPROJECT 			(30 + DIALOG_DIALOG_ADDER)
-#define DIALOG_EXPORT2 					(31 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANUALVARCHANGE 			(32 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MANUALVARCHANGE1 		(33 + DIALOG_DIALOG_ADDER)
-#define DIALOG_MAXBARPERCCHANGE			(34 + DIALOG_DIALOG_ADDER)
 
 /*
    _____                  _   _                

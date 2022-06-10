@@ -30,6 +30,7 @@
 #include <a_samp>
 #include <sscanf2>
 #include <ndialog-pages>
+#include <easyDialog>
 #include <progress2>
 #include <fsutil>
 #include <json>
