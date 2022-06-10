@@ -1,8 +1,12 @@
 
-ConvertNTDLegacy(const filePath[], const toFile[])
+ConvertNTDLegacy(index)
 {
-    new buf[324], File:handle = fopen(filePath, io_read);
-    new macro[64], value[258], len, macroId, macroStr[32], convertedAmount;
+    new buf[324], fromFile[324], toFile[324], File:handle, macro[64], value[258], len, macroId, macroStr[32], convertedAmount;
+    
+    format(fromFile, sizeof fromFile, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
+    format(toFile, sizeof toFile, "%s.%s", GetProjectName(index, false), Extensions[FILE_EXTENSION_NTD][fe_extension]);
+    
+    handle = fopen(fromFile, io_read);
     if(handle)
     {
         Iter_Clear(I_TEXTDRAWS);

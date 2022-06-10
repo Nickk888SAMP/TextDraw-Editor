@@ -10,9 +10,8 @@
 */
 TryConvertProject(index)
 {
-	new filePath[258], toFile[258];
+	new filePath[258];
 	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
-	format(toFile, sizeof toFile, "%s.%s", GetProjectName(index, false), Extensions[FILE_EXTENSION_NTD][fe_extension]);
 
 	if(!Exists( MakePath(filePath, true) ))
 		return -1;
@@ -21,7 +20,7 @@ TryConvertProject(index)
 	{
 		case FILE_EXTENSION_NTD_LEGACY:
 		{
-			return ConvertNTDLegacy(filePath, toFile);
+			return ConvertNTDLegacy(index);
 		}
 		case FILE_EXTENSION_ITD:
 		{
