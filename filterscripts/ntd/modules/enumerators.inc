@@ -458,7 +458,9 @@ new Language[MAX_LANGUAGES][E_LANGUAGE]; //Languages List
 // Groups
 enum E_GROUPS
 {
-	g_name[32]
+	gr_id,
+	gr_name[32],
+	bool:gr_hidden
 }
 new Group[MAX_GROUPS][E_GROUPS];
 
@@ -466,6 +468,7 @@ new Group[MAX_GROUPS][E_GROUPS];
 enum E_TD
 {
 	bool:TD_Created,
+	bool:TD_Hidden,
 	bool:TD_UseBox,
 	bool:TD_Selectable,
 	bool:TD_Proportional,
@@ -500,7 +503,8 @@ enum E_TD
 	TD_BoxColor,
 	TD_BoxColorAlpha,
 	TD_HighlightTimer,
-	TD_BarDirectory
+	TD_BarDirectory,
+	TD_GroupID
 }
 new TextDraw[MAX_TEXTDRAWS][E_TD]; //Textdraws Data
 

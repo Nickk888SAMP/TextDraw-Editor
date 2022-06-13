@@ -18,17 +18,14 @@ TryConvertProject(index)
 		}
 		case FILE_EXTENSION_ITD:
 		{
-			
 			return -1;
 		}
 		case FILE_EXTENSION_ZTD:
 		{
-			
 			return -1;
 		}
 		case FILE_EXTENSION_RAW:
 		{
-			
 			return -1;
 		}
 	}
@@ -63,6 +60,25 @@ GetProjectIndexByName(const projectname[])
 		}
 	}
 	return -1;
+}
+
+CreateGroup(const name[], id, bool:hidden)
+{
+	foreach(new i : I_GROUPS)
+	{
+		if(!strcmp(name, Group[i][gr_name], true))
+		{
+			return -1;
+		}
+	}
+	VALID_ITER_INDEX(I_GROUPS, Iter_Add(I_GROUPS, id))
+	{
+		Group[id][gr_id] = id;
+		Group[id][gr_hidden] = hidden;
+		format(Group[id][gr_name], 128, name);
+		return 1;
+	}
+	return 0;
 }
 
 CreateProject(const projectname[])
@@ -1198,50 +1214,74 @@ IsProjectFileValid(index)
 	return 0;
 }
 
+OpenGroupsDialog(playerid)
+{
+	ClearDialogListitems(playerid);
+
+	// Construct Dialog
+	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info0"));
+	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
+
+	foreach(new i : I_GROUPS)
+	{
+		AddDialogListitem(playerid, "   {FFFFFF}%i "HEX_PALETTE_4"%s\t%i\t%s%s", 
+			i,
+			Group[i][gr_name], 
+			Iter_Count(I_GROUP_TDS[i]),
+			(Group[i][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2),
+			(Group[i][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES)));
+	}
+	//
+
+	ShowPlayerDialogPages(playerid, "DP_GroupsList", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_GROUPS), MAX_GROUPS), 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button2"), 
+	EditorMaxDialogItems);
+	PlayerSelectTD(playerid, false);
+	return 1;
+}
+
 OpenProjectDialog(playerid)
 {
 	ClearDialogListitems(playerid);
+
 	// Get Projects
 	ReadProjectsDirectory();
+
+	// Construct Dialog
 	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "info0"));
 	AddDialogListitem(playerid, GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "info1"));
-	if(Iter_Count(I_PROJECTS) > 0)
+	foreach(new i : I_PROJECTS)
 	{
-		foreach(new i : I_PROJECTS)
+		if(Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
 		{
-			if(Projects[i][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
-			{
-				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s\t%i", 
-					i,
-					(IsProjectFileValid(i) ? HEX_PALETTE_4 : "{FF0000}"), 
-					GetProjectName(i, true), 
-					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName],
-					Projects[i][Pro_TDAmounts]);
-			}
-			else 
-			{
-				AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s", 
-					i,
-					(IsProjectFileValid(i) ? "{FFE599}" : "{FF0000}"), 
-					GetProjectName(i, true), 
-					Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName]);
-			}
-
-			
+			AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s\t%i", 
+				i,
+				(IsProjectFileValid(i) ? HEX_PALETTE_4 : "{FF0000}"), 
+				GetProjectName(i, true), 
+				Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName],
+				Projects[i][Pro_TDAmounts]);
 		}
-		//
+		else 
+		{
+			AddDialogListitem(playerid, "   {FFFFFF}%i %s%s\t%s", 
+				i,
+				(IsProjectFileValid(i) ? "{FFE599}" : "{FF0000}"), 
+				GetProjectName(i, true), 
+				Extensions[ Projects[i][Pro_fileExtensionId] ][fe_extensionName]);
+		}
+
 		
-		ShowPlayerDialogPages(playerid, "DP_ProjectsList", DIALOG_STYLE_TABLIST_HEADERS, 
-		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_PROJECTS), 
-		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button1"), 
-		GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button2"), 
-		EditorMaxDialogItems);
-		PlayerSelectTD(playerid, false);
 	}
-	else 
-	{
-		ShowInfo(playerid, GetLanguageMessage("noprojectsfound", LANG_TYPE_MESSAGES));
-	}
+	//
+	
+	ShowPlayerDialogPages(playerid, "DP_ProjectsList", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_PROJECTS), MAX_PROJECTS), 
+	GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("projectslist", LANG_TYPE_DIALOGS, "button2"), 
+	EditorMaxDialogItems);
+	PlayerSelectTD(playerid, false);
 	return 1;
 }
 
@@ -1254,73 +1294,102 @@ SaveProject(const projectFile[])
 	filePath = MakePath(filePath, true);
 
 	// Node
-	new Node:node;
-	node = JSON_Object(
-		"textdraws", JSON_Array()
-	);
+	new Node:mainNode = JSON_Object();
+
+	// TextDraw Node
+	new Node:textdrawsNode = JSON_Object("textdraws", JSON_Array());
 
 	// TextDraws
 	foreach(new i : I_TEXTDRAWS)
 	{
-		if(TextDraw[i][TD_Created])
-		{
-			new Node:tdNode = JSON_Object(
-			"string", JSON_String(TextDraw[i][TD_Text]),
-			"posx", JSON_Float(TextDraw[i][TD_PosX]),
-			"posy", JSON_Float(TextDraw[i][TD_PosY]),
-			"font", JSON_Int(TextDraw[i][TD_Font]),
-			"public", JSON_Bool(TextDraw[i][TD_IsGlobal]),
-			"outline", JSON_Int(TextDraw[i][TD_OutlineSize]),
-			"shadow", JSON_Int(TextDraw[i][TD_ShadowSize]),
-			"lettersizex", JSON_Float(TextDraw[i][TD_LetterSizeX]),
-			"lettersizey", JSON_Float(TextDraw[i][TD_LetterSizeY]),
-			"textcolor", JSON_Int(TextDraw[i][TD_Color]),
-			"backgroundcolor", JSON_Int(TextDraw[i][TD_BGColor]),
-			"boxcolor", JSON_Int(TextDraw[i][TD_BoxColor]),
-			"textcoloralpha", JSON_Int(TextDraw[i][TD_ColorAlpha]),
-			"backgroundcoloralpha", JSON_Int(TextDraw[i][TD_BGColorAlpha]),
-			"boxcoloralpha", JSON_Int(TextDraw[i][TD_BoxColorAlpha]),
-			"usebox", JSON_Bool(TextDraw[i][TD_UseBox]),
-			"boxsizex", JSON_Float(TextDraw[i][TD_BoxSizeX]),
-			"boxsizey", JSON_Float(TextDraw[i][TD_BoxSizeY]),
-			"selectable", JSON_Bool(TextDraw[i][TD_Selectable]),
-			"alignment", JSON_Int(TextDraw[i][TD_Alignment]),
-			"proportional", JSON_Bool(TextDraw[i][TD_Proportional]),
-			"previewmodelid", JSON_Int(TextDraw[i][TD_PrevModelID]),
-			"previewmodelcolor1", JSON_Int(TextDraw[i][TD_PrevModelC1]),
-			"previewmodelcolor2", JSON_Int(TextDraw[i][TD_PrevModelC2]),
-			"previewmodelrotx", JSON_Float(TextDraw[i][TD_PrevRotX]),
-			"previewmodelroty", JSON_Float(TextDraw[i][TD_PrevRotY]),
-			"previewmodelrotz", JSON_Float(TextDraw[i][TD_PrevRotZ]),
-			"previewmodelzoom", JSON_Float(TextDraw[i][TD_PrevRotZoom]),
-			"variablename", JSON_String(TextDraw[i][TD_VarName]),
-			"progressbarmaxpercentage", JSON_Float(TextDraw[i][TD_BarMaxPercentage]),
-			"progressbaralignment", JSON_Int(TextDraw[i][TD_BarDirectory])
-			);
-			// Append current textdraw to array.
-			JSON_ArrayAppend(node, "textdraws", tdNode);
-		}
+		new Node:tdNode = JSON_Object(
+		"string", JSON_String(TextDraw[i][TD_Text]),
+		"posx", JSON_Float(TextDraw[i][TD_PosX]),
+		"posy", JSON_Float(TextDraw[i][TD_PosY]),
+		"font", JSON_Int(TextDraw[i][TD_Font]),
+		"public", JSON_Bool(TextDraw[i][TD_IsGlobal]),
+		"outline", JSON_Int(TextDraw[i][TD_OutlineSize]),
+		"shadow", JSON_Int(TextDraw[i][TD_ShadowSize]),
+		"lettersizex", JSON_Float(TextDraw[i][TD_LetterSizeX]),
+		"lettersizey", JSON_Float(TextDraw[i][TD_LetterSizeY]),
+		"textcolor", JSON_Int(TextDraw[i][TD_Color]),
+		"backgroundcolor", JSON_Int(TextDraw[i][TD_BGColor]),
+		"boxcolor", JSON_Int(TextDraw[i][TD_BoxColor]),
+		"textcoloralpha", JSON_Int(TextDraw[i][TD_ColorAlpha]),
+		"backgroundcoloralpha", JSON_Int(TextDraw[i][TD_BGColorAlpha]),
+		"boxcoloralpha", JSON_Int(TextDraw[i][TD_BoxColorAlpha]),
+		"usebox", JSON_Bool(TextDraw[i][TD_UseBox]),
+		"boxsizex", JSON_Float(TextDraw[i][TD_BoxSizeX]),
+		"boxsizey", JSON_Float(TextDraw[i][TD_BoxSizeY]),
+		"selectable", JSON_Bool(TextDraw[i][TD_Selectable]),
+		"alignment", JSON_Int(TextDraw[i][TD_Alignment]),
+		"proportional", JSON_Bool(TextDraw[i][TD_Proportional]),
+		"previewmodelid", JSON_Int(TextDraw[i][TD_PrevModelID]),
+		"previewmodelcolor1", JSON_Int(TextDraw[i][TD_PrevModelC1]),
+		"previewmodelcolor2", JSON_Int(TextDraw[i][TD_PrevModelC2]),
+		"previewmodelrotx", JSON_Float(TextDraw[i][TD_PrevRotX]),
+		"previewmodelroty", JSON_Float(TextDraw[i][TD_PrevRotY]),
+		"previewmodelrotz", JSON_Float(TextDraw[i][TD_PrevRotZ]),
+		"previewmodelzoom", JSON_Float(TextDraw[i][TD_PrevRotZoom]),
+		"variablename", JSON_String(TextDraw[i][TD_VarName]),
+		"progressbarmaxpercentage", JSON_Float(TextDraw[i][TD_BarMaxPercentage]),
+		"progressbaralignment", JSON_Int(TextDraw[i][TD_BarDirectory]),
+		"groupid", JSON_Int(TextDraw[i][TD_GroupID])
+		);
+		// Append current textdraw to array.
+		JSON_ArrayAppend(textdrawsNode, "textdraws", tdNode);
 	}
 
+	// Append TextDraws to Main Node
+	mainNode = JSON_Append(mainNode, textdrawsNode);
+
+	// Groups Node
+	new Node:groupsNode = JSON_Object("groups", JSON_Array());
+	
+	// Groups
+	foreach(new i : I_GROUPS)
+	{
+		new Node:grNode = JSON_Object(
+			"id", JSON_Int(Group[i][gr_id]),
+			"name", JSON_String(Group[i][gr_name]),
+			"hidden", JSON_Bool(Group[i][gr_hidden])
+		);
+		JSON_ArrayAppend(groupsNode, "groups", grNode);
+	}
+
+	// Append Groups to Main Node
+	mainNode = JSON_Append(mainNode, groupsNode);
+
 	// Save File
-	JSON_SaveFile(filePath, node);
+	JSON_SaveFile(filePath, mainNode);
 	return 1;
 }
 
 LoadProject(index)
 {
-	new filePath[258], Node:node, free, Node:arrayNode, Node:tdnode, length;
+	new filePath[258], Node:node, free, Node:tdArrayNode, Node:groupArrayNode, Node:tdNode, Node:groupNode, tdArrayLength, groupsArrayLength;
 	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
 	filePath = MakePath(filePath, true);
 	if(Exists(filePath))
 	{
-		// Reset the TextDraw iterator.
+		// Reset iterators.
 		Iter_Clear(I_TEXTDRAWS);
+		Iter_Clear(I_GROUPS);
+		for(new i; i < MAX_GROUPS; i++)
+			Iter_Clear(I_GROUP_TDS[i]);
+
+		for(new i; i < MAX_GROUPS; i++)
+		{
+			Group[i][gr_hidden] = false;
+			Group[i][gr_name] = 0;
+			Group[i][gr_id] = -1;
+		}
 
 		// Reset the TextDraw enumerator
 		for(new i; i < MAX_TEXTDRAWS; i++)
 		{
 			TextDraw[i][TD_Created] = false;
+			TextDraw[i][TD_Hidden] = false;
 			TextDraw[i][TD_VarName] = 0;
 			TextDraw[i][TD_HighlightTimer] = -1;
 			TextDraw[i][TD_BarID] = INVALID_PLAYER_BAR_ID;
@@ -1328,67 +1397,111 @@ LoadProject(index)
 			TextDraw[i][TD_PickerID] = Text:INVALID_TEXT_DRAW;
 			TextDraw[i][TD_BarMaxPercentage] = 100.0;
 			TextDraw[i][TD_BarDirectory] = BAR_DIRECTION_RIGHT;
+			TextDraw[i][TD_GroupID] = -1;
 		}
 		
 		// Parsing project File
 		JSON_ParseFile(filePath, node);
 
-		// Get th TextDraw Array
-		JSON_GetArray(node, "textdraws", arrayNode);
-
-		// Get the Array length
-		JSON_ArrayLength(arrayNode, length);
-
-		// Loop through the Array
-		for(new i; i < length; i++)
+		// Get the groups Arrays
+		if(JSON_GetArray(node, "groups", groupArrayNode) == 0)
 		{
-			
-			// Get the TextDraw Object Node
-			JSON_ArrayObject(arrayNode, i, tdnode);
+			new groupID, groupName[128], bool:groupHidden;
 
-			// Create the TextDraw
-			free = Iter_Free(I_TEXTDRAWS);
-			VALID_ITER_INDEX(I_TEXTDRAWS, free)
+			// Get the Array length
+			JSON_ArrayLength(groupArrayNode, groupsArrayLength);
+
+			// Loop through the Array
+			for(new i; i < groupsArrayLength; i++)
 			{
-				Iter_Add(I_TEXTDRAWS, free);
-				JSON_GetString(tdnode, "string", TextDraw[free][TD_Text]);
-				JSON_GetFloat(tdnode, "posx", TextDraw[free][TD_PosX]);
-				JSON_GetFloat(tdnode, "posy", TextDraw[free][TD_PosY]);
-				JSON_GetInt(tdnode, "font", TextDraw[free][TD_Font]);
-				JSON_GetBool(tdnode, "public", TextDraw[free][TD_IsGlobal]);
-				JSON_GetInt(tdnode, "outline", TextDraw[free][TD_OutlineSize]);
-				JSON_GetInt(tdnode, "shadow", TextDraw[free][TD_ShadowSize]);
-				JSON_GetFloat(tdnode, "lettersizex", TextDraw[free][TD_LetterSizeX]);
-				JSON_GetFloat(tdnode, "lettersizey", TextDraw[free][TD_LetterSizeY]);
-				JSON_GetInt(tdnode, "textcolor", TextDraw[free][TD_Color]);
-				JSON_GetInt(tdnode, "backgroundcolor", TextDraw[free][TD_BGColor]);
-				JSON_GetInt(tdnode, "boxcolor", TextDraw[free][TD_BoxColor]);
-				JSON_GetInt(tdnode, "textcoloralpha", TextDraw[free][TD_ColorAlpha]);
-				JSON_GetInt(tdnode, "backgroundcoloralpha", TextDraw[free][TD_BGColorAlpha]);
-				JSON_GetInt(tdnode, "boxcoloralpha", TextDraw[free][TD_BoxColorAlpha]);
-				JSON_GetBool(tdnode, "usebox", TextDraw[free][TD_UseBox]);
-				JSON_GetBool(tdnode, "selectable", TextDraw[free][TD_Selectable]);
-				JSON_GetInt(tdnode, "alignment", TextDraw[free][TD_Alignment]);
-				JSON_GetFloat(tdnode, "boxsizex", TextDraw[free][TD_BoxSizeX]);
-				JSON_GetFloat(tdnode, "boxsizey", TextDraw[free][TD_BoxSizeY]);
-				JSON_GetInt(tdnode, "proportional", TextDraw[free][TD_Proportional]);
-				JSON_GetInt(tdnode, "previewmodelid", TextDraw[free][TD_PrevModelID]);
-				JSON_GetInt(tdnode, "previewmodelcolor1", TextDraw[free][TD_PrevModelC1]);
-				JSON_GetInt(tdnode, "previewmodelcolor2", TextDraw[free][TD_PrevModelC2]);
-				JSON_GetFloat(tdnode, "previewmodelrotx", TextDraw[free][TD_PrevRotX]);
-				JSON_GetFloat(tdnode, "previewmodelroty", TextDraw[free][TD_PrevRotY]);
-				JSON_GetFloat(tdnode, "previewmodelrotz", TextDraw[free][TD_PrevRotZ]);
-				JSON_GetFloat(tdnode, "previewmodelzoom", TextDraw[free][TD_PrevRotZoom]);
-				JSON_GetString(tdnode, "variablename", TextDraw[free][TD_VarName]);
-				JSON_GetFloat(tdnode, "progressbarmaxpercentage", TextDraw[free][TD_BarMaxPercentage]);
-				JSON_GetInt(tdnode, "progressbaralignment", TextDraw[free][TD_BarDirectory]);
-				TextDraw[free][TD_Created] = true;
+				// Get the Group Object Node
+				JSON_ArrayObject(groupArrayNode, i, groupNode);
+
+				JSON_GetInt(groupNode, "id", groupID);
+				JSON_GetString(groupNode, "name", groupName);
+				JSON_GetBool(groupNode, "hidden", groupHidden);
+
+				CreateGroup(groupName, groupID, groupHidden);
 			}
-			else break;
+		}
+
+		// Get the textdraws Arrays
+		if(JSON_GetArray(node, "textdraws", tdArrayNode) == 0)
+		{
+			// Get the Array length
+			JSON_ArrayLength(tdArrayNode, tdArrayLength);
+
+			// Loop through the Array
+			for(new i; i < tdArrayLength; i++)
+			{
+				// Get the TextDraw Object Node
+				JSON_ArrayObject(tdArrayNode, i, tdNode);
+
+				// Create the TextDraw
+				free = Iter_Free(I_TEXTDRAWS);
+				VALID_ITER_INDEX(I_TEXTDRAWS, free)
+				{
+					Iter_Add(I_TEXTDRAWS, free);
+					JSON_GetString(tdNode, "string", TextDraw[free][TD_Text]);
+					JSON_GetFloat(tdNode, "posx", TextDraw[free][TD_PosX]);
+					JSON_GetFloat(tdNode, "posy", TextDraw[free][TD_PosY]);
+					JSON_GetInt(tdNode, "font", TextDraw[free][TD_Font]);
+					JSON_GetBool(tdNode, "public", TextDraw[free][TD_IsGlobal]);
+					JSON_GetInt(tdNode, "outline", TextDraw[free][TD_OutlineSize]);
+					JSON_GetInt(tdNode, "shadow", TextDraw[free][TD_ShadowSize]);
+					JSON_GetFloat(tdNode, "lettersizex", TextDraw[free][TD_LetterSizeX]);
+					JSON_GetFloat(tdNode, "lettersizey", TextDraw[free][TD_LetterSizeY]);
+					JSON_GetInt(tdNode, "textcolor", TextDraw[free][TD_Color]);
+					JSON_GetInt(tdNode, "backgroundcolor", TextDraw[free][TD_BGColor]);
+					JSON_GetInt(tdNode, "boxcolor", TextDraw[free][TD_BoxColor]);
+					JSON_GetInt(tdNode, "textcoloralpha", TextDraw[free][TD_ColorAlpha]);
+					JSON_GetInt(tdNode, "backgroundcoloralpha", TextDraw[free][TD_BGColorAlpha]);
+					JSON_GetInt(tdNode, "boxcoloralpha", TextDraw[free][TD_BoxColorAlpha]);
+					JSON_GetBool(tdNode, "usebox", TextDraw[free][TD_UseBox]);
+					JSON_GetBool(tdNode, "selectable", TextDraw[free][TD_Selectable]);
+					JSON_GetInt(tdNode, "alignment", TextDraw[free][TD_Alignment]);
+					JSON_GetFloat(tdNode, "boxsizex", TextDraw[free][TD_BoxSizeX]);
+					JSON_GetFloat(tdNode, "boxsizey", TextDraw[free][TD_BoxSizeY]);
+					JSON_GetInt(tdNode, "proportional", TextDraw[free][TD_Proportional]);
+					JSON_GetInt(tdNode, "previewmodelid", TextDraw[free][TD_PrevModelID]);
+					JSON_GetInt(tdNode, "previewmodelcolor1", TextDraw[free][TD_PrevModelC1]);
+					JSON_GetInt(tdNode, "previewmodelcolor2", TextDraw[free][TD_PrevModelC2]);
+					JSON_GetFloat(tdNode, "previewmodelrotx", TextDraw[free][TD_PrevRotX]);
+					JSON_GetFloat(tdNode, "previewmodelroty", TextDraw[free][TD_PrevRotY]);
+					JSON_GetFloat(tdNode, "previewmodelrotz", TextDraw[free][TD_PrevRotZ]);
+					JSON_GetFloat(tdNode, "previewmodelzoom", TextDraw[free][TD_PrevRotZoom]);
+					JSON_GetString(tdNode, "variablename", TextDraw[free][TD_VarName]);
+					JSON_GetFloat(tdNode, "progressbarmaxpercentage", TextDraw[free][TD_BarMaxPercentage]);
+					JSON_GetInt(tdNode, "progressbaralignment", TextDraw[free][TD_BarDirectory]);
+					JSON_GetInt(tdNode, "groupid", TextDraw[free][TD_GroupID]);
+					TextDraw[free][TD_Created] = true;
+
+					if(AddTextDrawToGroup(free, TextDraw[free][TD_GroupID]) == 0)
+					{
+						TextDraw[free][TD_GroupID] = -1;
+					}
+				}
+				else break;
+			}
 		}
 		User[User_ProjectOpened] = true;
 		User[User_ProjectIndex] = index;
 		return 1;
+	}
+	return 0;
+}
+
+AddTextDrawToGroup(tdid, groupid)
+{
+	if(groupid == -1)
+		return 0;
+	VALID_ITER_INDEX(I_GROUPS, groupid)
+	{
+		if(Group[groupid][gr_id] != -1)
+		{
+			Iter_Add(I_GROUP_TDS[groupid], tdid);
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -1460,13 +1573,30 @@ RedrawTD(playerid, tdid)
 ShowTDOptions(playerid, tdid)
 {
 	User[User_ChoosenTDID] = tdid;
-	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_LIST, 
+	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_TABLIST_HEADERS, 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
-	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos"), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos", "ss", GetProcessedTDVarName( tdid ), GetGroupName(TextDraw[ tdid ][TD_GroupID])), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button2"));
 	PlayerSelectTD(playerid, false);
 	return 1;
+}
+
+GetGroupName(groupid)
+{
+	new groupName[128];
+	if(groupid != -1)
+	{
+		foreach(new i : I_GROUPS)
+		{
+			if(Group[i][gr_id] == groupid)
+			{
+				format(groupName, 128, Group[i][gr_name]);
+				break;
+			}
+		}
+	}
+	return groupName;
 }
 
 SwapTDLayers(tdid, tolayer)
@@ -2412,7 +2542,7 @@ CallNTDCommand(playerid)
 					}
 					return 1;
 				}
-				else if(strcmp(EditorVersion, SCRIPT_VERSION_CHECK, false) != 0)
+				else if(strcmp(EditorVersion, SCRIPT_VERSION, false) != 0)
 				{
 					Dialog_Show(playerid, "D_SettingsReset", DIALOG_STYLE_MSGBOX, 
 					GetLanguageMessage("oldversionsettingsreset", LANG_TYPE_DIALOGS, "caption"), 
@@ -2567,7 +2697,7 @@ ResetConfiguration(playerid)
 	EditorButtonsColor = BUTTON_TD_COLOR;
 	EditorFasterKey = KEY_JUMP;
 	EditorAcceptKey = KEY_SPRINT;
-	EditorVersion = SCRIPT_VERSION_CHECK;
+	EditorVersion = SCRIPT_VERSION;
 	EditorCompactMode = false;
 	ToggleTextDrawShowForAll(false);
 	QuickSelectionShow(playerid, true);

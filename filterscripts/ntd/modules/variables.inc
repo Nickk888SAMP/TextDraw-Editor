@@ -14,6 +14,7 @@ new Iterator:I_LANGUAGES<MAX_LANGUAGES>;
 new Iterator:I_PROJECTS<MAX_PROJECTS>;
 new Iterator:I_TEXTDRAWS<MAX_TEXTDRAWS>;
 new Iterator:I_GROUPS<MAX_GROUPS>;
+new Iterator:I_GROUP_TDS[MAX_GROUPS]<MAX_TEXTDRAWS>;
 
 /*
   _______                 _     _____                                  

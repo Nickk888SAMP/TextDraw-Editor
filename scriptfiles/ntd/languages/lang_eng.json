@@ -24,6 +24,8 @@
     "textoff": "OFF",
     "tdvforme": "ONLY ME",
     "tdvforall": "ALL",
+	"texthidden": "Hidden",
+	"textvisible": "Visible",
     "keysinverted": "SWITCHED",
     "infoprojectlimit": "The maximum number of projects has been reached.",
     "infoprojectinvalidname": "The name is too short, too long or has invalid characters.",
@@ -39,13 +41,14 @@
     "projectloaderror": "An error occurred while loading the project.",
     "projectdeleteerror": "An error occurred while deleting the project.",
     "projectdeleted": "Project \"#1\" has been deleted.",
-    "noprojectsfound": "You currently don't have any projects.",
     "modeltexterror": "Cannot change model preview text",
     "manualchangetypemzoom": "Zoom",
     "manualchangetypemcolor1": "Color 1",
     "manualchangetypemcolor2": "Color 2",
 	"infoprojectconverted": "Project has been converted.#nAmount of converted TextDraws: #1",
-	"infoprojecterror": "An error occured while converting the project."
+	"infoprojecterror": "An error occured while converting the project.",
+	"infomaxgroupsreached": "The maximum number of groups has been reached.",
+	"infogroupexists": "Group with that name already exists."
   },
   "gametexts": {
     "tdclonedinfo": "DUPLICATED_ID_#1",
@@ -170,11 +173,13 @@
     },
 	"tdoptions": {
       "caption": "ID #1 \"#2\"",
-      "info0": "Modify",
-	  "info1": "Duplicate",
-	  "info2": "Change layer",
-	  "info3": "Change variable name",
-	  "info4": "Delete",
+	  "info0": "Option#tValue",
+      "info1": "Modify",
+	  "info2": "Duplicate",
+	  "info3": "Change layer",
+	  "info4": "Change variable name#t#1",
+	  "info5": "Assign Group#t#2",
+	  "info6": "Delete",
       "button1": "Confirm",
       "button2": "Back"
     },
@@ -332,6 +337,19 @@
 	  "info3": "Do you want to procees with the conversion?",
       "button1": "Yes",
       "button2": "No"
+    },
+	"groupslist": {
+      "caption": "My Groups (#1/#2)",
+	  "info0": "Name#tConnected TextDraws#tVisibility",
+	  "info1": "Create new Group",
+      "button1": "Confirm",
+      "button2": "Back"
+    },
+	"newgroup": {
+      "caption": "New group",
+      "info0": "Enter the name of new group.",
+      "button1": "Confirm",
+      "button2": "Back"
     }
   }
 }

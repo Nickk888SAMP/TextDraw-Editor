@@ -41,7 +41,7 @@ Dialog:D_SettingsReset2(DIALOG_CALLBACK_PARAMETERS)
     }
     else
     {
-        EditorVersion = SCRIPT_VERSION_CHECK;
+        EditorVersion = SCRIPT_VERSION;
         SaveConfigurations();
         ShowEditorEx(playerid);
     }
@@ -588,7 +588,7 @@ Dialog:D_SettingsReset(DIALOG_CALLBACK_PARAMETERS)
     }
     else
     {
-        EditorVersion = SCRIPT_VERSION_CHECK;
+        EditorVersion = SCRIPT_VERSION;
         SaveConfigurations();
     }
     if(!User[User_InEditor])
@@ -642,7 +642,11 @@ Dialog:D_TextDrawOptions(DIALOG_CALLBACK_PARAMETERS)
                 GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button1"), 
                 GetLanguageMessage("variablechange", LANG_TYPE_DIALOGS, "button2"));
             }
-            case 4: // Delete
+            case 4: // Assign Group
+            {
+
+            }
+            case 5: // Delete
             {
                 new formatedtd[MAXFORMATEDTD];
                 format(formatedtd, MAXFORMATEDTD, TextDraw[tdid][TD_Text]);
@@ -674,6 +678,25 @@ Dialog:D_ExitEditor(DIALOG_CALLBACK_PARAMETERS)
         CallNTDCommand(playerid);
     else
         ShowEditorEx(playerid);
+    return 1;
+}
+
+Dialog:D_NewGroup(DIALOG_CALLBACK_PARAMETERS)
+{
+    if(response)
+    {
+        if(strlen(inputtext) > 0 && strlen(inputtext) < 128 && IsValidString(inputtext))
+        {
+            switch(CreateGroup(inputtext, Iter_Free(I_GROUPS), false))
+            {
+                case -1: ShowInfo(playerid, GetLanguageMessage("infogroupexists", LANG_TYPE_MESSAGES));
+                case 0: ShowInfo(playerid, GetLanguageMessage("infomaxgroupsreached", LANG_TYPE_MESSAGES));
+                case 1: OpenGroupsDialog(playerid);
+            }
+        }
+        else ShowInfo(playerid, GetLanguageMessage("infoprojectinvalidname", LANG_TYPE_MESSAGES));
+    }
+    else ShowEditorEx(playerid);
     return 1;
 }
 
@@ -986,6 +1009,37 @@ DialogPages:DP_TextDrawList(DIALOG_PAGES_CALLBACK_PARAMETERS)
                 ShowTDOptions(playerid, index);
             }
         }
+    }
+    else ShowEditorEx(playerid);
+    return 1;
+}
+
+DialogPages:DP_GroupsList(DIALOG_PAGES_CALLBACK_PARAMETERS)
+{
+    if(response)
+    {
+        switch(listitem)
+        {
+            case 0: // Create new project
+            {
+               Dialog_Show(playerid, "D_NewGroup", DIALOG_STYLE_INPUT, 
+                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "caption"), 
+                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "infos"), 
+                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button1"), 
+                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button2"));
+            }
+            default: // Project Select
+            {
+                /*new index = Iter_Index(I_PROJECTS, (listitem - 1));
+                User[User_ProjectIndex] = index;
+                Dialog_Show(playerid, "D_OpenProject", DIALOG_STYLE_LIST, 
+                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", "s", Projects[index][Pro_fileName]), 
+                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "infos"), 
+                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button1"), 
+                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button2"));*/
+            }
+        }
+        PlayerSelectTD(playerid, false);
     }
     else ShowEditorEx(playerid);
     return 1;

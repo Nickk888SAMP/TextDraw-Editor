@@ -23,8 +23,7 @@
                                            __/ |      
                                           |___/       
 */
-#define SCRIPT_VERSION 					                "v7.0"
-#define SCRIPT_VERSION_CHECK 			              "7.0"
+#define SCRIPT_VERSION 			                    "7.0"
 
 #define MAX_TEMPLATES				                    50						            //Max templates that can be loaded
 #define MAX_PROJECTS 			  	                  (124)					            //Max projects that can be created and loaded

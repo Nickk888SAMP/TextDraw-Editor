@@ -9,6 +9,7 @@
 */
 public OnFilterScriptInit()
 {
+	Iter_Init(I_GROUP_TDS);
 	ScriptScriptActive = false;
 	if(Exists( MakePath(NTD_DIRECTORYPATH, true) ) && 
 		Exists( MakePath(EXPORTS_DIRECTORYPATH, true) ) && 
@@ -16,7 +17,7 @@ public OnFilterScriptInit()
 		Exists( MakePath(LANGUAGES_DIRECTORYPATH, true) ))
 	{
 		ScriptScriptActive = true;
-		printf("[NTD] TextDraw editor by Nickk888 %s has been successfully initialized!\n", SCRIPT_VERSION);
+		printf("[NTD] TextDraw editor by Nickk888 v%s has been initialized!\n", SCRIPT_VERSION);
 	}
 	else
 	{
@@ -426,6 +427,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button1"), 
 			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button2"));
 			PlayerSelectTD(playerid, false);
+			return 1;
+		}
+		else if(clickedid == B_Groups)
+		{
+			OpenGroupsDialog(playerid);
 			return 1;
 		}
 	}
