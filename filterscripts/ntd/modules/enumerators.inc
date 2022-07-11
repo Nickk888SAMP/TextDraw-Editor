@@ -467,7 +467,6 @@ new Group[MAX_GROUPS][E_GROUPS];
 //TextDraw Data
 enum E_TD
 {
-	bool:TD_Created,
 	bool:TD_Hidden,
 	bool:TD_UseBox,
 	bool:TD_Selectable,
@@ -519,6 +518,7 @@ enum E_USER
 	User_ChangingState,
 	User_ManualChangeType,
 	User_ExportType,
+	bool:User_ExportArrayMode,
 	User_ProjectIndex,
 	User_SpritePicker,
 	User_SpriteIndex,
@@ -531,6 +531,7 @@ enum E_USER
 	User_PlayerIDInEditor,
 	User_ChoosenTDID,
 	User_EditingTDID,
+	User_ChoosenGroupID,
 	User_ChangingMColorState
 }
 new User[E_USER]; //User Data

@@ -111,7 +111,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 			fwrite(file, "Nickk888 is the author of the NTD script\n*/\n\n");
 			if(exporttype == 0) //RAW EXPORT
 			{
-				fwrite(file, "//Variables\n");
+				fwrite(file, "// Variables\n");
 				if(intoarray) //ARRAY
 				{
 					//Count non custom vars
@@ -193,7 +193,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 						}
 					}
 				}
-				fwrite(file, "\n//Textdraws\n");
+				fwrite(file, "\n// Textdraws\n");
 				if(intoarray) //ARRAY
 				{
 					publiccount = 0;
@@ -288,7 +288,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
-					fwrite(file, "\n//Player Textdraws\n");
+					fwrite(file, "\n// Player Textdraws\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -376,10 +376,10 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
-					fwrite(file, "\n/*Player Progress Bars\n");
-					fwrite(file, "Requires \"progress2\" include by Southclaws\n");
-					fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
-					fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
+					fwrite(file, "\n// Player Progress Bars\n");
+					fwrite(file, "// Requires \"progress2\" include by Southclaws\n");
+					fwrite(file, "// Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+					fwrite(file, "// Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases \n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -452,7 +452,7 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
-					fwrite(file, "//Player Textdraws\n");
+					fwrite(file, "// Player Textdraws\n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(!TextDraw[i][TD_IsGlobal] && TextDraw[i][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -497,10 +497,10 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 						if(TextDraw[i][TD_Selectable])
 							clickableTD = true;
 					}
-					fwrite(file, "\n/*Player Progress Bars\n");
-					fwrite(file, "Requires \"progress2\" include by Southclaws\n");
-					fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
-					fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
+					fwrite(file, "\n// Player Progress Bars\n");
+					fwrite(file, "// Requires \"progress2\" include by Southclaws\n");
+					fwrite(file, "// Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+					fwrite(file, "// Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases \n");
 					foreach(new i : I_TEXTDRAWS)
 					{
 						if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
@@ -522,9 +522,9 @@ ExportProject(index, exporttype=0, bool:intoarray = false)
 					if(TextDraw[i][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
 					{
 						fwrite(file, "#include <progress2>\n");
-						fwrite(file, "//Requires \"progress2\" include by Southclaws\n");
-						fwrite(file, "Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
-						fwrite(file, "Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases */\n");
+						fwrite(file, "// Requires \"progress2\" include by Southclaws\n");
+						fwrite(file, "// Download (Requires some libraries): https://github.com/Southclaws/progress2/releases \n");
+						fwrite(file, "// Download (Standalone version, requires \"foreach\" only): https://github.com/Nickk888SAMP/progress2/releases \n");
 						break;
 					}
 				}
@@ -1388,7 +1388,6 @@ LoadProject(index)
 		// Reset the TextDraw enumerator
 		for(new i; i < MAX_TEXTDRAWS; i++)
 		{
-			TextDraw[i][TD_Created] = false;
 			TextDraw[i][TD_Hidden] = false;
 			TextDraw[i][TD_VarName] = 0;
 			TextDraw[i][TD_HighlightTimer] = -1;
@@ -1474,7 +1473,6 @@ LoadProject(index)
 					JSON_GetFloat(tdNode, "progressbarmaxpercentage", TextDraw[free][TD_BarMaxPercentage]);
 					JSON_GetInt(tdNode, "progressbaralignment", TextDraw[free][TD_BarDirectory]);
 					JSON_GetInt(tdNode, "groupid", TextDraw[free][TD_GroupID]);
-					TextDraw[free][TD_Created] = true;
 
 					if(AddTextDrawToGroup(free, TextDraw[free][TD_GroupID]) == 0)
 					{
@@ -1495,6 +1493,7 @@ AddTextDrawToGroup(tdid, groupid)
 {
 	if(groupid == -1)
 		return 0;
+
 	VALID_ITER_INDEX(I_GROUPS, groupid)
 	{
 		if(Group[groupid][gr_id] != -1)
@@ -1567,6 +1566,56 @@ RedrawTD(playerid, tdid)
 		TextDraw[tdid][TD_BarID] = INVALID_PLAYER_BAR_ID;
 	}
 	DrawTD(tdid);
+	return 1;
+}
+
+GetExportTypeName()
+{
+	new tmpExportTypeName[128];
+	switch(User[User_ExportType])
+	{
+		case 0: // Simple
+		{
+			format(tmpExportTypeName, 128, GetLanguageMessage("exporttypesimple", LANG_TYPE_MESSAGES));
+		}
+		case 1: // Filterscript
+		{
+			format(tmpExportTypeName, 128, GetLanguageMessage("exporttypefs", LANG_TYPE_MESSAGES));
+		}
+	}
+	return tmpExportTypeName;
+}
+
+ShowEditorSettings(playerid)
+{
+	new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60], langstr[30];
+	if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
+		format(invertedstr, sizeof invertedstr, "%s%s", HEX_PALETTE_3, GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
+
+	format(quickselectstr, sizeof quickselectstr, "%s%s", (EditorQuickSelect ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+	format(tdvisistr, sizeof tdvisistr, "%s%s", (EditorTextDrawShowForAll ? HEX_PALETTE_3 : HEX_PALETTE_2), GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
+	format(compmodestr, sizeof compmodestr, "%s%s", (EditorCompactMode ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+	format(langstr, sizeof langstr, "%s%s", HEX_PALETTE_1, (EditorLanguage == -1 ? "" : GetLanguageName(EditorLanguage)));
+
+	Dialog_Show(playerid, "D_Settings", DIALOG_STYLE_TABLIST_HEADERS, 
+		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
+		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "sssss", invertedstr, quickselectstr, tdvisistr, compmodestr, langstr), 
+		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button1"), 
+		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button2"));
+	PlayerSelectTD(playerid, false);
+	return 1;
+}
+
+ShowExportDialog(playerid)
+{ 	
+	new tmp_arrayMode[128];
+	format(tmp_arrayMode, 128, (User[User_ExportArrayMode] ? GetLanguageMessage("texton", LANG_TYPE_MESSAGES) : GetLanguageMessage("textoff", LANG_TYPE_MESSAGES)));
+	Dialog_Show(playerid, "D_ExportProject", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "caption"), 
+	GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "infos", "ss", GetExportTypeName(), tmp_arrayMode), 
+	GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button2"));
+	PlayerSelectTD(playerid, false);
 	return 1;
 }
 
@@ -1714,23 +1763,21 @@ SelectTD(playerid, tdid)
 
 DestroyTD(td, &next)
 {
-	if(TextDraw[td][TD_Created] == true)
+	new playerid = User[User_PlayerIDInEditor];
+
+	if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
 	{
-		new playerid = User[User_PlayerIDInEditor];
-		TextDraw[td][TD_Created] = false;
-		if(TextDraw[td][TD_SelfID] != Text:INVALID_TEXT_DRAW)
-		{
-			TextDrawDestroy(TextDraw[td][TD_SelfID]);
-			TextDraw[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
-		}
-		if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
-		{
-			DestroyPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
-			TextDraw[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
-		}
-		TextDrawDestroy(TextDraw[td][TD_PickerID]);
-		Iter_SafeRemove(I_TEXTDRAWS, td, next);
+		TextDrawDestroy(TextDraw[td][TD_SelfID]);
+		TextDraw[td][TD_SelfID] = Text:INVALID_TEXT_DRAW;
 	}
+	if(TextDraw[td][TD_BarID] != INVALID_PLAYER_BAR_ID)
+	{
+		DestroyPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
+		TextDraw[td][TD_BarID] = INVALID_PLAYER_BAR_ID;
+	}
+	TextDrawDestroy(TextDraw[td][TD_PickerID]);
+	Iter_SafeRemove(I_TEXTDRAWS, td, next);
+	return 1;
 }
 
 HighlightTD(playerid, td)
@@ -1758,82 +1805,78 @@ DrawTD(td)
 	new playerid = User[User_PlayerIDInEditor];
 	new red, green, blue, alpha;
 	#pragma unused alpha
-	if(TextDraw[td][TD_Created] == true)
+	//TD
+	if(TextDraw[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
 	{
-		//TD
-		if(TextDraw[td][TD_Font] != TEXT_DRAW_FONT_PROGRESS_BAR)
+		TextDraw[td][TD_SelfID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY], TextDraw[td][TD_Text]);
+		TextDrawFont(TextDraw[td][TD_SelfID], TextDraw[td][TD_Font]);
+		TextDrawSetOutline(TextDraw[td][TD_SelfID], TextDraw[td][TD_OutlineSize]);
+		TextDrawSetShadow(TextDraw[td][TD_SelfID], TextDraw[td][TD_ShadowSize]);
+		TextDrawLetterSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_LetterSizeX], TextDraw[td][TD_LetterSizeY]);
+		//
+		SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
+		TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
+		TextDrawColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_Color]);
+		//
+		SplitRGBA(TextDraw[td][TD_BGColor],red,green,blue, alpha);
+		TextDraw[td][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BGColorAlpha]);
+		TextDrawBackgroundColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BGColor]);
+		//
+		SplitRGBA(TextDraw[td][TD_BoxColor],red,green,blue, alpha); 
+		TextDraw[td][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BoxColorAlpha]);
+		TextDrawBoxColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxColor]);
+		//
+		TextDrawUseBox(TextDraw[td][TD_SelfID], TextDraw[td][TD_UseBox]);	
+		TextDrawTextSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxSizeX], TextDraw[td][TD_BoxSizeY]);
+		TextDrawSetSelectable(TextDraw[td][TD_SelfID], TextDraw[td][TD_Selectable]);
+		TextDrawAlignment(TextDraw[td][TD_SelfID], TextDraw[td][TD_Alignment]);
+		TextDrawSetProportional(TextDraw[td][TD_SelfID], TextDraw[td][TD_Proportional]);
+		TextDrawSetPreviewModel(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelID]);
+		TextDrawSetPreviewRot(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevRotX], TextDraw[td][TD_PrevRotY], TextDraw[td][TD_PrevRotZ], TextDraw[td][TD_PrevRotZoom]);
+		TextDrawSetPreviewVehCol(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelC1], TextDraw[td][TD_PrevModelC2]);
+		
+		//Show
+		if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
+		else TextDrawShowForAll(TextDraw[td][TD_SelfID]);
+	}
+	else
+	{
+		if(TextDraw[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
 		{
-			TextDraw[td][TD_SelfID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY], TextDraw[td][TD_Text]);
-			TextDrawFont(TextDraw[td][TD_SelfID], TextDraw[td][TD_Font]);
-			TextDrawSetOutline(TextDraw[td][TD_SelfID], TextDraw[td][TD_OutlineSize]);
-			TextDrawSetShadow(TextDraw[td][TD_SelfID], TextDraw[td][TD_ShadowSize]);
-			TextDrawLetterSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_LetterSizeX], TextDraw[td][TD_LetterSizeY]);
-			//
 			SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
 			TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
-			TextDrawColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_Color]);
-			//
-			SplitRGBA(TextDraw[td][TD_BGColor],red,green,blue, alpha);
-			TextDraw[td][TD_BGColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BGColorAlpha]);
-			TextDrawBackgroundColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BGColor]);
-			//
-			SplitRGBA(TextDraw[td][TD_BoxColor],red,green,blue, alpha); 
-			TextDraw[td][TD_BoxColor] = CreateRGBA(red,green,blue,TextDraw[td][TD_BoxColorAlpha]);
-			TextDrawBoxColor(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxColor]);
-			//
-			TextDrawUseBox(TextDraw[td][TD_SelfID], TextDraw[td][TD_UseBox]);	
-			TextDrawTextSize(TextDraw[td][TD_SelfID], TextDraw[td][TD_BoxSizeX], TextDraw[td][TD_BoxSizeY]);
-			TextDrawSetSelectable(TextDraw[td][TD_SelfID], TextDraw[td][TD_Selectable]);
-			TextDrawAlignment(TextDraw[td][TD_SelfID], TextDraw[td][TD_Alignment]);
-			TextDrawSetProportional(TextDraw[td][TD_SelfID], TextDraw[td][TD_Proportional]);
-			TextDrawSetPreviewModel(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelID]);
-			TextDrawSetPreviewRot(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevRotX], TextDraw[td][TD_PrevRotY], TextDraw[td][TD_PrevRotZ], TextDraw[td][TD_PrevRotZoom]);
-			TextDrawSetPreviewVehCol(TextDraw[td][TD_SelfID], TextDraw[td][TD_PrevModelC1], TextDraw[td][TD_PrevModelC2]);
-			
-			//Show
-			if(!EditorTextDrawShowForAll) TextDrawShowForPlayer(playerid, TextDraw[td][TD_SelfID]);
-			else TextDrawShowForAll(TextDraw[td][TD_SelfID]);
+			TextDraw[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
+			TextDraw[td][TD_PosX], 
+			TextDraw[td][TD_PosY], 
+			TextDraw[td][TD_BoxSizeX], 
+			TextDraw[td][TD_BoxSizeY],
+			TextDraw[td][TD_Color],
+			TextDraw[td][TD_BarMaxPercentage],
+			TextDraw[td][TD_BarDirectory]);
 		}
-		else
-		{
-			if(TextDraw[td][TD_BarID] == INVALID_PLAYER_BAR_ID)
-			{
-				SplitRGBA(TextDraw[td][TD_Color],red,green,blue, alpha); 
-				TextDraw[td][TD_Color] = CreateRGBA(red,green,blue,TextDraw[td][TD_ColorAlpha]);
-				TextDraw[td][TD_BarID] = CreatePlayerProgressBar(playerid, 
-				TextDraw[td][TD_PosX], 
-				TextDraw[td][TD_PosY], 
-				TextDraw[td][TD_BoxSizeX], 
-				TextDraw[td][TD_BoxSizeY],
-				TextDraw[td][TD_Color],
-				TextDraw[td][TD_BarMaxPercentage],
-				TextDraw[td][TD_BarDirectory]);
-			}
-			
-			//Show
-			SetPlayerProgressBarValue(playerid, TextDraw[td][TD_BarID], (TextDraw[td][TD_BarMaxPercentage] / 2.0));
-			ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
-		}
-		//Picker
-		TextDraw[td][TD_PickerID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY] - 10, GetProcessedTDVarName(td));
-		TextDrawFont(TextDraw[td][TD_PickerID], 1);
-		TextDrawSetOutline(TextDraw[td][TD_PickerID], 0);
-		TextDrawSetShadow(TextDraw[td][TD_PickerID], 0);
-		TextDrawLetterSize(TextDraw[td][TD_PickerID], 0.212, 0.850); 
-		TextDrawTextSize(TextDraw[td][TD_PickerID], 10.0, clamp( strlen(GetProcessedTDVarName(td)) * 4 , 10, 500));
-		TextDrawAlignment(TextDraw[td][TD_PickerID], 2);
-		TextDrawSetSelectable(TextDraw[td][TD_PickerID], true);
 		
-		if(User[User_EditingTDID] != td) 
-			TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR);
-		else
-			TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR_ACTIVE);
-
-		if(EditorQuickSelect) 
-			TextDrawShowForPlayer(playerid, TextDraw[td][TD_PickerID]);
-		return 1;
+		//Show
+		SetPlayerProgressBarValue(playerid, TextDraw[td][TD_BarID], (TextDraw[td][TD_BarMaxPercentage] / 2.0));
+		ShowPlayerProgressBar(playerid, TextDraw[td][TD_BarID]);
 	}
-	return 0;
+	//Picker
+	TextDraw[td][TD_PickerID] = TextDrawCreate(TextDraw[td][TD_PosX], TextDraw[td][TD_PosY] - 10, GetProcessedTDVarName(td));
+	TextDrawFont(TextDraw[td][TD_PickerID], 1);
+	TextDrawSetOutline(TextDraw[td][TD_PickerID], 0);
+	TextDrawSetShadow(TextDraw[td][TD_PickerID], 0);
+	TextDrawLetterSize(TextDraw[td][TD_PickerID], 0.212, 0.850); 
+	TextDrawTextSize(TextDraw[td][TD_PickerID], 10.0, clamp( strlen(GetProcessedTDVarName(td)) * 4 , 10, 500));
+	TextDrawAlignment(TextDraw[td][TD_PickerID], 2);
+	TextDrawSetSelectable(TextDraw[td][TD_PickerID], true);
+	
+	if(User[User_EditingTDID] != td) 
+		TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR);
+	else
+		TextDrawColor(TextDraw[td][TD_PickerID], TDPICKER_COLOR_ACTIVE);
+
+	if(EditorQuickSelect) 
+		TextDrawShowForPlayer(playerid, TextDraw[td][TD_PickerID]);
+	return 1;
 }
 
 CreateNewTDFromTemplate(templateid)
@@ -1907,7 +1950,6 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 	VALID_ITER_INDEX(I_TEXTDRAWS, index)
 	{
 		Iter_Add(I_TEXTDRAWS, index);
-		TextDraw[index][TD_Created] = true;
 		TextDraw[index][TD_SelfID] = Text:INVALID_TEXT_DRAW;
 		TextDraw[index][TD_BarID] = INVALID_PLAYER_BAR_ID;
 		switch(cloneid)
@@ -1982,40 +2024,37 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 			}
 			default: //Clone
 			{
-				if(TextDraw[cloneid][TD_Created] == true)
-				{
-					format(TextDraw[index][TD_Text], 300, TextDraw[cloneid][TD_Text]);
-					format(TextDraw[index][TD_VarName], 35, "");
-					TextDraw[index][TD_PosX] = TextDraw[cloneid][TD_PosX];
-					TextDraw[index][TD_PosY] = TextDraw[cloneid][TD_PosY];
-					TextDraw[index][TD_Font] = TextDraw[cloneid][TD_Font];
-					TextDraw[index][TD_IsGlobal] = TextDraw[cloneid][TD_IsGlobal];
-					TextDraw[index][TD_OutlineSize] = TextDraw[cloneid][TD_OutlineSize];
-					TextDraw[index][TD_ShadowSize] = TextDraw[cloneid][TD_ShadowSize];
-					TextDraw[index][TD_LetterSizeX] = TextDraw[cloneid][TD_LetterSizeX];
-					TextDraw[index][TD_LetterSizeY] = TextDraw[cloneid][TD_LetterSizeY];
-					TextDraw[index][TD_BoxSizeX] = TextDraw[cloneid][TD_BoxSizeX];
-					TextDraw[index][TD_BoxSizeY] = TextDraw[cloneid][TD_BoxSizeY];
-					TextDraw[index][TD_Color] = TextDraw[cloneid][TD_Color];
-					TextDraw[index][TD_BGColor] = TextDraw[cloneid][TD_BGColor];
-					TextDraw[index][TD_BoxColor] = TextDraw[cloneid][TD_BoxColor];
-					TextDraw[index][TD_ColorAlpha] = TextDraw[cloneid][TD_ColorAlpha];
-					TextDraw[index][TD_BGColorAlpha] = TextDraw[cloneid][TD_BGColorAlpha];
-					TextDraw[index][TD_BoxColorAlpha] = TextDraw[cloneid][TD_BoxColorAlpha];
-					TextDraw[index][TD_Alignment] = TextDraw[cloneid][TD_Alignment];
-					TextDraw[index][TD_Selectable] = TextDraw[cloneid][TD_Selectable];
-					TextDraw[index][TD_Proportional] = TextDraw[cloneid][TD_Proportional];
-					TextDraw[index][TD_UseBox] = TextDraw[cloneid][TD_UseBox];
-					TextDraw[index][TD_PrevModelID] = TextDraw[cloneid][TD_PrevModelID];
-					TextDraw[index][TD_PrevModelC1] = TextDraw[cloneid][TD_PrevModelC1];
-					TextDraw[index][TD_PrevModelC2] = TextDraw[cloneid][TD_PrevModelC2];
-					TextDraw[index][TD_PrevRotX] = TextDraw[cloneid][TD_PrevRotX];
-					TextDraw[index][TD_PrevRotY] = TextDraw[cloneid][TD_PrevRotY];
-					TextDraw[index][TD_PrevRotZ] = TextDraw[cloneid][TD_PrevRotZ];
-					TextDraw[index][TD_PrevRotZoom] = TextDraw[cloneid][TD_PrevRotZoom];
-					TextDraw[index][TD_BarMaxPercentage] = TextDraw[cloneid][TD_BarMaxPercentage];
-					TextDraw[index][TD_BarDirectory] = TextDraw[cloneid][TD_BarDirectory];
-				}
+				format(TextDraw[index][TD_Text], 300, TextDraw[cloneid][TD_Text]);
+				format(TextDraw[index][TD_VarName], 35, "");
+				TextDraw[index][TD_PosX] = TextDraw[cloneid][TD_PosX];
+				TextDraw[index][TD_PosY] = TextDraw[cloneid][TD_PosY];
+				TextDraw[index][TD_Font] = TextDraw[cloneid][TD_Font];
+				TextDraw[index][TD_IsGlobal] = TextDraw[cloneid][TD_IsGlobal];
+				TextDraw[index][TD_OutlineSize] = TextDraw[cloneid][TD_OutlineSize];
+				TextDraw[index][TD_ShadowSize] = TextDraw[cloneid][TD_ShadowSize];
+				TextDraw[index][TD_LetterSizeX] = TextDraw[cloneid][TD_LetterSizeX];
+				TextDraw[index][TD_LetterSizeY] = TextDraw[cloneid][TD_LetterSizeY];
+				TextDraw[index][TD_BoxSizeX] = TextDraw[cloneid][TD_BoxSizeX];
+				TextDraw[index][TD_BoxSizeY] = TextDraw[cloneid][TD_BoxSizeY];
+				TextDraw[index][TD_Color] = TextDraw[cloneid][TD_Color];
+				TextDraw[index][TD_BGColor] = TextDraw[cloneid][TD_BGColor];
+				TextDraw[index][TD_BoxColor] = TextDraw[cloneid][TD_BoxColor];
+				TextDraw[index][TD_ColorAlpha] = TextDraw[cloneid][TD_ColorAlpha];
+				TextDraw[index][TD_BGColorAlpha] = TextDraw[cloneid][TD_BGColorAlpha];
+				TextDraw[index][TD_BoxColorAlpha] = TextDraw[cloneid][TD_BoxColorAlpha];
+				TextDraw[index][TD_Alignment] = TextDraw[cloneid][TD_Alignment];
+				TextDraw[index][TD_Selectable] = TextDraw[cloneid][TD_Selectable];
+				TextDraw[index][TD_Proportional] = TextDraw[cloneid][TD_Proportional];
+				TextDraw[index][TD_UseBox] = TextDraw[cloneid][TD_UseBox];
+				TextDraw[index][TD_PrevModelID] = TextDraw[cloneid][TD_PrevModelID];
+				TextDraw[index][TD_PrevModelC1] = TextDraw[cloneid][TD_PrevModelC1];
+				TextDraw[index][TD_PrevModelC2] = TextDraw[cloneid][TD_PrevModelC2];
+				TextDraw[index][TD_PrevRotX] = TextDraw[cloneid][TD_PrevRotX];
+				TextDraw[index][TD_PrevRotY] = TextDraw[cloneid][TD_PrevRotY];
+				TextDraw[index][TD_PrevRotZ] = TextDraw[cloneid][TD_PrevRotZ];
+				TextDraw[index][TD_PrevRotZoom] = TextDraw[cloneid][TD_PrevRotZoom];
+				TextDraw[index][TD_BarMaxPercentage] = TextDraw[cloneid][TD_BarMaxPercentage];
+				TextDraw[index][TD_BarDirectory] = TextDraw[cloneid][TD_BarDirectory];
 			}
 		}
 		return index;
@@ -2519,7 +2558,7 @@ public BlockVarsChanger(bool:block)
 bool:VariableExists(const string[])
 {
 	foreach(new i : I_TEXTDRAWS)
-		if(!strcmp(TextDraw[i][TD_VarName], string, true) && !isnull(TextDraw[i][TD_VarName]) && TextDraw[i][TD_Created]) return true;
+		if(!strcmp(TextDraw[i][TD_VarName], string, true) && !isnull(TextDraw[i][TD_VarName])) return true;
 	return false;
 }
 
@@ -2771,7 +2810,7 @@ ToggleTextDrawShowForAll(bool:toggle)
 	{
 		foreach(new i : I_TEXTDRAWS)
 		{
-			if(TextDraw[i][TD_Created])
+			if(!TextDraw[i][TD_Hidden])
 				TextDrawShowForAll(TextDraw[i][TD_SelfID]);
 		}
 	}
@@ -2779,7 +2818,7 @@ ToggleTextDrawShowForAll(bool:toggle)
 	{
 		foreach(new i : I_TEXTDRAWS)
 		{
-			if(TextDraw[i][TD_Created])
+			if(!TextDraw[i][TD_Hidden])
 			{
 				TextDrawHideForAll(TextDraw[i][TD_SelfID]);
 				TextDrawShowForPlayer(User[User_PlayerIDInEditor], TextDraw[i][TD_SelfID]);
@@ -2837,19 +2876,16 @@ SaveConfigurations()
 GetProcessedTDVarName(tdid)
 {
 	new string[64] = "ERROR";
-	if(TextDraw[tdid][TD_Created])
+	if(strlen(TextDraw[tdid][TD_VarName]) > 0)
+		format(string, sizeof string, TextDraw[tdid][TD_VarName]);
+	else
 	{
-		if(strlen(TextDraw[tdid][TD_VarName]) > 0)
-			format(string, sizeof string, TextDraw[tdid][TD_VarName]);
-		else
-		{
-			if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
-				format(string, sizeof string, "playerprogressbar_%i", tdid);
-			else if(!TextDraw[tdid][TD_IsGlobal])
-				format(string, sizeof string, "playertextdraw_%i", tdid);
-			else 
-				format(string, sizeof string, "textdraw_%i", tdid);
-		}
+		if(TextDraw[tdid][TD_Font] == TEXT_DRAW_FONT_PROGRESS_BAR)
+			format(string, sizeof string, "playerprogressbar_%i", tdid);
+		else if(!TextDraw[tdid][TD_IsGlobal])
+			format(string, sizeof string, "playertextdraw_%i", tdid);
+		else 
+			format(string, sizeof string, "textdraw_%i", tdid);
 	}
 	return string;
 }

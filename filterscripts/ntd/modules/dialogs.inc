@@ -8,6 +8,10 @@
                                     __/ |      
                                    |___/       
 */
+
+
+
+
 Dialog:D_ConvertProject(DIALOG_CALLBACK_PARAMETERS)
 {
     new projectindex = User[User_ProjectIndex];
@@ -234,29 +238,38 @@ Dialog:D_ChangeSize(DIALOG_CALLBACK_PARAMETERS)
     return 1;
 }
 
-Dialog:D_ExportProject2(DIALOG_CALLBACK_PARAMETERS)
-{
-    if(ExportProject(User[User_ProjectIndex], User[User_ExportType], bool:response))
-    {
-        format(EditorString, sizeof EditorString, HEX_PALETTE_2"%s/%s.pwn", MakePath(EXPORTS_DIRECTORYPATH, true), GetProjectName(User[User_ProjectIndex]));
-        format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES, "", "s", EditorString));
-        ShowInfo(playerid, EditorLString);
-    }
-    else 
-        ShowInfo(playerid, GetLanguageMessage("infoprojectexporterror", LANG_TYPE_MESSAGES));
-    return 1;
-}
-
-Dialog:D_ExportProject1(DIALOG_CALLBACK_PARAMETERS)
+Dialog:D_ExportProject(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
     {
-        User[User_ExportType] = listitem;
-        Dialog_Show(playerid, "D_ExportProject2", DIALOG_STYLE_MSGBOX, 
-        GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "caption"), 
-        GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "infos"), 
-        GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "button1"), 
-        GetLanguageMessage("exportwitharray", LANG_TYPE_DIALOGS, "button2"));
+        switch(listitem)
+        {
+            case 0: 
+            {
+                User[User_ExportType]++;
+                if(User[User_ExportType] == 2)
+                    User[User_ExportType] = 0;
+                ShowExportDialog(playerid);
+            }
+            case 1:
+            {
+                User[User_ExportArrayMode] = !User[User_ExportArrayMode];
+                ShowExportDialog(playerid);
+            }
+            case 2:
+            {
+                if(ExportProject(User[User_ProjectIndex], User[User_ExportType], User[User_ExportArrayMode]))
+                {
+                    new filePath[258];
+                    format(filePath, sizeof filePath, HEX_PALETTE_2"%s/%s.pwn", MakePath(EXPORTS_DIRECTORYPATH, true), GetProjectName(User[User_ProjectIndex]));
+                    ShowInfo(playerid, GetLanguageMessage("infoprojectexported", LANG_TYPE_MESSAGES, #, "s", filePath));
+                }
+                else
+                {
+                    ShowInfo(playerid, GetLanguageMessage("infoprojectexporterror", LANG_TYPE_MESSAGES));
+                }
+            }
+        }
     }
     else ShowEditorEx(playerid);
     return 1;
@@ -323,7 +336,7 @@ Dialog:D_ChangeParamName(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
     {
-        if(strlen(inputtext) != 0)
+        if(strlen(inputtext) > 0 && !isnull(inputtext))
         {
             if(strlen(inputtext) < 35)
             {
@@ -463,18 +476,18 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 new keyB = EditorAcceptKey;
                 EditorFasterKey = keyB;
                 EditorAcceptKey = keyA;
-                OnPlayerClickTextDraw(playerid, B_Settings);
+                ShowEditorSettings(playerid);
             }
             case 4: //Szybki wybor
             {
                 EditorQuickSelect = !EditorQuickSelect;
                 QuickSelectionShow(playerid, EditorQuickSelect);
-                OnPlayerClickTextDraw(playerid, B_Settings);
+                ShowEditorSettings(playerid);
             }
             case 5: //Wyswietlanie TextDrawow
             {
                 ToggleTextDrawShowForAll(!EditorTextDrawShowForAll);
-                OnPlayerClickTextDraw(playerid, B_Settings);
+                ShowEditorSettings(playerid);
             }
             case 6: //Tryb kompaktowy
             {
@@ -482,7 +495,7 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 DestroyEditor();
                 CreateEditor();
                 ShowEditorEx(playerid);
-                OnPlayerClickTextDraw(playerid, B_Settings);
+                ShowEditorSettings(playerid);
             }
             case 7: //Zmien jezyk
                 ShowLanguageChangeDialog(playerid, 2);
@@ -696,7 +709,7 @@ Dialog:D_NewGroup(DIALOG_CALLBACK_PARAMETERS)
         }
         else ShowInfo(playerid, GetLanguageMessage("infoprojectinvalidname", LANG_TYPE_MESSAGES));
     }
-    else ShowEditorEx(playerid);
+    else OpenGroupsDialog(playerid);
     return 1;
 }
 
@@ -1028,15 +1041,24 @@ DialogPages:DP_GroupsList(DIALOG_PAGES_CALLBACK_PARAMETERS)
                 GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button1"), 
                 GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button2"));
             }
-            default: // Project Select
+            default: // Group Select
             {
-                /*new index = Iter_Index(I_PROJECTS, (listitem - 1));
-                User[User_ProjectIndex] = index;
-                Dialog_Show(playerid, "D_OpenProject", DIALOG_STYLE_LIST, 
-                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "caption", "s", Projects[index][Pro_fileName]), 
-                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "infos"), 
-                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button1"), 
-                GetLanguageMessage("projectsoptions", LANG_TYPE_DIALOGS, "button2"));*/
+                new tmp_groupHiddenStr[64];
+                User[User_ChoosenGroupID] = Iter_Index(I_GROUPS, (listitem - 1));
+                format(tmp_groupHiddenStr, 64, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES));
+
+                ClearDialogListitems(playerid);
+                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info0"));
+                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info1"));
+                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info2", "s", tmp_groupHiddenStr));
+                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
+                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
+
+                ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
+                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  User[User_ChoosenGroupID], Group[  User[User_ChoosenGroupID] ][gr_name]), 
+                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
+                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button2"),
+                EditorMaxDialogItems);
             }
         }
         PlayerSelectTD(playerid, false);
@@ -1153,5 +1175,33 @@ DialogPages:DP_ColorChange3(DIALOG_PAGES_CALLBACK_PARAMETERS)
     }
     else if(!User[User_ChangingColorBar]) ColorDialog(playerid, 1);
     else ColorDialog(playerid, 2);
+    return 1;
+}
+
+DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
+{
+    new groupId = User[User_ChoosenGroupID];
+    if(response)
+    {
+        switch(listitem)
+        {
+            case 0: // Change Position
+            {
+                if(Iter_Count(I_GROUP_TDS[groupId]) > 0)
+                {
+
+                }
+            }
+            case 1: // Rename
+            {
+
+            }
+            case 2: // Delete
+            {
+                
+            }
+        }
+    }
+    else OpenGroupsDialog(playerid);
     return 1;
 }

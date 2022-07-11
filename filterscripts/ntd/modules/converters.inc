@@ -22,11 +22,7 @@ ConvertNTDLegacy(index)
                 {
                     VALID_ITER_INDEX(I_TEXTDRAWS, macroId)
                     {
-                        if(!TextDraw[macroId][TD_Created])
-                        {
-                            Iter_Add(I_TEXTDRAWS, macroId);
-                            TextDraw[macroId][TD_Created] = true;
-                        }
+                        Iter_Add(I_TEXTDRAWS, macroId);
                     }
                     else continue;
                     if(!strcmp(macroStr, "string", true))

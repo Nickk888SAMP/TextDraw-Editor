@@ -172,21 +172,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Settings)
 		{
-			new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60], langstr[30];
-			if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
-				format(invertedstr, sizeof invertedstr, "%s%s", HEX_PALETTE_3, GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
-
-			format(quickselectstr, sizeof quickselectstr, "%s%s", (EditorQuickSelect ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
-			format(tdvisistr, sizeof tdvisistr, "%s%s", (EditorTextDrawShowForAll ? HEX_PALETTE_3 : HEX_PALETTE_2), GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
-			format(compmodestr, sizeof compmodestr, "%s%s", (EditorCompactMode ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
-			format(langstr, sizeof langstr, "%s%s", HEX_PALETTE_1, (EditorLanguage == -1 ? "" : GetLanguageName(EditorLanguage)));
-
-			Dialog_Show(playerid, "D_Settings", DIALOG_STYLE_TABLIST_HEADERS, 
-				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
-				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "sssss", invertedstr, quickselectstr, tdvisistr, compmodestr, langstr), 
-				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button1"), 
-				GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button2"));
-			PlayerSelectTD(playerid, false);
+			ShowEditorSettings(playerid);
 			return 1;
 		}
 		else if(clickedid == B_TDSettings)
@@ -419,14 +405,11 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			OpenProjectDialog(playerid);
 			return 1;
 		}
-		else if(clickedid == B_Export)
+		else if(clickedid == B_Export) 
 		{
-			Dialog_Show(playerid, "D_ExportProject1", DIALOG_STYLE_LIST, 
-			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "caption"), 
-			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "infos"), 
-			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button1"), 
-			GetLanguageMessage("exportproject", LANG_TYPE_DIALOGS, "button2"));
-			PlayerSelectTD(playerid, false);
+			User[User_ExportType] = 0;
+			User[User_ExportArrayMode] = true;
+			ShowExportDialog(playerid);
 			return 1;
 		}
 		else if(clickedid == B_Groups)

@@ -48,7 +48,9 @@
 	"infoprojectconverted": "Project has been converted.#nAmount of converted TextDraws: #1",
 	"infoprojecterror": "An error occured while converting the project.",
 	"infomaxgroupsreached": "The maximum number of groups has been reached.",
-	"infogroupexists": "Group with that name already exists."
+	"infogroupexists": "Group with that name already exists.",
+	"exporttypesimple": "Normal export",
+	"exporttypefs": "Functional filterscript"
   },
   "gametexts": {
     "tdclonedinfo": "DUPLICATED_ID_#1",
@@ -151,10 +153,12 @@
       "button2": "Back"
     },
 	"exportproject": {
-      "caption": "Export as...",
-      "info0": "Normal export",
-	  "info1": "Functional filterscript",
-      "button1": "Export",
+      "caption": "Export Project",
+      "info0": "Option#tValue",
+	  "info1": "Export Type#t#1",
+	  "info2": "Array Mode#t#2",
+	  "info3": "Export",
+      "button1": "Confirm",
       "button2": "Back"
     },
 	"newtextdraw": {
@@ -172,7 +176,7 @@
       "button2": "No"
     },
 	"tdoptions": {
-      "caption": "ID #1 \"#2\"",
+      "caption": "TD ID #1 \"#2\"",
 	  "info0": "Option#tValue",
       "info1": "Modify",
 	  "info2": "Duplicate",
@@ -348,6 +352,16 @@
 	"newgroup": {
       "caption": "New group",
       "info0": "Enter the name of new group.",
+      "button1": "Confirm",
+      "button2": "Back"
+    },
+	"groupoptions": {
+      "caption": "Group ID #1 \"#2\"",
+	  "info0": "ID/TextDraw#tVariable Name",
+      "info1": "Change Position",
+	  "info2": "Change Visibility#t#1",
+	  "info3": "Rename",
+	  "info4": "Delete",
       "button1": "Confirm",
       "button2": "Back"
     }
