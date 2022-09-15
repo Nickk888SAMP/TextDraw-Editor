@@ -8,7 +8,6 @@
     "editordisabled": "Editor exited.",
     "editorinuse": "Editor is being used by another player.",
     "infodialogcaption": "Information",
-    "infoeditorleave": "To exit editor, use command /NTD",
     "infoeditorlocked": "Script has been blocked. #nCheck server LOGs for more informations.",
     "infoeditorreset": "Settings have been restored.",
     "infoinvalidmodelid": "Model ID is incorrect.",
@@ -338,7 +337,7 @@
 	  "info0": "This project file need to be converted in order to work within this editor.",
 	  "info1": "Conversion: #1 > #2",
 	  "info2": "The original file will be placed inside #3",
-	  "info3": "Do you want to procees with the conversion?",
+	  "info3": "Do you want to proceed with the conversion?",
       "button1": "Yes",
       "button2": "No"
     },

@@ -414,7 +414,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Groups)
 		{
-			OpenGroupsDialog(playerid);
+			OpenGroupsDialog(playerid, 0);
 			return 1;
 		}
 	}

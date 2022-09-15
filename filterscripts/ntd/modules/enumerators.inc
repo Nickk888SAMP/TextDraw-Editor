@@ -532,6 +532,7 @@ enum E_USER
 	User_ChoosenTDID,
 	User_EditingTDID,
 	User_ChoosenGroupID,
+	User_GroupDialogType,
 	User_ChangingMColorState
 }
 new User[E_USER]; //User Data

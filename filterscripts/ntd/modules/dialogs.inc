@@ -14,20 +14,24 @@
 
 Dialog:D_ConvertProject(DIALOG_CALLBACK_PARAMETERS)
 {
-    new projectindex = User[User_ProjectIndex];
-    new amount = TryConvertProject(projectindex);
-    new filePathFrom[258], filePathTo[258];
-    if(amount != -1)
+    if(response)
     {
-        if(!Exists( MakePath(PROJECTS_ORIGINAL_DIRPATH, true)))
-            CreateDir(MakePath(PROJECTS_ORIGINAL_DIRPATH, true));
-        
-	    format(filePathFrom, sizeof filePathFrom, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(projectindex, true));
-	    format(filePathTo, sizeof filePathTo, PROJECTS_ORIGINAL_DIRPATH"/%s", GetProjectName(projectindex, true));
-        MoveFile( MakePath(filePathFrom, true), MakePath(filePathTo, true) );
-        ShowInfo(playerid, GetLanguageMessage("infoprojectconverted", LANG_TYPE_MESSAGES, "", "i", amount));
-    } 
-    else ShowInfo(playerid, GetLanguageMessage("infoprojecterror", LANG_TYPE_MESSAGES));
+        new projectindex = User[User_ProjectIndex];
+        new amount = TryConvertProject(projectindex);
+        new filePathFrom[258], filePathTo[258];
+        if(amount != -1)
+        {
+            if(!Exists( MakePath(PROJECTS_ORIGINAL_DIRPATH, true)))
+                CreateDir(MakePath(PROJECTS_ORIGINAL_DIRPATH, true));
+            
+            format(filePathFrom, sizeof filePathFrom, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(projectindex, true));
+            format(filePathTo, sizeof filePathTo, PROJECTS_ORIGINAL_DIRPATH"/%s", GetProjectName(projectindex, true));
+            MoveFile( MakePath(filePathFrom, true), MakePath(filePathTo, true) );
+            ShowInfo(playerid, GetLanguageMessage("infoprojectconverted", LANG_TYPE_MESSAGES, "", "i", amount));
+        } 
+        else ShowInfo(playerid, GetLanguageMessage("infoprojecterror", LANG_TYPE_MESSAGES));
+    }
+    else ShowEditorEx(playerid), OpenProjectDialog(playerid);
     return 1;
 }
 
@@ -36,18 +40,17 @@ Dialog:D_SettingsReset2(DIALOG_CALLBACK_PARAMETERS)
     if(response)
     {
         ResetConfiguration(playerid);
+        SaveConfigurations();
         DestroyEditor();
         CreateEditor();
         ShowEditorEx(playerid);
-        SaveConfigurations();
+        
         PlayerSelectTD(playerid, false);
         ShowInfo(playerid, GetLanguageMessage("infoeditorreset", LANG_TYPE_MESSAGES));
     }
     else
     {
-        EditorVersion = SCRIPT_VERSION;
-        SaveConfigurations();
-        ShowEditorEx(playerid);
+        ShowEditorSettings(playerid);
     }
     return 1;
 }
@@ -501,7 +504,7 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 ShowLanguageChangeDialog(playerid, 2);
             case 8: //Ustawienia fabryczne
             {
-                Dialog_Show(playerid, DIALOG_SETTINGRESET, DIALOG_STYLE_MSGBOX, 
+                Dialog_Show(playerid, "D_SettingsReset2", DIALOG_STYLE_MSGBOX, 
                 GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "caption"), 
                 GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "infos"), 
                 GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "button1"), 
@@ -657,7 +660,7 @@ Dialog:D_TextDrawOptions(DIALOG_CALLBACK_PARAMETERS)
             }
             case 4: // Assign Group
             {
-
+                OpenGroupsDialog(playerid, 1);
             }
             case 5: // Delete
             {
@@ -704,12 +707,12 @@ Dialog:D_NewGroup(DIALOG_CALLBACK_PARAMETERS)
             {
                 case -1: ShowInfo(playerid, GetLanguageMessage("infogroupexists", LANG_TYPE_MESSAGES));
                 case 0: ShowInfo(playerid, GetLanguageMessage("infomaxgroupsreached", LANG_TYPE_MESSAGES));
-                case 1: OpenGroupsDialog(playerid);
+                case 1: OpenGroupsDialog(playerid, 0);
             }
         }
         else ShowInfo(playerid, GetLanguageMessage("infoprojectinvalidname", LANG_TYPE_MESSAGES));
     }
-    else OpenGroupsDialog(playerid);
+    else OpenGroupsDialog(playerid, 0);
     return 1;
 }
 
@@ -735,7 +738,7 @@ Dialog:D_NewProject(DIALOG_CALLBACK_PARAMETERS)
         }
         else ShowInfo(playerid, GetLanguageMessage("infoprojectinvalidname", LANG_TYPE_MESSAGES));
     }
-    else ShowEditorEx(playerid);
+    else ShowEditorEx(playerid), OpenProjectDialog(playerid);
     return 1;
 }
 
@@ -1031,37 +1034,47 @@ DialogPages:DP_GroupsList(DIALOG_PAGES_CALLBACK_PARAMETERS)
 {
     if(response)
     {
-        switch(listitem)
+        if(User[User_GroupDialogType] == 0) // Groups Manage
         {
-            case 0: // Create new project
+            switch(listitem)
             {
-               Dialog_Show(playerid, "D_NewGroup", DIALOG_STYLE_INPUT, 
-                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "caption"), 
-                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "infos"), 
-                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button1"), 
-                GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button2"));
-            }
-            default: // Group Select
-            {
-                new tmp_groupHiddenStr[64];
-                User[User_ChoosenGroupID] = Iter_Index(I_GROUPS, (listitem - 1));
-                format(tmp_groupHiddenStr, 64, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES));
+                case 0: // Create new project
+                {
+                    Dialog_Show(playerid, "D_NewGroup", DIALOG_STYLE_INPUT, 
+                        GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "caption"), 
+                        GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "infos"), 
+                        GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button1"), 
+                        GetLanguageMessage("newgroup", LANG_TYPE_DIALOGS, "button2"));
+                }
+                default: // Group Select
+                {
+                    new tmp_groupHiddenStr[64];
+                    User[User_ChoosenGroupID] = Iter_Index(I_GROUPS, (listitem - 1));
+                    format(tmp_groupHiddenStr, 64, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES));
+                    strins(tmp_groupHiddenStr, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2, 0);
 
-                ClearDialogListitems(playerid);
-                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info0"));
-                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info1"));
-                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info2", "s", tmp_groupHiddenStr));
-                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
-                AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
+                    ClearDialogListitems(playerid);
+                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info0"));
+                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info1"));
+                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info2", "s", tmp_groupHiddenStr));
+                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
+                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
 
-                ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
-                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  User[User_ChoosenGroupID], Group[  User[User_ChoosenGroupID] ][gr_name]), 
-                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
-                GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button2"),
-                EditorMaxDialogItems);
+                    ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
+                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  User[User_ChoosenGroupID], Group[  User[User_ChoosenGroupID] ][gr_name]), 
+                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
+                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button2"),
+                    EditorMaxDialogItems);
+                }
             }
+            PlayerSelectTD(playerid, false);
         }
-        PlayerSelectTD(playerid, false);
+        else // Group assign
+        {
+            new groupid = Iter_Index(I_GROUPS, listitem);
+            AssignTextDrawGroup(User[User_ChoosenTDID], groupid);
+            ShowTDOptions(playerid, User[User_ChoosenTDID]);
+        }
     }
     else ShowEditorEx(playerid);
     return 1;
@@ -1192,16 +1205,20 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
 
                 }
             }
-            case 1: // Rename
+            case 1: // Change Visibility
             {
 
             }
-            case 2: // Delete
+            case 2: // Rename
+            {
+
+            }
+            case 3: // Delete
             {
                 
             }
         }
     }
-    else OpenGroupsDialog(playerid);
+    else OpenGroupsDialog(playerid, 0);
     return 1;
 }

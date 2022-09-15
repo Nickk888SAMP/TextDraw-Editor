@@ -1214,13 +1214,16 @@ IsProjectFileValid(index)
 	return 0;
 }
 
-OpenGroupsDialog(playerid)
+OpenGroupsDialog(playerid, dialogtype)
 {
+	User[User_GroupDialogType] = dialogtype;
+
 	ClearDialogListitems(playerid);
 
 	// Construct Dialog
 	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info0"));
-	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
+	if(User[User_GroupDialogType] == 0) 
+		AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
 
 	foreach(new i : I_GROUPS)
 	{
@@ -1285,6 +1288,7 @@ OpenProjectDialog(playerid)
 	return 1;
 }
 
+/* Saves the project injecting all the TextDraw's and Groups's data to a .json file */
 SaveProject(const projectFile[])
 {
 	new filePath[300];
@@ -1365,10 +1369,11 @@ SaveProject(const projectFile[])
 	return 1;
 }
 
-LoadProject(index)
+/* Try's to load a Project by the given Index */
+LoadProject(projectindex)
 {
-	new filePath[258], Node:node, free, Node:tdArrayNode, Node:groupArrayNode, Node:tdNode, Node:groupNode, tdArrayLength, groupsArrayLength;
-	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(index, true));
+	new filePath[258], Node:node, index, Node:tdArrayNode, Node:groupArrayNode, Node:tdNode, Node:groupNode, tdArrayLength, groupsArrayLength;
+	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(projectindex, true));
 	filePath = MakePath(filePath, true);
 	if(Exists(filePath))
 	{
@@ -1437,74 +1442,65 @@ LoadProject(index)
 				JSON_ArrayObject(tdArrayNode, i, tdNode);
 
 				// Create the TextDraw
-				free = Iter_Free(I_TEXTDRAWS);
-				VALID_ITER_INDEX(I_TEXTDRAWS, free)
+				index = Iter_Free(I_TEXTDRAWS);
+				VALID_ITER_INDEX(I_TEXTDRAWS, index)
 				{
-					Iter_Add(I_TEXTDRAWS, free);
-					JSON_GetString(tdNode, "string", TextDraw[free][TD_Text]);
-					JSON_GetFloat(tdNode, "posx", TextDraw[free][TD_PosX]);
-					JSON_GetFloat(tdNode, "posy", TextDraw[free][TD_PosY]);
-					JSON_GetInt(tdNode, "font", TextDraw[free][TD_Font]);
-					JSON_GetBool(tdNode, "public", TextDraw[free][TD_IsGlobal]);
-					JSON_GetInt(tdNode, "outline", TextDraw[free][TD_OutlineSize]);
-					JSON_GetInt(tdNode, "shadow", TextDraw[free][TD_ShadowSize]);
-					JSON_GetFloat(tdNode, "lettersizex", TextDraw[free][TD_LetterSizeX]);
-					JSON_GetFloat(tdNode, "lettersizey", TextDraw[free][TD_LetterSizeY]);
-					JSON_GetInt(tdNode, "textcolor", TextDraw[free][TD_Color]);
-					JSON_GetInt(tdNode, "backgroundcolor", TextDraw[free][TD_BGColor]);
-					JSON_GetInt(tdNode, "boxcolor", TextDraw[free][TD_BoxColor]);
-					JSON_GetInt(tdNode, "textcoloralpha", TextDraw[free][TD_ColorAlpha]);
-					JSON_GetInt(tdNode, "backgroundcoloralpha", TextDraw[free][TD_BGColorAlpha]);
-					JSON_GetInt(tdNode, "boxcoloralpha", TextDraw[free][TD_BoxColorAlpha]);
-					JSON_GetBool(tdNode, "usebox", TextDraw[free][TD_UseBox]);
-					JSON_GetBool(tdNode, "selectable", TextDraw[free][TD_Selectable]);
-					JSON_GetInt(tdNode, "alignment", TextDraw[free][TD_Alignment]);
-					JSON_GetFloat(tdNode, "boxsizex", TextDraw[free][TD_BoxSizeX]);
-					JSON_GetFloat(tdNode, "boxsizey", TextDraw[free][TD_BoxSizeY]);
-					JSON_GetInt(tdNode, "proportional", TextDraw[free][TD_Proportional]);
-					JSON_GetInt(tdNode, "previewmodelid", TextDraw[free][TD_PrevModelID]);
-					JSON_GetInt(tdNode, "previewmodelcolor1", TextDraw[free][TD_PrevModelC1]);
-					JSON_GetInt(tdNode, "previewmodelcolor2", TextDraw[free][TD_PrevModelC2]);
-					JSON_GetFloat(tdNode, "previewmodelrotx", TextDraw[free][TD_PrevRotX]);
-					JSON_GetFloat(tdNode, "previewmodelroty", TextDraw[free][TD_PrevRotY]);
-					JSON_GetFloat(tdNode, "previewmodelrotz", TextDraw[free][TD_PrevRotZ]);
-					JSON_GetFloat(tdNode, "previewmodelzoom", TextDraw[free][TD_PrevRotZoom]);
-					JSON_GetString(tdNode, "variablename", TextDraw[free][TD_VarName]);
-					JSON_GetFloat(tdNode, "progressbarmaxpercentage", TextDraw[free][TD_BarMaxPercentage]);
-					JSON_GetInt(tdNode, "progressbaralignment", TextDraw[free][TD_BarDirectory]);
-					JSON_GetInt(tdNode, "groupid", TextDraw[free][TD_GroupID]);
+					// Add TextDraw to the Iterator
+					Iter_Add(I_TEXTDRAWS, index);
 
-					if(AddTextDrawToGroup(free, TextDraw[free][TD_GroupID]) == 0)
+					// Assign all data to memory
+					JSON_GetString(tdNode, "string", TextDraw[index][TD_Text]);
+					JSON_GetFloat(tdNode, "posx", TextDraw[index][TD_PosX]);
+					JSON_GetFloat(tdNode, "posy", TextDraw[index][TD_PosY]);
+					JSON_GetInt(tdNode, "font", TextDraw[index][TD_Font]);
+					JSON_GetBool(tdNode, "public", TextDraw[index][TD_IsGlobal]);
+					JSON_GetInt(tdNode, "outline", TextDraw[index][TD_OutlineSize]);
+					JSON_GetInt(tdNode, "shadow", TextDraw[index][TD_ShadowSize]);
+					JSON_GetFloat(tdNode, "lettersizex", TextDraw[index][TD_LetterSizeX]);
+					JSON_GetFloat(tdNode, "lettersizey", TextDraw[index][TD_LetterSizeY]);
+					JSON_GetInt(tdNode, "textcolor", TextDraw[index][TD_Color]);
+					JSON_GetInt(tdNode, "backgroundcolor", TextDraw[index][TD_BGColor]);
+					JSON_GetInt(tdNode, "boxcolor", TextDraw[index][TD_BoxColor]);
+					JSON_GetInt(tdNode, "textcoloralpha", TextDraw[index][TD_ColorAlpha]);
+					JSON_GetInt(tdNode, "backgroundcoloralpha", TextDraw[index][TD_BGColorAlpha]);
+					JSON_GetInt(tdNode, "boxcoloralpha", TextDraw[index][TD_BoxColorAlpha]);
+					JSON_GetBool(tdNode, "usebox", TextDraw[index][TD_UseBox]);
+					JSON_GetBool(tdNode, "selectable", TextDraw[index][TD_Selectable]);
+					JSON_GetInt(tdNode, "alignment", TextDraw[index][TD_Alignment]);
+					JSON_GetFloat(tdNode, "boxsizex", TextDraw[index][TD_BoxSizeX]);
+					JSON_GetFloat(tdNode, "boxsizey", TextDraw[index][TD_BoxSizeY]);
+					JSON_GetBool(tdNode, "proportional", TextDraw[index][TD_Proportional]);
+					JSON_GetInt(tdNode, "previewmodelid", TextDraw[index][TD_PrevModelID]);
+					JSON_GetInt(tdNode, "previewmodelcolor1", TextDraw[index][TD_PrevModelC1]);
+					JSON_GetInt(tdNode, "previewmodelcolor2", TextDraw[index][TD_PrevModelC2]);
+					JSON_GetFloat(tdNode, "previewmodelrotx", TextDraw[index][TD_PrevRotX]);
+					JSON_GetFloat(tdNode, "previewmodelroty", TextDraw[index][TD_PrevRotY]);
+					JSON_GetFloat(tdNode, "previewmodelrotz", TextDraw[index][TD_PrevRotZ]);
+					JSON_GetFloat(tdNode, "previewmodelzoom", TextDraw[index][TD_PrevRotZoom]);
+					JSON_GetString(tdNode, "variablename", TextDraw[index][TD_VarName]);
+					JSON_GetFloat(tdNode, "progressbarmaxpercentage", TextDraw[index][TD_BarMaxPercentage]);
+					JSON_GetInt(tdNode, "progressbaralignment", TextDraw[index][TD_BarDirectory]);
+					JSON_GetInt(tdNode, "groupid", TextDraw[index][TD_GroupID]);
+
+					// Try assign TextDraw to the Group. If it doesn't exist for whatever reason, set it to -1
+					if(AddTextDrawToGroup(index, TextDraw[index][TD_GroupID]) == 0)
 					{
-						TextDraw[free][TD_GroupID] = -1;
+						TextDraw[index][TD_GroupID] = -1;
 					}
 				}
 				else break;
 			}
 		}
+		// Mark the project as "Open"
 		User[User_ProjectOpened] = true;
+		// Keep track of the project's index
 		User[User_ProjectIndex] = index;
 		return 1;
 	}
 	return 0;
 }
 
-AddTextDrawToGroup(tdid, groupid)
-{
-	if(groupid == -1)
-		return 0;
-
-	VALID_ITER_INDEX(I_GROUPS, groupid)
-	{
-		if(Group[groupid][gr_id] != -1)
-		{
-			Iter_Add(I_GROUP_TDS[groupid], tdid);
-			return 1;
-		}
-	}
-	return 0;
-}
-
+/* Get's the Project name, with or without extension */
 GetProjectName(index, bool:withExtension = false)
 {
 	new projectName[258];
@@ -1517,6 +1513,7 @@ GetProjectName(index, bool:withExtension = false)
 	return projectName;
 }
 
+/* Deletes a Project */
 DeleteProject(index, bool:force = true)
 {
 	new filePath[128];
@@ -1548,6 +1545,41 @@ DeleteProject(index, bool:force = true)
     |_|     \___| /_/\_\  \__| |_____/  |_|     \__,_|   \_/\_/     |_|       \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
                                                                                                                                                                                                                                                                
 */
+
+AddTextDrawToGroup(tdid, groupid)
+{
+	if(groupid == -1)
+		return 0;
+
+	VALID_ITER_INDEX(I_GROUPS, groupid)
+	{
+		if(Group[groupid][gr_id] != -1)
+		{
+			Iter_Add(I_GROUP_TDS[groupid], tdid);
+			TextDraw[tdid][TD_GroupID] = groupid;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+AssignTextDrawGroup(tdid, group)
+{
+	RemoveTextDrawGroup(tdid);
+	return AddTextDrawToGroup(tdid, group);
+}
+
+RemoveTextDrawGroup(tdid)
+{
+	if(TextDraw[tdid][TD_GroupID] == -1)
+		return 0;
+	
+	new groupid = TextDraw[tdid][TD_GroupID];
+	Iter_Remove(I_GROUP_TDS[groupid], tdid);
+	TextDraw[tdid][TD_GroupID] = -1;
+	return 1;
+}
+
 RedrawTD(playerid, tdid)
 {
 	if(TextDraw[tdid][TD_SelfID] != Text:INVALID_TEXT_DRAW)
@@ -1622,9 +1654,18 @@ ShowExportDialog(playerid)
 ShowTDOptions(playerid, tdid)
 {
 	User[User_ChoosenTDID] = tdid;
+
+	new tmp_tdvarName[128];
+	format(tmp_tdvarName, 128, GetProcessedTDVarName( tdid ));
+	strins(tmp_tdvarName, HEX_PALETTE_4, 0);
+
+	new tmp_groupName[128];
+	format(tmp_groupName, 128, GetGroupName(TextDraw[ tdid ][TD_GroupID]));
+	strins(tmp_groupName, HEX_PALETTE_4, 0);
+
 	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_TABLIST_HEADERS, 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
-	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos", "ss", GetProcessedTDVarName( tdid ), GetGroupName(TextDraw[ tdid ][TD_GroupID])), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos", "ss", tmp_tdvarName, tmp_groupName), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button2"));
 	PlayerSelectTD(playerid, false);
@@ -2604,7 +2645,6 @@ CallNTDCommand(playerid)
 				ShowWelcomeScreen(true);
 				TogglePlayerControllable(playerid, false);
 				ShowEditorEx(playerid);
-				ShowInfo(playerid, GetLanguageMessage("infoeditorleave", LANG_TYPE_MESSAGES));
 				for(new i; i < 15; i++)
 					SendClientMessage(playerid, -1, " ");
 			}
@@ -3089,10 +3129,11 @@ stock GetLanguageMessage(const key[], type, const subKey[] = "\1", const fmat[] 
 			}
 			else
 			{
-				if(JSON_GetString(tmpDialogNode, subKey, langMessageStr) != 0)
+				if(JSON_GetString(tmpDialogNode, subKey, langMessageStr) == 0)
 				{
-					langMessageStr = "Language Data Error";
+					SEARCH_REPLACE_ARGUMENTS(langMessageStr);
 				}
+				else langMessageStr = "Language Data Error";
 			}
 			
 		}
