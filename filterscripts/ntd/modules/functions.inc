@@ -1,3 +1,55 @@
+
+
+CreateGroup(const name[], id, bool:hidden)
+{
+	foreach(new i : I_GROUPS)
+	{
+		if(!strcmp(name, Group[i][gr_name], true))
+		{
+			return -1;
+		}
+	}
+	VALID_ITER_INDEX(I_GROUPS, Iter_Add(I_GROUPS, id))
+	{
+		Group[id][gr_id] = id;
+		Group[id][gr_hidden] = hidden;
+		format(Group[id][gr_name], 128, name);
+		return 1;
+	}
+	return 0;
+}
+
+OpenGroupsDialog(playerid, dialogtype)
+{
+	User[User_GroupDialogType] = dialogtype;
+
+	ClearDialogListitems(playerid);
+
+	// Construct Dialog
+	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info0"));
+	if(User[User_GroupDialogType] == 0) 
+		AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
+
+	foreach(new i : I_GROUPS)
+	{
+		AddDialogListitem(playerid, "   {FFFFFF}%i "HEX_PALETTE_4"%s\t%i\t%s%s", 
+			i,
+			Group[i][gr_name], 
+			Iter_Count(I_GROUP_TDS[i]),
+			(Group[i][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2),
+			(Group[i][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES)));
+	}
+	//
+
+	ShowPlayerDialogPages(playerid, "DP_GroupsList", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_GROUPS), MAX_GROUPS), 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button2"), 
+	EditorMaxDialogItems);
+	PlayerSelectTD(playerid, false);
+	return 1;
+}
+
 /*
   _____                     _                 _       ______                          _     _                       
  |  __ \                   (_)               | |     |  ____|                        | |   (_)                      
@@ -60,25 +112,6 @@ GetProjectIndexByName(const projectname[])
 		}
 	}
 	return -1;
-}
-
-CreateGroup(const name[], id, bool:hidden)
-{
-	foreach(new i : I_GROUPS)
-	{
-		if(!strcmp(name, Group[i][gr_name], true))
-		{
-			return -1;
-		}
-	}
-	VALID_ITER_INDEX(I_GROUPS, Iter_Add(I_GROUPS, id))
-	{
-		Group[id][gr_id] = id;
-		Group[id][gr_hidden] = hidden;
-		format(Group[id][gr_name], 128, name);
-		return 1;
-	}
-	return 0;
 }
 
 CreateProject(const projectname[])
@@ -1214,37 +1247,6 @@ IsProjectFileValid(index)
 	return 0;
 }
 
-OpenGroupsDialog(playerid, dialogtype)
-{
-	User[User_GroupDialogType] = dialogtype;
-
-	ClearDialogListitems(playerid);
-
-	// Construct Dialog
-	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info0"));
-	if(User[User_GroupDialogType] == 0) 
-		AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
-
-	foreach(new i : I_GROUPS)
-	{
-		AddDialogListitem(playerid, "   {FFFFFF}%i "HEX_PALETTE_4"%s\t%i\t%s%s", 
-			i,
-			Group[i][gr_name], 
-			Iter_Count(I_GROUP_TDS[i]),
-			(Group[i][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2),
-			(Group[i][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES)));
-	}
-	//
-
-	ShowPlayerDialogPages(playerid, "DP_GroupsList", DIALOG_STYLE_TABLIST_HEADERS, 
-	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "caption", "ii", Iter_Count(I_GROUPS), MAX_GROUPS), 
-	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button1"), 
-	GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "button2"), 
-	EditorMaxDialogItems);
-	PlayerSelectTD(playerid, false);
-	return 1;
-}
-
 OpenProjectDialog(playerid)
 {
 	ClearDialogListitems(playerid);
@@ -1365,7 +1367,7 @@ SaveProject(const projectFile[])
 	mainNode = JSON_Append(mainNode, groupsNode);
 
 	// Save File
-	JSON_SaveFile(filePath, mainNode);
+	printf("Saving Return: %i | Path: %s", JSON_SaveFile(filePath, mainNode), filePath);
 	return 1;
 }
 
@@ -1494,7 +1496,7 @@ LoadProject(projectindex)
 		// Mark the project as "Open"
 		User[User_ProjectOpened] = true;
 		// Keep track of the project's index
-		User[User_ProjectIndex] = index;
+		User[User_ProjectIndex] = projectindex;
 		return 1;
 	}
 	return 0;

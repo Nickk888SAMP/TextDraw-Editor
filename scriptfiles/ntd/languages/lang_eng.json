@@ -242,12 +242,6 @@
       "button1": "Confirm",
       "button2": "Back"
     },
-	"textchange": {
-      "caption": "Change text",
-	  "info0": "Enter the text to be set",
-      "button1": "Confirm",
-      "button2": "Back"
-    },
 	"spritechangelist": {
       "caption": "Change Sprite",
 	  "info0": "Enter manualy",

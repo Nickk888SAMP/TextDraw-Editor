@@ -1060,6 +1060,24 @@ DialogPages:DP_GroupsList(DIALOG_PAGES_CALLBACK_PARAMETERS)
                     AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
                     AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
 
+                    new formatedtd[MAXFORMATEDTD];
+                    foreach(new i : I_GROUP_TDS[ User[User_ChoosenGroupID] ])
+                    {
+                        format(formatedtd, MAXFORMATEDTD, TextDraw[i][TD_Text]);
+                        if(strlen(TextDraw[i][TD_Text]) > MAXFORMATEDTD - 4)
+                        {
+                            strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
+                            strcat(formatedtd, "...");
+                        }
+                        AddDialogListitem(playerid, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s",
+                            (i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
+                            i, 
+                            formatedtd, 
+                            GetProcessedTDVarName(i),
+                            (TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
+                            (TextDraw[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
+                    }
+
                     ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
                     GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  User[User_ChoosenGroupID], Group[  User[User_ChoosenGroupID] ][gr_name]), 
                     GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
@@ -1202,7 +1220,10 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
             {
                 if(Iter_Count(I_GROUP_TDS[groupId]) > 0)
                 {
-
+                    User[User_ChangingState] = CH_BULK_POSITION;
+                    EnableVarChangeTimer(true);
+                    PlayerSelectTD(playerid, false);
+                    HideEditor(playerid);
                 }
             }
             case 1: // Change Visibility
@@ -1216,6 +1237,11 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
             case 3: // Delete
             {
                 
+            }
+            default:
+            {
+                new index = Iter_Index(I_GROUP_TDS[groupId], (listitem - 4));
+                ShowTDOptions(playerid, index);
             }
         }
     }

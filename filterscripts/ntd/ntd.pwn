@@ -15,7 +15,7 @@
 *	GIVEN ANY CREDITS! DO NOT COPY THIS SCRIPT ELSEWHERE!										*
 *************************************************************************************************/
 
-#define MAX_PLAYERS 5
+#define MAX_PLAYERS 2
 #include <modules\defines>
 
 /*

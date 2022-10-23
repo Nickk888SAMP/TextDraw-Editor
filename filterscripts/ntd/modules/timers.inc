@@ -2,6 +2,7 @@
 public ChangingVarsTime()
 {
 	new tdid = User[User_EditingTDID];
+	new groupId = User[User_ChoosenGroupID];
 	new Keys,ud,lr;
 	new tmp_str[12];
 	new newlayer;
@@ -71,6 +72,17 @@ public ChangingVarsTime()
 					else 
 						TextDraw[tdid][TD_PosY] -= 5.0;
 				}	
+				case CH_BULK_POSITION:
+				{
+					foreach(new i : I_GROUP_TDS[groupId])
+					{
+						
+						if(!User[User_Accelerate]) 
+							TextDraw[i][TD_PosY] -= 0.1; 	
+						else 
+							TextDraw[i][TD_PosY] -= 5.0; 
+					}
+				}
 				case CH_SIZE:
 				{
 					if(!User[User_Accelerate]) 
@@ -163,6 +175,17 @@ public ChangingVarsTime()
 					else
 						TextDraw[tdid][TD_PosY] += 5.0;
 				}	
+				case CH_BULK_POSITION:
+				{
+					foreach(new i : I_GROUP_TDS[groupId])
+					{
+						
+						if(!User[User_Accelerate]) 
+							TextDraw[i][TD_PosY] += 0.1; 	
+						else 
+							TextDraw[i][TD_PosY] += 5.0; 
+					}
+				}
 				case CH_SIZE:
 				{
 					if(!User[User_Accelerate]) 
@@ -215,6 +238,17 @@ public ChangingVarsTime()
 					else
 						TextDraw[tdid][TD_PosX] -= 5.0; 
 				}	
+				case CH_BULK_POSITION:
+				{
+					foreach(new i : I_GROUP_TDS[groupId])
+					{
+						
+						if(!User[User_Accelerate]) 
+							TextDraw[i][TD_PosX] -= 0.1; 	
+						else 
+							TextDraw[i][TD_PosX] -= 5.0; 
+					}
+				}
 				case CH_SIZE:
 				{
 					if(!User[User_Accelerate]) 
@@ -261,6 +295,17 @@ public ChangingVarsTime()
 					else 
 						TextDraw[tdid][TD_PosX] += 5.0; 
 				}	
+				case CH_BULK_POSITION:
+				{
+					foreach(new i : I_GROUP_TDS[groupId])
+					{
+						
+						if(!User[User_Accelerate]) 
+							TextDraw[i][TD_PosX] += 0.1; 	
+						else 
+							TextDraw[i][TD_PosX] += 5.0; 
+					}
+				}
 				case CH_SIZE:
 				{
 					if(!User[User_Accelerate]) 
@@ -408,27 +453,45 @@ public ChangingVarsTime()
 			format(tmp_str, sizeof tmp_str, "%i", User[User_SpritePicker]);
 			strreplace(EditorString, "#2", tmp_str);
 		}
+		case CH_BULK_POSITION:
+		{
+			GameTextForPlayer(playerid, "Bulk Edit", CHANGING_VAR_TIME + 5, 3);
+		}
 	}
-	if((User[User_ChangingState] == CH_EDITOR_POS ? (EditorPosY < 224) : (TextDraw[tdid][TD_PosY] < 224)))
+	if(User[User_ChangingState] != CH_BULK_POSITION)
 	{
-		strins(EditorString, "~n~ ~n~ ~n~ ~n~ ~n~ ~n~", 0);
-		GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 3);
-	}	
-	else
-	{
-		GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 4);
+		if((User[User_ChangingState] == CH_EDITOR_POS ? (EditorPosY < 224) : (TextDraw[tdid][TD_PosY] < 224)))
+		{
+			strins(EditorString, "~n~ ~n~ ~n~ ~n~ ~n~ ~n~", 0);
+			GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 3);
+		}	
+		else
+		{
+			GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 4);
+		}
 	}
+
 	
 	if(EditorVarUpdated)
 	{
 		EditorVarUpdated = false;
 		if(User[User_ChangingState] != CH_EDITOR_POS)
 		{
-			if(User[User_ChangingState] == CH_POSITION || User[User_ChangingState] == CH_SPRITE) 
+			if(User[User_ChangingState] == CH_BULK_POSITION)
+			{
+				foreach(new i : I_GROUP_TDS[groupId])
+				{
+					RedrawTD(playerid, i);
+				}
+			}
+			else if(User[User_ChangingState] == CH_POSITION || User[User_ChangingState] == CH_SPRITE) 
 			{
 				RedrawTD(playerid, tdid);
 			}
-			else UpdateTD(playerid, tdid);
+			else
+			{
+				UpdateTD(playerid, tdid);
+			} 
 		}
 		else
 		{

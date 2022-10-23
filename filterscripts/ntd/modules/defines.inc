@@ -34,7 +34,7 @@
 
 #define CHANGING_VAR_TIME 				              15						            //The Update time for the editor
 #define MAXFORMATEDTD 					                32						            //Clamps the TextDraw name in the Dialogs
-#define CURSOR_COLOR 					                  -8388353				          //Default Cursor Color
+#define CURSOR_COLOR 					                  1687547391				          //Default Cursor Color
 #define BUTTON_TD_COLOR 				                -1						            //Default Buttons Color
 #define DIALOG_DIALOG_ADDER				              1000 					            //If there are coliding Dialog ID's, change this to fix it!
 #define TDPICKER_COLOR_ACTIVE 			            0xFFFF00FF				      //Color of the TD Picker when active
