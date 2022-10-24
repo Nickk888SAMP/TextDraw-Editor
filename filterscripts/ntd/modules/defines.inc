@@ -26,7 +26,7 @@
 #define SCRIPT_VERSION 			                    "7.0"
 
 #define MAX_TEMPLATES				                    50						            //Max templates that can be loaded
-#define MAX_PROJECTS 			  	                  (124)					            //Max projects that can be created and loaded
+#define MAX_PROJECTS 			  	                  (1000)					            //Max projects that can be created and loaded
 #define MAX_TEXTDRAWS			                      (512 - 1)	                //Max TextDraws that can be created and loaded
 #define MAX_LANGUAGES				                    30						            //Max languages that can be loaded
 #define MAX_SPRITES 				                    100						            //Max sprites that can be loaded into library.

@@ -1,7 +1,9 @@
-# TextDrawEditor
-NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor. 
-The goal was to make a easy to use, straight forward TextDraw editor, the script contains a lot of cool features, more then the original editor by iPLEOMAX!
+<img src="/NTD_RESOURCES/Welcome_Screen.png" width=75% height=75%>
 
+NTD is a TextDraw editor, inspired by iPLEOMAX's TextDraw editor. 
+The goal was to make a easy to use, straight forward TextDraw editor containing a lot of cool features, helping you, creating and editing your awesome TextDraws.
+
+## Features
 - Clickable interface.
 - Multilanguage support (English, Polish and German natively included)
 - Player Progress Bar Support (With Color and Max Percentage settings!)
@@ -21,19 +23,31 @@ The goal was to make a easy to use, straight forward TextDraw editor, the script
 - TextDraw layering (Change the layer of a TextDraw In-Game!).
 - Editor Compact mode (Creates a smaller version of the interface to make working easier!).
 
+
+## Instalation
+[Click here](https://github.com/Nickk888SAMP/TextDraw-Editor/blob/master/How_To_Install.txt)
+
 ## Dependencies
-* SSCANF2: https://github.com/maddinat0r/sscanf
+* sscanf2: https://github.com/maddinat0r/sscanf
+* fsutil: https://github.com/Southclaws/pawn-fsutil
+* json: https://github.com/Southclaws/pawn-json
+
 ### For the Source Code
 * YSI Library: https://github.com/pawn-lang/YSI-Includes
 * NDialogPages: https://github.com/Nickk888SAMP/Dialog-Pages
 * Progress2: https://github.com/Nickk888SAMP/progress2
+* EasyDialog: https://github.com/Awsomedude/easyDialog
+* sscanf2: https://github.com/maddinat0r/sscanf
+* fsutil: https://github.com/Southclaws/pawn-fsutil
+* json: https://github.com/Southclaws/pawn-json
 
 ## Credits:
 - a_samp: SAMP Team
-- ZCMD: Zeex
-- DFILE: DrAkE
 - YSI: Y-Less
-- sscanf: maddinat0r
 - ndialogpages: Nickk888
+- sscanf: maddinat0r
 - Progress2: Southclaws
+- pawn-json: Southclaws
+- pawn-fsutil: Southclaws
+- easydialog: Awsomedude
 - [continue98](https://github.com/continue98) for the help with GitHub Actions and debugging/fixing.

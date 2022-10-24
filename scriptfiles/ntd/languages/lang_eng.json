@@ -143,14 +143,14 @@
       "button2": "Back"
     },
 	"textdrawslist": {
-      "caption": "My TextDraws (#1/#2)",
-      "info0": "ID/Text#tVariable name#tType#tSelectable",
+      "caption": "My TextDraws ( #1/#2 )",
+      "info0": "ID/Text/Group#tVariable name#tType#tSelectable",
 	  "info1": "Create new TextDraw#t#t",
       "button1": "Confirm",
       "button2": "Back"
     },
 	"projectslist": {
-      "caption": "My Projects (#1/#2)",
+      "caption": "My Projects ( #1/#2 )",
 	  "info0": "Name#tFile Type#tTextDraw Amount",
 	  "info1": "Create new Project",
       "button1": "Confirm",

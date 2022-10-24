@@ -87,7 +87,7 @@ DeleteGroup(playerid, groupid)
 
 RenameGroup(groupid, const newName[])
 {
-	format(Group[ groupid ][gr_name], 128, newName);
+	format(Group[ groupid ][gr_name], 32, newName);
 	return 1;
 }
 

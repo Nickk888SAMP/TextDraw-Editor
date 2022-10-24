@@ -1,14 +1,17 @@
 {
 	"user": "Nickk888SAMP",
 	"repo": "TextDraw-Editor",
+	"tag": "7.0.0",
 	"entry": "gamemodes\\empty.pwn",
 	"output": "gamemodes\\empty.amx",
 	"dependencies": [
 		"sampctl/samp-stdlib",
-		"Zeex/samp-plugin-crashdetect:v4.20",
 		"maddinat0r/sscanf",
 		"Southclaws/samp-fsutil:1.3.0",
 		"Southclaws/pawn-json:1.2.0"
+	],
+	"dev_dependencies": [
+		"Zeex/samp-plugin-crashdetect:v4.20"
 	],
 	"local": true,
 	"runtime": {

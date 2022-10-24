@@ -699,7 +699,7 @@ Dialog:D_NewGroup(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
     {
-        if(strlen(inputtext) > 0 && strlen(inputtext) < 128 && IsValidString(inputtext))
+        if(strlen(inputtext) > 0 && strlen(inputtext) < 32 && IsValidString(inputtext))
         {
             switch(CreateGroup(inputtext, Iter_Free(I_GROUPS), false))
             {
@@ -718,7 +718,7 @@ Dialog:D_NewProject(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
     {
-        if(strlen(inputtext) > 0 && strlen(inputtext) < 40 && IsValidString(inputtext))
+        if(strlen(inputtext) > 0 && strlen(inputtext) < 64 && IsValidString(inputtext))
         {
             new pid = CreateProject(inputtext);
             if(pid != -1)
@@ -1242,7 +1242,7 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
 Dialog:D_GroupRename(DIALOG_CALLBACK_PARAMETERS)
 {
     new groupId = User[User_ChoosenGroupID];
-    if(response && strlen(inputtext) > 0 && strlen(inputtext) < 128 && IsValidString(inputtext))
+    if(response && strlen(inputtext) > 0 && strlen(inputtext) < 32 && IsValidString(inputtext))
     {
         if(GroupNameExists(inputtext))
         {

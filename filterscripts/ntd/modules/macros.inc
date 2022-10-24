@@ -35,20 +35,22 @@ for (new i_%0 = 0; ; ++i_%0) \
 
 // TextDraw listing single TextDraw format
 #define TDLIST_TD_FORMAT \
-	new formatedtd[MAXFORMATEDTD], yesnotext[32], typetext[32]; \
+	new formatedtd[MAXFORMATEDTD], yesnotext[32], typetext[32], grouptext[32]; \
 	format(typetext, 32, "%s%s", (TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2 : HEX_PALETTE_3), (TextDraw[i][TD_IsGlobal] ? GetLanguageMessage("textglobal", LANG_TYPE_MESSAGES) : GetLanguageMessage("textplayer", LANG_TYPE_MESSAGES))); \
 	format(yesnotext, 32, "%s%s", (TextDraw[i][TD_Selectable] ? HEX_PALETTE_2 : HEX_PALETTE_3), (TextDraw[i][TD_Selectable] ? GetLanguageMessage("textyes", LANG_TYPE_MESSAGES) : GetLanguageMessage("textno", LANG_TYPE_MESSAGES))); \
 	format(formatedtd, MAXFORMATEDTD, TextDraw[i][TD_Text]); \
+	format(grouptext, 32, (TextDraw[i][TD_GroupID] == -1 ? "" : " ( %s )"), (TextDraw[i][TD_GroupID] == -1 ? "" : GetGroupName(TextDraw[i][TD_GroupID]))); \
 	if(strlen(TextDraw[i][TD_Text]) > MAXFORMATEDTD - 4) \
 	{ \
 		strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD); \
 		strcat(formatedtd, "..."); \
 	} \
-	AddDialogListitem(playerid, "%s%i %s\"%s\"\t%s\t%s\t%s", \
+	AddDialogListitem(playerid, "%s%i %s\"%s\"%s\t%s\t%s\t%s", \
 	(i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "), \
 	i,  \
 	(TextDraw[i][TD_Hidden] ? HEX_PALETTE_5 : HEX_PALETTE_4),\
-	formatedtd,  \
+	formatedtd, \
+	grouptext, \
 	GetProcessedTDVarName(i), \
 	typetext, \
 	yesnotext);
