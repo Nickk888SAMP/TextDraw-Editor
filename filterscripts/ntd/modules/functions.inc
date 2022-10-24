@@ -1,13 +1,69 @@
+/*
 
+   _____                                          ______                          _     _                       
+  / ____|                                        |  ____|                        | |   (_)                      
+ | |  __   _ __    ___    _   _   _ __    ___    | |__     _   _   _ __     ___  | |_   _    ___    _ __    ___ 
+ | | |_ | | '__|  / _ \  | | | | | '_ \  / __|   |  __|   | | | | | '_ \   / __| | __| | |  / _ \  | '_ \  / __|
+ | |__| | | |    | (_) | | |_| | | |_) | \__ \   | |      | |_| | | | | | | (__  | |_  | | | (_) | | | | | \__ \
+  \_____| |_|     \___/   \__,_| | .__/  |___/   |_|       \__,_| |_| |_|  \___|  \__| |_|  \___/  |_| |_| |___/
+                                 | |                                                                            
+                                 |_|                                                                            
 
-CreateGroup(const name[], id, bool:hidden)
+*/
+
+OpenGroupOptions(playerid, groupid)
+{
+	new tmp_groupHiddenStr[64];
+	format(tmp_groupHiddenStr, 64, Group[ groupid ][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES));
+	strins(tmp_groupHiddenStr, Group[ groupid ][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2, 0);
+
+	ClearDialogListitems(playerid);
+	AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info0"));
+	AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info1"));
+	AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info2", "s", tmp_groupHiddenStr));
+	AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
+	AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
+
+	foreach(new i : I_GROUP_TDS[ groupid ])
+	{
+		TDLIST_TD_FORMAT
+	}
+
+	ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
+	GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  groupid, Group[groupid][gr_name]), 
+	GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
+	GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button2"),
+	EditorMaxDialogItems);
+	return 1;
+}
+
+SetGroupVisibility(playerid, groupid, bool:hidden)
+{
+	Group[groupid][gr_hidden] = hidden;
+	foreach(new i : I_GROUP_TDS[groupid])
+	{
+		SetTextDrawVisibility(playerid, i, hidden);
+	}
+	return 1;
+}
+
+GroupNameExists(const name[])
 {
 	foreach(new i : I_GROUPS)
 	{
 		if(!strcmp(name, Group[i][gr_name], true))
 		{
-			return -1;
+			return 1;
 		}
+	}
+	return 0;
+}
+
+CreateGroup(const name[], id, bool:hidden)
+{
+	if(GroupNameExists(name))
+	{
+		return -1;
 	}
 	VALID_ITER_INDEX(I_GROUPS, Iter_Add(I_GROUPS, id))
 	{
@@ -17,6 +73,22 @@ CreateGroup(const name[], id, bool:hidden)
 		return 1;
 	}
 	return 0;
+}
+
+DeleteGroup(playerid, groupid)
+{
+	foreach(new i : I_GROUP_TDS[groupid])
+	{
+		SetTextDrawVisibility(playerid, i, false);
+	}
+	Iter_Remove(I_GROUPS, groupid);
+	return 1;
+}
+
+RenameGroup(groupid, const newName[])
+{
+	format(Group[ groupid ][gr_name], 128, newName);
+	return 1;
 }
 
 OpenGroupsDialog(playerid, dialogtype)
@@ -29,6 +101,8 @@ OpenGroupsDialog(playerid, dialogtype)
 	AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info0"));
 	if(User[User_GroupDialogType] == 0) 
 		AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info1"));
+	else if(User[User_GroupDialogType] == 1) 
+		AddDialogListitem(playerid, GetLanguageMessage("groupslist", LANG_TYPE_DIALOGS, "info2"));
 
 	foreach(new i : I_GROUPS)
 	{
@@ -1372,7 +1446,7 @@ SaveProject(const projectFile[])
 }
 
 /* Try's to load a Project by the given Index */
-LoadProject(projectindex)
+LoadProject(playerid, projectindex)
 {
 	new filePath[258], Node:node, index, Node:tdArrayNode, Node:groupArrayNode, Node:tdNode, Node:groupNode, tdArrayLength, groupsArrayLength;
 	format(filePath, sizeof filePath, PROJECTS_DIRECTORYPATH"/%s", GetProjectName(projectindex, true));
@@ -1485,7 +1559,7 @@ LoadProject(projectindex)
 					JSON_GetInt(tdNode, "groupid", TextDraw[index][TD_GroupID]);
 
 					// Try assign TextDraw to the Group. If it doesn't exist for whatever reason, set it to -1
-					if(AddTextDrawToGroup(index, TextDraw[index][TD_GroupID]) == 0)
+					if(AddTextDrawToGroup(playerid, index, TextDraw[index][TD_GroupID]) == 0)
 					{
 						TextDraw[index][TD_GroupID] = -1;
 					}
@@ -1493,6 +1567,21 @@ LoadProject(projectindex)
 				else break;
 			}
 		}
+
+		// TextDraw group Hiding
+		foreach(new g : I_GROUPS)
+		{
+			if(Group[g][gr_hidden])
+			{
+				foreach(new td : I_GROUP_TDS[g])
+				{
+					SetTextDrawVisibility(playerid, td, true);
+				}
+			}
+			
+		}
+		
+
 		// Mark the project as "Open"
 		User[User_ProjectOpened] = true;
 		// Keep track of the project's index
@@ -1548,7 +1637,19 @@ DeleteProject(index, bool:force = true)
                                                                                                                                                                                                                                                                
 */
 
-AddTextDrawToGroup(tdid, groupid)
+SetTextDrawVisibility(playerid, tdid, bool:hidden)
+{
+	TextDraw[tdid][TD_Hidden] = hidden;
+	if(User[User_EditingTDID] == tdid && TextDraw[tdid][TD_Hidden])
+	{
+		User[User_EditingTDID] = -1;
+		ShowEditorEx(playerid, false);
+	}
+	RedrawTD(playerid, tdid);
+	return 1;
+}
+
+AddTextDrawToGroup(playerid, tdid, groupid)
 {
 	if(groupid == -1)
 		return 0;
@@ -1559,19 +1660,20 @@ AddTextDrawToGroup(tdid, groupid)
 		{
 			Iter_Add(I_GROUP_TDS[groupid], tdid);
 			TextDraw[tdid][TD_GroupID] = groupid;
+			SetTextDrawVisibility(playerid, tdid, Group[groupid][gr_hidden]);
 			return 1;
 		}
 	}
 	return 0;
 }
 
-AssignTextDrawGroup(tdid, group)
+AssignTextDrawGroup(playerid, tdid, group)
 {
-	RemoveTextDrawGroup(tdid);
-	return AddTextDrawToGroup(tdid, group);
+	RemoveTextDrawGroup(playerid, tdid);
+	return AddTextDrawToGroup(playerid, tdid, group);
 }
 
-RemoveTextDrawGroup(tdid)
+RemoveTextDrawGroup(playerid, tdid)
 {
 	if(TextDraw[tdid][TD_GroupID] == -1)
 		return 0;
@@ -1579,6 +1681,7 @@ RemoveTextDrawGroup(tdid)
 	new groupid = TextDraw[tdid][TD_GroupID];
 	Iter_Remove(I_GROUP_TDS[groupid], tdid);
 	TextDraw[tdid][TD_GroupID] = -1;
+	SetTextDrawVisibility(playerid, tdid, false);
 	return 1;
 }
 
@@ -1655,8 +1758,6 @@ ShowExportDialog(playerid)
 
 ShowTDOptions(playerid, tdid)
 {
-	User[User_ChoosenTDID] = tdid;
-
 	new tmp_tdvarName[128];
 	format(tmp_tdvarName, 128, GetProcessedTDVarName( tdid ));
 	strins(tmp_tdvarName, HEX_PALETTE_4, 0);
@@ -1664,6 +1765,13 @@ ShowTDOptions(playerid, tdid)
 	new tmp_groupName[128];
 	format(tmp_groupName, 128, GetGroupName(TextDraw[ tdid ][TD_GroupID]));
 	strins(tmp_groupName, HEX_PALETTE_4, 0);
+
+	if(TextDraw[ tdid ][TD_Hidden])
+	{
+		return ShowInfo(playerid, GetLanguageMessage("tdeditdeclinedhidden", LANG_TYPE_MESSAGES, "", "s", tmp_groupName));
+	}
+
+	User[User_ChoosenTDID] = tdid;
 
 	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_TABLIST_HEADERS, 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
@@ -1845,6 +1953,9 @@ HighlightTD(playerid, td)
 
 DrawTD(td)
 {
+	if(TextDraw[td][TD_Hidden])
+		return 1;
+	
 	new playerid = User[User_PlayerIDInEditor];
 	new red, green, blue, alpha;
 	#pragma unused alpha
@@ -1949,25 +2060,12 @@ CreateNewTDFromTemplate(templateid)
 
 OpenTDDialog(playerid)
 {
-	new formatedtd[MAXFORMATEDTD];
 	ClearDialogListitems(playerid);
 	AddDialogListitem(playerid, GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "info0"));
 	AddDialogListitem(playerid, GetLanguageMessage("textdrawslist", LANG_TYPE_DIALOGS, "info1"));
 	foreach(new i : I_TEXTDRAWS)
 	{
-		format(formatedtd, MAXFORMATEDTD, TextDraw[i][TD_Text]);
-		if(strlen(TextDraw[i][TD_Text]) > MAXFORMATEDTD - 4)
-		{
-			strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
-			strcat(formatedtd, "...");
-		}
-		AddDialogListitem(playerid, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s",
-			(i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
-			i, 
-			formatedtd, 
-			GetProcessedTDVarName(i),
-			(TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
-			(TextDraw[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
+		TDLIST_TD_FORMAT
 	}
 	PlayerSelectTD(playerid, false);
 	

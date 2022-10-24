@@ -57,6 +57,7 @@
 #define HEX_PALETTE_2 					"{274E13}" //#274E13
 #define HEX_PALETTE_3 					"{F44336}" //#F44336
 #define HEX_PALETTE_4 					"{76A5AF}" //#76A5AF
+#define HEX_PALETTE_5 					"{737373}" //#737373
 
 /*
   ______   _   _            _____            _     _           

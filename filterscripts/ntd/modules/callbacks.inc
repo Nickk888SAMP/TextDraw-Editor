@@ -149,6 +149,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		{
 			foreach(new i : I_TEXTDRAWS)
 			{
+				if(TextDraw[i][TD_Hidden])
+					continue;
+					
 				if(clickedid == TextDraw[i][TD_PickerID])
 				{
 					if(SelectTD(playerid, i) == 0)

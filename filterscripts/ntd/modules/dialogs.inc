@@ -9,9 +9,6 @@
                                    |___/       
 */
 
-
-
-
 Dialog:D_ConvertProject(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
@@ -320,6 +317,7 @@ Dialog:D_DeleteTextDraw(DIALOG_CALLBACK_PARAMETERS)
 {
     if(response)
     {
+        RemoveTextDrawGroup(playerid, User[User_ChoosenTDID]);
         new next;
         DestroyTD(User[User_ChoosenTDID], next);
         Iter_Remove(I_TEXTDRAWS, User[User_ChoosenTDID]);
@@ -725,7 +723,7 @@ Dialog:D_NewProject(DIALOG_CALLBACK_PARAMETERS)
             new pid = CreateProject(inputtext);
             if(pid != -1)
             {
-                if( LoadProject(pid) )
+                if( LoadProject(playerid, pid) )
                 {
                     format(EditorLString, sizeof EditorLString, GetLanguageMessage("infoprojectcreated", LANG_TYPE_MESSAGES, "", "s", inputtext));
                     ShowInfo(playerid, EditorLString);
@@ -753,7 +751,7 @@ Dialog:D_OpenProject(DIALOG_CALLBACK_PARAMETERS)
             {
                 if(Projects[projectindex][Pro_fileExtensionId] == FILE_EXTENSION_NTD)
                 {
-                    if(LoadProject(projectindex))
+                    if(LoadProject(playerid, projectindex))
                     {
                         ShowInfo(playerid, GetLanguageMessage("infoprojectloaded", LANG_TYPE_MESSAGES, "", "s", GetProjectName(projectindex)));
                         ShowWelcomeScreen(false);
@@ -1048,50 +1046,28 @@ DialogPages:DP_GroupsList(DIALOG_PAGES_CALLBACK_PARAMETERS)
                 }
                 default: // Group Select
                 {
-                    new tmp_groupHiddenStr[64];
                     User[User_ChoosenGroupID] = Iter_Index(I_GROUPS, (listitem - 1));
-                    format(tmp_groupHiddenStr, 64, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? GetLanguageMessage("texthidden", LANG_TYPE_MESSAGES) : GetLanguageMessage("textvisible", LANG_TYPE_MESSAGES));
-                    strins(tmp_groupHiddenStr, Group[ User[User_ChoosenGroupID] ][gr_hidden] ? HEX_PALETTE_3 : HEX_PALETTE_2, 0);
-
-                    ClearDialogListitems(playerid);
-                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info0"));
-                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info1"));
-                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info2", "s", tmp_groupHiddenStr));
-                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info3"));
-                    AddDialogListitem(playerid, GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "info4"));
-
-                    new formatedtd[MAXFORMATEDTD];
-                    foreach(new i : I_GROUP_TDS[ User[User_ChoosenGroupID] ])
-                    {
-                        format(formatedtd, MAXFORMATEDTD, TextDraw[i][TD_Text]);
-                        if(strlen(TextDraw[i][TD_Text]) > MAXFORMATEDTD - 4)
-                        {
-                            strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
-                            strcat(formatedtd, "...");
-                        }
-                        AddDialogListitem(playerid, "%s%i "HEX_PALETTE_4"\"%s\"\t%s\t%s\t%s",
-                            (i == User[User_EditingTDID] ? HEX_PALETTE_3">{FFFFFF} " : "   "),
-                            i, 
-                            formatedtd, 
-                            GetProcessedTDVarName(i),
-                            (TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2"Global" : HEX_PALETTE_3"Player"),
-                            (TextDraw[i][TD_Selectable] ? HEX_PALETTE_2"Yes" : HEX_PALETTE_3"No"));
-                    }
-
-                    ShowPlayerDialogPages(playerid, "D_GroupOptions", DIALOG_STYLE_TABLIST_HEADERS, 
-                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "caption", "is",  User[User_ChoosenGroupID], Group[  User[User_ChoosenGroupID] ][gr_name]), 
-                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button1"), 
-                    GetLanguageMessage("groupoptions", LANG_TYPE_DIALOGS, "button2"),
-                    EditorMaxDialogItems);
+                    OpenGroupOptions(playerid, User[User_ChoosenGroupID]);
                 }
             }
             PlayerSelectTD(playerid, false);
         }
-        else // Group assign
+        else if(User[User_GroupDialogType] == 1) // Group assign
         {
-            new groupid = Iter_Index(I_GROUPS, listitem);
-            AssignTextDrawGroup(User[User_ChoosenTDID], groupid);
-            ShowTDOptions(playerid, User[User_ChoosenTDID]);
+            switch(listitem)
+            {
+                case 0:
+                {
+                    RemoveTextDrawGroup(playerid, User[User_ChoosenTDID]);
+                    ShowTDOptions(playerid, User[User_ChoosenTDID]);
+                }
+                default:
+                {
+                    new groupid = Iter_Index(I_GROUPS, (listitem - 1));
+                    AssignTextDrawGroup(playerid, User[User_ChoosenTDID], groupid);
+                    ShowTDOptions(playerid, User[User_ChoosenTDID]);
+                }
+            }
         }
     }
     else ShowEditorEx(playerid);
@@ -1220,23 +1196,37 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
             {
                 if(Iter_Count(I_GROUP_TDS[groupId]) > 0)
                 {
+                    if(Group[groupId][gr_hidden])
+                    {
+                        SetGroupVisibility(playerid, groupId, !Group[groupId][gr_hidden]);
+                    }
                     User[User_ChangingState] = CH_BULK_POSITION;
                     EnableVarChangeTimer(true);
                     PlayerSelectTD(playerid, false);
                     HideEditor(playerid);
                 }
+                else OpenGroupOptions(playerid, groupId);
             }
             case 1: // Change Visibility
             {
-
+                SetGroupVisibility(playerid, groupId, !Group[groupId][gr_hidden]);
+                OpenGroupOptions(playerid, groupId);
             }
             case 2: // Rename
             {
-
+                Dialog_Show(playerid, "D_GroupRename", DIALOG_STYLE_INPUT, 
+                    GetLanguageMessage("grouprename", LANG_TYPE_DIALOGS, "caption"), 
+                    GetLanguageMessage("grouprename", LANG_TYPE_DIALOGS, "infos", "s", Group[groupId][gr_name]), 
+                    GetLanguageMessage("grouprename", LANG_TYPE_DIALOGS, "button1"), 
+                    GetLanguageMessage("grouprename", LANG_TYPE_DIALOGS, "button2"));
             }
             case 3: // Delete
             {
-                
+                Dialog_Show(playerid, "D_GroupDelete", DIALOG_STYLE_MSGBOX, 
+                    GetLanguageMessage("groupdelete", LANG_TYPE_DIALOGS, "caption"), 
+                    GetLanguageMessage("groupdelete", LANG_TYPE_DIALOGS, "infos"), 
+                    GetLanguageMessage("groupdelete", LANG_TYPE_DIALOGS, "button1"), 
+                    GetLanguageMessage("groupdelete", LANG_TYPE_DIALOGS, "button2"));
             }
             default:
             {
@@ -1246,5 +1236,36 @@ DialogPages:D_GroupOptions(DIALOG_CALLBACK_PARAMETERS)
         }
     }
     else OpenGroupsDialog(playerid, 0);
+    return 1;
+}
+
+Dialog:D_GroupRename(DIALOG_CALLBACK_PARAMETERS)
+{
+    new groupId = User[User_ChoosenGroupID];
+    if(response && strlen(inputtext) > 0 && strlen(inputtext) < 128 && IsValidString(inputtext))
+    {
+        if(GroupNameExists(inputtext))
+        {
+            ShowInfo(playerid, GetLanguageMessage("infogroupexists", LANG_TYPE_MESSAGES));
+        }
+        else
+        {
+            RenameGroup(groupId, inputtext);
+            OpenGroupOptions(playerid, groupId);
+        }
+    }
+    else OpenGroupOptions(playerid, groupId);
+    return 1;
+}
+
+Dialog:D_GroupDelete(DIALOG_CALLBACK_PARAMETERS)
+{
+    new groupId = User[User_ChoosenGroupID];
+    if(response)
+    {
+        DeleteGroup(playerid, groupId);
+        OpenGroupsDialog(playerid, 0);
+    }
+    else OpenGroupOptions(playerid, groupId);
     return 1;
 }

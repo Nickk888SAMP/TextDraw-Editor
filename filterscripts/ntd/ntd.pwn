@@ -1,22 +1,22 @@
-/************************************************************************************************
-*	Nickk's TextDraw editor																		*
-*	Release: 7.0.0																				*
-*	All right reserved! C By: Nickk888															*
-*																								*
-*	Credits:																					*
-*	a_samp: SAMP Team																			*
-*	sscanf2: maddinat0r																			*
-*	YSI: Y_Less																					*
-*	ndialogpages: Nickk888 																		*
-*	progress2: Southclaws 																		*
-*	ASCII Art Generator: https://patorjk.com/software/taag/#p=display&h=0&v=0&f=Big				*
-*																								*
-*	YOU ARE NOT ALLOWED TO RECREATE THIS FILTERSCRIPT WITHOUT									*
-*	GIVEN ANY CREDITS! DO NOT COPY THIS SCRIPT ELSEWHERE!										*
+/*************************************************************************************************
+*	Nickk's TextDraw editor																		                                     *
+*	Release: 7.0.0																				                                         *
+*	All right reserved! C By: Nickk888															                               *
+*																								                                                 *
+*	Credits:																					                                             *
+*	a_samp: SAMP Team																			                                         *
+*	sscanf2: maddinat0r																			                                       *
+*	YSI: Y_Less																					                                           *
+*	ndialogpages: Nickk888 																		                                     *
+*	progress2: Southclaws 																		                                     *
+*	ASCII Art Generator: https://patorjk.com/software/taag/#p=display&h=0&v=0&f=Big				         *
+*																								                                                 *
+*	YOU ARE NOT ALLOWED TO RECREATE THIS FILTERSCRIPT WITHOUT									                     *
+*	GIVEN ANY CREDITS! DO NOT COPY THIS SCRIPT ELSEWHERE!										                       *
 *************************************************************************************************/
 
 #define MAX_PLAYERS 2
-#include <modules\defines>
+#include <defines>
 
 /*
   ___               _             _            

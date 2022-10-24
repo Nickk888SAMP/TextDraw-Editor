@@ -26,6 +26,10 @@
 	"texthidden": "Hidden",
 	"textvisible": "Visible",
     "keysinverted": "SWITCHED",
+	"textyes": "Yes",
+	"textno": "No",
+	"textglobal": "Global",
+	"textplayer": "Player",
     "infoprojectlimit": "The maximum number of projects has been reached.",
     "infoprojectinvalidname": "The name is too short, too long or has invalid characters.",
     "infoprojectexists": "This project already exists.",
@@ -49,7 +53,8 @@
 	"infomaxgroupsreached": "The maximum number of groups has been reached.",
 	"infogroupexists": "Group with that name already exists.",
 	"exporttypesimple": "Normal export",
-	"exporttypefs": "Functional filterscript"
+	"exporttypefs": "Functional filterscript",
+    "tdeditdeclinedhidden": "You can't edit this Textdraw because the group this textdraw belongs in is hidden.#nPlease change the visibility of the group named: #1"
   },
   "gametexts": {
     "tdclonedinfo": "DUPLICATED_ID_#1",
@@ -273,7 +278,7 @@
     },
 	"changeprojectname": {
       "caption": "Change project name",
-	  "info0": "Enter new name of project.",
+	  "info0": "Enter new name of the project.",
 	  "info1": "Current name: \"#1\"",
       "button1": "Confirm",
       "button2": "Back"
@@ -338,7 +343,8 @@
 	"groupslist": {
       "caption": "My Groups (#1/#2)",
 	  "info0": "Name#tConnected TextDraws#tVisibility",
-	  "info1": "Create new Group",
+	  "info1": "Create new group",
+	  "info2": "Remove from group",
       "button1": "Confirm",
       "button2": "Back"
     },
@@ -357,6 +363,20 @@
 	  "info4": "Delete",
       "button1": "Confirm",
       "button2": "Back"
+    },
+	"grouprename": {
+      "caption": "Change group name",
+	  "info0": "Enter new name of the group.",
+	  "info1": "Current name: \"#1\"",
+      "button1": "Confirm",
+      "button2": "Back"
+    },
+	"groupdelete": {
+      "caption": "Deleting group",
+	  "info0": "Are you sure you want to delete this group?",
+	  "info1": "This action only deletes the group, not the TextDraws inside.",
+      "button1": "Yes",
+      "button2": "No"
     }
   }
 }
