@@ -268,7 +268,13 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 		}
 		else if(clickedid == B_Shadow)
 		{
-			if(TextDraw[tdid][TD_ShadowSize] == 4)
+			if(TextDraw[tdid][TD_OutlineSize] > 0)
+			{
+				TextDraw[tdid][TD_OutlineSize] = 0;
+				TextDraw[tdid][TD_ShadowSize] = 0;
+			}
+
+			if(TextDraw[tdid][TD_ShadowSize] == 10)
 				TextDraw[tdid][TD_ShadowSize] = -1;
 			
 			TextDraw[tdid][TD_ShadowSize]++;
@@ -277,22 +283,28 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
 			return 1;
 		}
-		else if(clickedid == B_UseBox)
-		{
-			TextDraw[tdid][TD_UseBox] = !TextDraw[tdid][TD_UseBox];
-			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_UseBox] ? "tdboxenabled" : "tdboxdisabled") , LANG_TYPE_GAMETEXTS), 1500, 6);
-			UpdateTD(playerid, tdid);
-			return 1;
-		}
 		else if(clickedid == B_Outline)
 		{
-			if(TextDraw[tdid][TD_OutlineSize] == 4)
+			if(TextDraw[tdid][TD_ShadowSize] > 0)
+			{
+				TextDraw[tdid][TD_ShadowSize] = 0;
+				TextDraw[tdid][TD_OutlineSize] = 0;
+			}
+
+			if(TextDraw[tdid][TD_OutlineSize] == 10)
 				TextDraw[tdid][TD_OutlineSize] = -1;
 			
 			TextDraw[tdid][TD_OutlineSize]++;
 			UpdateTD(playerid, tdid);
 			format(EditorString, sizeof EditorString, GetLanguageMessage("tdoutlinesize", LANG_TYPE_GAMETEXTS, "", "i", TextDraw[tdid][TD_OutlineSize]));
 			GameTextForPlayer(playerid, EditorString, 1500, 6);
+			return 1;
+		}
+		else if(clickedid == B_UseBox)
+		{
+			TextDraw[tdid][TD_UseBox] = !TextDraw[tdid][TD_UseBox];
+			GameTextForPlayer(playerid, GetLanguageMessage( (TextDraw[tdid][TD_UseBox] ? "tdboxenabled" : "tdboxdisabled") , LANG_TYPE_GAMETEXTS), 1500, 6);
+			UpdateTD(playerid, tdid);
 			return 1;
 		}
 		else if(clickedid == B_Color)

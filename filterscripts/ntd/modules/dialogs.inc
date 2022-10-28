@@ -668,12 +668,7 @@ Dialog:D_TextDrawOptions(DIALOG_CALLBACK_PARAMETERS)
             case 5: // Delete
             {
                 new formatedtd[MAXFORMATEDTD];
-                format(formatedtd, MAXFORMATEDTD, TextDraw[tdid][TD_Text]);
-                if(strlen(TextDraw[tdid][TD_Text]) > MAXFORMATEDTD - 4)
-                {
-                    strdel(formatedtd, MAXFORMATEDTD - 4, MAXFORMATEDTD);
-                    strcat(formatedtd, "...");
-                }
+                format(formatedtd, MAXFORMATEDTD, ClampString(TextDraw[tdid][TD_Text]));
                 Dialog_Show(playerid, "D_DeleteTextDraw", DIALOG_STYLE_MSGBOX, 
                 GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "caption"), 
                 GetLanguageMessage("deletedconfirm", LANG_TYPE_DIALOGS, "infos", "s", formatedtd), 

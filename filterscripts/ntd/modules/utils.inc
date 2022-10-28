@@ -86,4 +86,14 @@ HexToInt(const string[])
     return res;
 }
 
+ClampString(const strToClamp[])
+{
+    new clampedString[MAXFORMATEDTD + 3];
+    format(clampedString, MAXFORMATEDTD, strToClamp);
+    if(strlen(strToClamp) >= MAXFORMATEDTD)
+    {
+        strins(clampedString, "...", MAXFORMATEDTD - 1);
+    }
+    return clampedString;
+}
 

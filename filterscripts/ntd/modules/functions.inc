@@ -1775,7 +1775,7 @@ ShowTDOptions(playerid, tdid)
 	User[User_ChoosenTDID] = tdid;
 
 	Dialog_Show(playerid, "D_TextDrawOptions", DIALOG_STYLE_TABLIST_HEADERS, 
-	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, TextDraw[ tdid ][TD_Text]), 
+	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "caption", "is", tdid, ClampString(TextDraw[ tdid ][TD_Text])), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "infos", "ss", tmp_tdvarName, tmp_groupName), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button1"), 
 	GetLanguageMessage("tdoptions", LANG_TYPE_DIALOGS, "button2"));
