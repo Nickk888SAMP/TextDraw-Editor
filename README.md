@@ -5,7 +5,7 @@ The goal was to make a easy to use, straight forward TextDraw editor containing 
 
 ## Features
 - Clickable interface.
-- Multilanguage support (English, Polish and German natively included)
+- Multilanguage support.
 - Player Progress Bar Support (With Color and Max Percentage settings!)
 - Build-in Sprite selector (Over 300 sprites!).
 - Preview Model and Sprites support.
@@ -13,15 +13,16 @@ The goal was to make a easy to use, straight forward TextDraw editor containing 
 - Over 35 Pre-made colors to choose.
 - Fully customizable interface (Button colors, override colors & interface position).
 - TextDraw templates (Pre-made TextDraws to choose and create your own!).
-- Quick Selection tool (Just select your TextDraw! No need to search within the Dialog!).
+- Quick Selection tool (Just select your TextDraw! No need to search within the dialog!).
 - TextDraw visibility option (If you want to show other players your work!).
 - Fully editable Preview Model (Rotation, Zoom, ID and colors!).
 - Easy export your project (Simple export or Self-working Script).
 - Quick, fluid and stable working environment.
 - File based language and templates system (Add new languages without code interaction!).
-- Array Export mode (Collapses TextDraws with default Variable name into an Array shortening the code amount!).
+- Array Export mode (Collapses TextDraws with default Variable name into an array shortening the code amount!).
 - TextDraw layering (Change the layer of a TextDraw In-Game!).
 - Editor Compact mode (Creates a smaller version of the interface to make working easier!).
+- Groups (Place your TextDraws into groups, move or hide the whole group!)
 
 
 ## Instalation

@@ -174,7 +174,7 @@ Dialog:D_PreviewModel2(DIALOG_CALLBACK_PARAMETERS)
         new tdid = User[User_EditingTDID];
         TextDraw[tdid][TD_PrevModelID] = strval(inputtext);
         UpdateTD(playerid, tdid);
-        PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+        PlaySoundEffect(playerid, CONFIRM_SOUNDID);
         ShowEditorEx(playerid);
     }
     else ShowEditorEx(playerid);
@@ -217,7 +217,7 @@ Dialog:D_BarMaxPercentage(DIALOG_CALLBACK_PARAMETERS)
             new tdid = User[User_EditingTDID];
             TextDraw[tdid][TD_BarMaxPercentage] = floatstr(inputtext);
             UpdateTD(playerid, tdid);
-            PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+            PlaySoundEffect(playerid, CONFIRM_SOUNDID);
         }
     }
     ShowEditorEx(playerid);
@@ -326,7 +326,7 @@ Dialog:D_DeleteTextDraw(DIALOG_CALLBACK_PARAMETERS)
         //
         format(EditorString, sizeof EditorString, GetLanguageMessage("tddeletedinfo", LANG_TYPE_GAMETEXTS, "", "i", User[User_ChoosenTDID]));
         GameTextForPlayer(playerid, EditorString, 5000, 6);
-        PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+        PlaySoundEffect(playerid, CONFIRM_SOUNDID);
         ShowEditorEx(playerid, true);
     }
     else ShowEditorEx(playerid), ShowTDOptions(playerid, User[User_ChoosenTDID]);
@@ -425,7 +425,7 @@ Dialog:D_TextChange(DIALOG_CALLBACK_PARAMETERS)
             format(TextDraw[tdid][TD_Text], 300, inputtext);
             RedrawTD(playerid, tdid);
             ShowEditorEx(playerid);
-            PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+            PlaySoundEffect(playerid, CONFIRM_SOUNDID);
         }
         else ShowEditorEx(playerid);
     }
@@ -439,13 +439,13 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
     {
         switch(listitem)
         {
-            case 0: //Pozycja Edytora
+            case 0: // Change ditor position
             {
                 User[User_ChangingState] = CH_EDITOR_POS;
                 EnableVarChangeTimer(true);
                 PlayerSelectTD(playerid, false);
             }
-            case 1: //Zmien kolor najechania
+            case 1: // Change highlight color
             {
                 ClearDialogListitems(playerid);
                 for(new i = 1; i < sizeof Premade_Colors; i++)
@@ -458,7 +458,7 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 GetLanguageMessage("overridecolorchange", LANG_TYPE_DIALOGS, "button2"),
                 EditorMaxDialogItems);
             }
-            case 2: //Zmien kolor przyciskow
+            case 2: // Change buttons color
             {
                 ClearDialogListitems(playerid);
                 for(new i = 1; i < sizeof Premade_Colors; i++)
@@ -471,7 +471,7 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 GetLanguageMessage("buttonscolorchange", LANG_TYPE_DIALOGS, "button2"),
                 EditorMaxDialogItems);
             }
-            case 3: //Odwroc Shift z Spacja
+            case 3: // Switch space with spacebar
             {
                 new keyA = EditorFasterKey;
                 new keyB = EditorAcceptKey;
@@ -479,18 +479,18 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 EditorAcceptKey = keyA;
                 ShowEditorSettings(playerid);
             }
-            case 4: //Szybki wybor
+            case 4: // Quick Select
             {
                 EditorQuickSelect = !EditorQuickSelect;
                 QuickSelectionShow(playerid, EditorQuickSelect);
                 ShowEditorSettings(playerid);
             }
-            case 5: //Wyswietlanie TextDrawow
+            case 5: // Textdraw display
             {
                 ToggleTextDrawShowForAll(!EditorTextDrawShowForAll);
                 ShowEditorSettings(playerid);
             }
-            case 6: //Tryb kompaktowy
+            case 6: // Compact Mode
             {
                 EditorCompactMode = !EditorCompactMode;
                 DestroyEditor();
@@ -498,9 +498,14 @@ Dialog:D_Settings(DIALOG_CALLBACK_PARAMETERS)
                 ShowEditorEx(playerid);
                 ShowEditorSettings(playerid);
             }
-            case 7: //Zmien jezyk
+            case 7: //Sounds
+            {
+                EditorSounds = !EditorSounds;
+                ShowEditorSettings(playerid);
+            }
+            case 8: // Change language
                 ShowLanguageChangeDialog(playerid, 2);
-            case 8: //Ustawienia fabryczne
+            case 9: // Restore default settings
             {
                 Dialog_Show(playerid, "D_SettingsReset2", DIALOG_STYLE_MSGBOX, 
                 GetLanguageMessage("settingsreset", LANG_TYPE_DIALOGS, "caption"), 
@@ -635,7 +640,7 @@ Dialog:D_TextDrawOptions(DIALOG_CALLBACK_PARAMETERS)
                     format(EditorString, sizeof EditorString, GetLanguageMessage("tdclonedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
                     //
                     GameTextForPlayer(playerid, EditorString, 5000, 6);
-                    PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+                    PlaySoundEffect(playerid, CONFIRM_SOUNDID);
                     RelayerEditor();
                     ShowEditorEx(playerid, true);
                 }
@@ -812,7 +817,7 @@ Dialog:D_CreateNewTD(DIALOG_CALLBACK_PARAMETERS)
                     SelectTD(playerid, tdid);
                     //
                     format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
-                    PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+                    PlaySoundEffect(playerid, CONFIRM_SOUNDID);
                     GameTextForPlayer(playerid, EditorString, 5000, 6);
                     //
                     RelayerEditor();
@@ -823,6 +828,9 @@ Dialog:D_CreateNewTD(DIALOG_CALLBACK_PARAMETERS)
             }
             case 1: // Template
             {
+                if(Iter_Count(I_TEMPLATES) == 0)
+                    return ShowInfo(playerid, GetLanguageMessage("tdnotemplatesfound", LANG_TYPE_MESSAGES));
+                
                 ClearDialogListitems(playerid);
                 foreach(new i : I_TEMPLATES)
                 {
@@ -992,7 +1000,7 @@ DialogPages:DP_TemplatesList(DIALOG_PAGES_CALLBACK_PARAMETERS)
             //
             format(EditorString, sizeof EditorString, GetLanguageMessage("tdcreatedinfo", LANG_TYPE_GAMETEXTS, "", "i", tdid));
             GameTextForPlayer(playerid, EditorString, 5000, 6);
-            PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+            PlaySoundEffect(playerid, CONFIRM_SOUNDID);
             RelayerEditor();
             ShowEditorEx(playerid, true);
             

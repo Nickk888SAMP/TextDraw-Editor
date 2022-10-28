@@ -63,6 +63,7 @@ new bool:ScriptScriptActive;
 new bool:EditorQuickSelect;
 new bool:EditorTextDrawShowForAll;
 new bool:EditorCompactMode = false;
+new bool:EditorSounds = true;
 new bool:EditorVarUpdated;
 new Float:EditorCompactSize = 2.0;
 new EditorPosY;

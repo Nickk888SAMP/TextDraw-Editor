@@ -54,7 +54,8 @@
 	"infogroupexists": "Group with that name already exists.",
 	"exporttypesimple": "Normal export",
 	"exporttypefs": "Functional filterscript",
-    "tdeditdeclinedhidden": "You can't edit this Textdraw because the group this textdraw belongs in is hidden.#nPlease change the visibility of the group named: #1"
+    "tdeditdeclinedhidden": "You can't edit this Textdraw because the group this textdraw belongs in is hidden.#nPlease change the visibility of the group named: #1",
+    "tdnotemplatesfound": "No templates found"
   },
   "gametexts": {
     "tdclonedinfo": "DUPLICATED_ID_#1",
@@ -101,8 +102,9 @@
       "info5": "Quick Select#t#2",
       "info6": "TextDraw display#t#3",
       "info7": "Compact mode#t#4",
-      "info8": "Change language#t#5",
-      "info9": "Restore default settings#t",
+      "info8": "Sounds#t#5",
+      "info9": "Change language#t#6",
+      "info10": "Restore default settings#t",
       "button1": "Confirm",
       "button2": "Back"
     },

@@ -1725,18 +1725,19 @@ GetExportTypeName()
 
 ShowEditorSettings(playerid)
 {
-	new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60], langstr[30];
+	new invertedstr[40], quickselectstr[30], compmodestr[30], tdvisistr[60], tdsoundsstr[30], langstr[30];
 	if(EditorAcceptKey == KEY_JUMP && EditorFasterKey == KEY_SPRINT)
 		format(invertedstr, sizeof invertedstr, "%s%s", HEX_PALETTE_3, GetLanguageMessage("keysinverted", LANG_TYPE_MESSAGES));
 
 	format(quickselectstr, sizeof quickselectstr, "%s%s", (EditorQuickSelect ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorQuickSelect ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
 	format(tdvisistr, sizeof tdvisistr, "%s%s", (EditorTextDrawShowForAll ? HEX_PALETTE_3 : HEX_PALETTE_2), GetLanguageMessage((EditorTextDrawShowForAll ? "tdvforall" : "tdvforme"), LANG_TYPE_MESSAGES));
 	format(compmodestr, sizeof compmodestr, "%s%s", (EditorCompactMode ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorCompactMode ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
+	format(tdsoundsstr, sizeof tdsoundsstr, "%s%s", (EditorSounds ? HEX_PALETTE_2 : HEX_PALETTE_3), GetLanguageMessage((EditorSounds ? "texton" : "textoff"), LANG_TYPE_MESSAGES));
 	format(langstr, sizeof langstr, "%s%s", HEX_PALETTE_1, (EditorLanguage == -1 ? "" : GetLanguageName(EditorLanguage)));
 
 	Dialog_Show(playerid, "D_Settings", DIALOG_STYLE_TABLIST_HEADERS, 
 		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "caption"), 
-		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "sssss", invertedstr, quickselectstr, tdvisistr, compmodestr, langstr), 
+		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "infos", "ssssss", invertedstr, quickselectstr, tdvisistr, compmodestr, tdsoundsstr, langstr), 
 		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button1"), 
 		GetLanguageMessage("dialogsettings", LANG_TYPE_DIALOGS, "button2"));
 	PlayerSelectTD(playerid, false);
@@ -1897,7 +1898,7 @@ SelectTD(playerid, tdid)
 		strreplace(EditorString, "#1", tmp_str);
 		//
 		GameTextForPlayer(playerid, EditorString, 5000, 6);
-		PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+		PlaySoundEffect(playerid, CONFIRM_SOUNDID);
 		HighlightTD(playerid, User[User_EditingTDID]);
 		ShowEditorEx(playerid);
 		TextDrawColor(TextDraw[tdid][TD_PickerID], TDPICKER_COLOR_ACTIVE);
@@ -2133,23 +2134,23 @@ Float:TBarMaxPercentage = 100.0, TBarDirectory = BAR_DIRECTION_RIGHT)
 			{
 				format(TextDraw[index][TD_Text], 300, "TextDraw");
 				format(TextDraw[index][TD_VarName], 35, "");
-				TextDraw[index][TD_PosX] = 233.0;
-				TextDraw[index][TD_PosY] = 225.0;
+				TextDraw[index][TD_PosX] = 320.0;
+				TextDraw[index][TD_PosY] = 240.0;
 				TextDraw[index][TD_Font] = 1;
 				TextDraw[index][TD_IsGlobal] = true;
 				TextDraw[index][TD_OutlineSize] = 1;
 				TextDraw[index][TD_ShadowSize] = 0;
 				TextDraw[index][TD_LetterSizeX] = 0.6;
 				TextDraw[index][TD_LetterSizeY] = 2.0;
-				TextDraw[index][TD_BoxSizeX] = 400.0;
-				TextDraw[index][TD_BoxSizeY] = 17.0;
+				TextDraw[index][TD_BoxSizeX] = 20.0;
+				TextDraw[index][TD_BoxSizeY] = 120.0;
 				TextDraw[index][TD_Color] = -1;
 				TextDraw[index][TD_BGColor] = 255;
 				TextDraw[index][TD_BoxColor] = 100;
 				TextDraw[index][TD_ColorAlpha] = 255;
 				TextDraw[index][TD_BGColorAlpha] = 255;
-				TextDraw[index][TD_BoxColorAlpha] = 50;
-				TextDraw[index][TD_Alignment] = 1;
+				TextDraw[index][TD_BoxColorAlpha] = 127;
+				TextDraw[index][TD_Alignment] = 2;
 				TextDraw[index][TD_Selectable] = false;
 				TextDraw[index][TD_Proportional] = true;
 				TextDraw[index][TD_UseBox] = true;
@@ -2685,6 +2686,13 @@ RelayerEditor()
                                                                                                        
                                                                                                        
 */
+PlaySoundEffect(playerid, soundid)
+{
+	if(!EditorSounds) 
+		return 1;
+	return PlayerPlaySound(playerid, soundid, 0.0, 0.0, 0.0);
+}
+
 public BlockVarsChanger(bool:block)
 {
 	if(block)
@@ -2878,6 +2886,7 @@ ResetConfiguration(playerid)
 	EditorAcceptKey = KEY_SPRINT;
 	EditorVersion = SCRIPT_VERSION;
 	EditorCompactMode = false;
+	EditorSounds = true;
 	ToggleTextDrawShowForAll(false);
 	QuickSelectionShow(playerid, true);
 	EditorQuickSelect = true;
@@ -2909,7 +2918,7 @@ ShowInfo(playerid, const text[])
 {
 	format(EditorString, sizeof EditorString, CAPTION_TEXT"%s", GetLanguageMessage("infodialogcaption", LANG_TYPE_MESSAGES));
 	Dialog_Show(playerid, "D_Info", DIALOG_STYLE_MSGBOX, EditorString, text, "OK", #);
-	PlayerPlaySound(playerid, CONFIRM_SOUNDID, 0.0, 0.0, 0.0);
+	PlaySoundEffect(playerid, CONFIRM_SOUNDID);
 	return 1;
 }
 
@@ -2983,6 +2992,7 @@ LoadConfigurations()
 		JSON_GetBool(node, "quickselect", EditorQuickSelect);
 		JSON_GetBool(node, "tdshowforall", EditorTextDrawShowForAll);
 		JSON_GetBool(node, "compactmode", EditorCompactMode);
+		JSON_GetBool(node, "editorsounds", EditorSounds);
 		JSON_GetString(node, "scriptversion", EditorVersion);
 		JSON_GetString(node, "languagefile", tmplangname);
 		JSON_GetInt(node, "maxdialogitems", EditorMaxDialogItems);
@@ -3005,6 +3015,7 @@ SaveConfigurations()
 		"quickselect", JSON_Bool(EditorQuickSelect),
 		"tdshowforall", JSON_Bool(EditorTextDrawShowForAll),
 		"compactmode", JSON_Bool(EditorCompactMode),
+		"editorsounds", JSON_Bool(EditorSounds),
 		"scriptversion", JSON_String(EditorVersion),
 		"languagefile", JSON_String(GetLanguageName(EditorLanguage)),
 		"maxdialogitems", JSON_Int(EditorMaxDialogItems)

@@ -127,7 +127,7 @@
 
 */
 #define MAX_NTD_LANGUAGE_DIALOGS		  40						//Do NOT change!
-#define MAX_NTD_DIALOG_INFO				    10						//Do NOT change!
+#define MAX_NTD_DIALOG_INFO				    15						//Do NOT change!
 #define DEFAULT_LANG_STRING_SIZE		  328						//Do NOT change!
 #define BUTTON_TD_SIZE					      35.5					//Do NOT change!
 #define BUTTON_TD_SPACER				      35.5					//Do NOT change!
