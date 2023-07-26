@@ -11,6 +11,7 @@ public ChangingVarsTime()
 	
 	if(User[User_BlockVarsTime] == false)
 	{
+		// Up
 		if(ud == KEY_UP)
 		{
 			EditorVarUpdated = true;
@@ -123,6 +124,7 @@ public ChangingVarsTime()
 				}
 			}
 		}
+		// Down
 		else if(ud == KEY_DOWN)
 		{
 			EditorVarUpdated = true;
@@ -226,6 +228,7 @@ public ChangingVarsTime()
 				}
 			}
 		}
+		// Left
 		if(lr == KEY_LEFT)
 		{
 			EditorVarUpdated = true;
@@ -283,6 +286,7 @@ public ChangingVarsTime()
 				}
 			}
 		}
+		// Right
 		else if(lr == KEY_RIGHT)
 		{
 			EditorVarUpdated = true;
@@ -455,7 +459,9 @@ public ChangingVarsTime()
 		}
 		case CH_BULK_POSITION:
 		{
-			GameTextForPlayer(playerid, "Bulk Edit", CHANGING_VAR_TIME + 5, 3);
+			format(EditorString, sizeof EditorString, GetLanguageMessage("tdgroupposition", LANG_TYPE_GAMETEXTS));
+			strreplace(EditorString, "#1", GetGroupName(groupId));
+			GameTextForPlayer(playerid, EditorString, CHANGING_VAR_TIME + 5, 3);
 		}
 	}
 	if(User[User_ChangingState] != CH_BULK_POSITION)

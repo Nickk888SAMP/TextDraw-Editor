@@ -67,6 +67,7 @@
     "tdeditorposition": "X:#1~n~Y:#2~n~SHIFT=Faster~n~SPACEBAR=End",
     "tdprevmodelcolor": "Color 1:#1 Color 2:#2 ~n~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End",
     "tdposition": "X:#1 Y:#2~n~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End",
+    "tdgroupposition": "Group:#1~n~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End",
     "tdrotation": "X:#1 Y:#2~n~Z:#3~n~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End",
     "tdsize": "X:#1 Y:#2~n~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End",
     "tdpremodelzoom": "Zoom:#1~n~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End",

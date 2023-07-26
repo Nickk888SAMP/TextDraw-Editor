@@ -4,18 +4,21 @@
 *	All right reserved! C By: Nickk888															                               *
 *																								                                                 *
 *	Credits:																					                                             *
-*	a_samp: SAMP Team																			                                         *
-*	sscanf2: maddinat0r																			                                       *
-*	YSI: Y_Less																					                                           *
-*	ndialogpages: Nickk888 																		                                     *
-*	progress2: Southclaws 																		                                     *
+* a_samp: SAMP Team                                                                              *
+* YSI: Y-Less                                                                                    *
+* ndialogpages: Nickk888                                                                         *
+* sscanf: maddinat0r                                                                             *
+* Progress2: Southclaws                                                                          *
+* pawn-json: Southclaws                                                                          *
+* pawn-fsutil: Southclaws                                                                        *
+* easydialog: Awsomedude                                                                         *
 *	ASCII Art Generator: https://patorjk.com/software/taag/#p=display&h=0&v=0&f=Big				         *
 *																								                                                 *
 *	YOU ARE NOT ALLOWED TO RECREATE THIS FILTERSCRIPT WITHOUT									                     *
 *	GIVEN ANY CREDITS! DO NOT COPY THIS SCRIPT ELSEWHERE!										                       *
 *************************************************************************************************/
 
-#define MAX_PLAYERS 2
+#define MAX_PLAYERS 10
 #include <defines>
 
 /*

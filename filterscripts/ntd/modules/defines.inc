@@ -25,18 +25,17 @@
 */
 #define SCRIPT_VERSION 			                    "7.0"
 
-#define MAX_TEMPLATES				                    50						            //Max templates that can be loaded
-#define MAX_PROJECTS 			  	                  (1000)					            //Max projects that can be created and loaded
+#define MAX_TEMPLATES				                    (1000)						            //Max templates that can be loaded
+#define MAX_PROJECTS 			  	                  (1000)					            //Max projects that can be loaded
 #define MAX_TEXTDRAWS			                      (512 - 1)	                //Max TextDraws that can be created and loaded
-#define MAX_LANGUAGES				                    30						            //Max languages that can be loaded
-#define MAX_SPRITES 				                    100						            //Max sprites that can be loaded into library.
-#define MAX_GROUPS                              100                       //Max groups that can be loaded
+#define MAX_LANGUAGES				                    (30)						            //Max languages that can be loaded
+#define MAX_SPRITES 				                    (100)						            //Max sprites that can be loaded into library.
+#define MAX_GROUPS                              (1000)                       //Max groups that can be loaded
 
 #define CHANGING_VAR_TIME 				              15						            //The Update time for the editor
 #define MAXFORMATEDTD 					                32						            //Clamps the TextDraw name in the Dialogs
 #define CURSOR_COLOR 					                  1687547391				          //Default Cursor Color
 #define BUTTON_TD_COLOR 				                -1						            //Default Buttons Color
-#define DIALOG_DIALOG_ADDER				              1000 					            //If there are coliding Dialog ID's, change this to fix it!
 #define TDPICKER_COLOR_ACTIVE 			            0xFFFF00FF				      //Color of the TD Picker when active
 #define TDPICKER_COLOR 					                0xFFFFFFCC			       	//Color of the TD Picker when inactive
 #define CONFIRM_SOUNDID					                1083					  	        //Confirmation Sound

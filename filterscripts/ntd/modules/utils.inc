@@ -79,7 +79,7 @@ HexToInt(const string[])
     new i;
     new cur=1;
     new res=0;
-    for (i=strlen(string);i>0;i--) {
+    for (i = strlen(string); i > 0; i--) {
         if (string[i-1]<58) res=res+cur*(string[i-1]-48); else res=res+cur*(string[i-1]-65+10);
         cur=cur*16;
     }

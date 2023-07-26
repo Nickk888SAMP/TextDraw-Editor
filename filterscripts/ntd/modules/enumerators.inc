@@ -473,6 +473,7 @@ enum E_TD
 	bool:TD_Selectable,
 	bool:TD_Proportional,
 	bool:TD_IsGlobal,
+
 	Float:TD_PosX,
 	Float:TD_PosY,
 	Float:TD_PrevRotX,
@@ -484,9 +485,11 @@ enum E_TD
 	Float:TD_BoxSizeX,
 	Float:TD_BoxSizeY,
 	Float:TD_BarMaxPercentage,
-	Text:TD_SelfID,
+
 	PlayerBar:TD_BarID,
+	Text:TD_SelfID,
 	Text:TD_PickerID,
+
 	TD_Text[328],
 	TD_VarName[35],
 	TD_PrevModelID,
@@ -516,10 +519,11 @@ enum E_USER
 	bool:User_Accelerate,
 	bool:User_BlockVarsTime,
 	bool:User_ChangingColorBar,
+	bool:User_ExportArrayMode,
+
 	User_ChangingState,
 	User_ManualChangeType,
 	User_ExportType,
-	bool:User_ExportArrayMode,
 	User_ProjectIndex,
 	User_SpritePicker,
 	User_SpriteIndex,
