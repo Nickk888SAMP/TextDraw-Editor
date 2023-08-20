@@ -5,61 +5,61 @@
 
 #MESSAGES
 
-<nopermit>{FFFFFF}คุณไม่ได้รับอนุญาตให้ใช้คำสั่งนี้ โปรดล็อกอิน RCON
-<editordisabled>{FFFFFF}ออกจากโปรแกรมแก้ไขแล้ว
-<editorinuse>{FFFFFF}โปรแกรมแก้ไขกำลังถูกใช้โดยผู้เล่นอื่น!
-<infodialogcaption>ข้อมูล
-<infoeditorleave>{FFFFFF}หากต้องการออกจากเครื่องมือ ใช้คำสั่ง{00FFFF}/NTD
-<infoeditorlocked>{FFFFFF}สคริปต์ถูกบล็อก! #n{FFFFFF}ตรวจสอบ Logs ของเซิร์ฟเวอร์สำหรับข้อมูลเพิ่มเติม!
-<infoeditorreset>{FFFFFF}คืนค่าการตั้งค่าแล้ว!
-<infoeditorkeyswiched>{FFFFFF}Keys ถูกเปลี่ยนแล้ว!
-<infoeditorfastselectdisabled>{FFFFFF}การเลือกแบบด่วน: {FF0000}ปิด
-<infoeditorfastselectenabled>{FFFFFF}การเลือกแบบด่วน: {00FF00}เปิด
-<infoeditortdvisibility>{FFFFFF}ารแสดง TextDraws มีการเปลี่ยนแปลง!
-<infoinvalidmodelid>{FFFFFF}Model ID ไม่ถูกต้อง!
-<languagefilenotfound>{FFFFFF}ไม่พบไฟล์ภาษานี้!
-<infoprojectexported>{FFFFFF}ส่งออกโปรเจกต์เรียบร้อยแล้ว! #n{FFFFFF}ส่งออกโปรเจกต์ไปที่
-<infoprojectexporterror>{FFFFFF}เกิดข้อผิดพลาดขณะส่งออก...
-<infoparamnamechange>{FFFFFF}เปลี่ยนชื่อตัวแปรแล้ว!#nตัวแปรใหม่ชื่อ: {F5D742}#1#n{FFFFFF}TextDraw ข้อความ: {F5D742}#2
-<infoparamnamechangetaken>{FFFFFF}ชื่อตัวแปรนี้ถูกใช้แล้ว!
-<infoparamnamechangecharserr>{FFFFFF}ชื่อตัวแปรต้องไม่มีอักขระพิเศษหรือช่องว่าง!
-<infoparamnamechangeammerr>{FFFFFF}ชื่อตัวแปรต้องมีความยาวไม่เกิน 35 อักขระ!
-<infomaxtextdrawsreached>{FFFFFF}จำนวน Textdraw ถึงจำนวนสูงสุดแล้ว!
-<infolanguagechanged>{FFFFFF}เปลี่ยนภาษาแล้ว
-<fsenabled>{00FF00}เปิด{FFFFFF}
-<fsdisabled>{FF0000}ปิด{FFFFFF}
-<tdvforme>{F5D742}เฉพาะฉัน{FFFFFF}
-<tdvforall>{0080C0}ทั้งหมด{FFFFFF}
-<keysinverted>{FFFF00}เปลี่ยน{FFFFFF}
-<infoprojectlimit>{FFFFFF}จำนวนหมายเลขโปรเจกต์สูงสุดแล้ว!
-<infoprojectinvalidname>{FFFFFF}ชื่อสั้นเกินไป ยาวเกินไป หรือมีอักขระไม่ถูกต้อง!
-<infoprojectexists>{FFFFFF}โปรเจกต์นี้มีอยู่แล้ว!
-<infoprojectcreated>{FFFFFF}สร้างโปรเจกต์ "{F5D742}#1{FFFFFF}" สำเร็จแล้ว!
-<infoprojectclosed>{FFFFFF}โปรเจกต์ได้รับการบันทึกและปิดเรียบร้อยแล้ว
-<infoprojectsaveerror>{FFFFFF}เกิดข้อผิดพลาดขณะบันทึกโปรเจกต์
-<infoprojectloaded>{FFFFFF}โปรเจกต์ "{F5D742}#1{FFFFFF}" โหลดสำเร็จแล้ว!
-<previewmodelidinvalid>{FFFFFF}Model ID ไม่ถูกต้อง!
-<projectrenamed>{FFFFFF}เปลี่ยนชื่อโปรเจกต์สำเร็จแล้ว. #n{FFFFFF}ชื่อโปรเจกต์เก่า:"{F5D742}#1{FFFFFF}"#n{FFFFFF}ชื่อโปรเจกต์ใหม่: "{F5D742}#2{FFFFFF}"
-<projectnamechangecharerr>{FFFFFF}ชื่อสั้นเกินไป ยาวเกินไป หรือมีอักขระไม่ถูกต้อง
-<projectnameexists>{FFFFFF}โปรเจกต์นี้มีอยู่แล้ว!
-<projectnamechangeerror>{FFFFFF}กิดข้อผิดพลาดขณะเปลี่ยนชื่อโปรเจกต์
-<projectloaderror>{FFFFFF}เกิดข้อผิดพลาดขณะโหลดโปรเจ็กต์
-<projectdeleteerror>{FFFFFF}เกิดข้อผิดพลาดขณะลบโปรเจ็กต์
-<projectdeleted>{FFFFFF}โปรเจ็กต์ "{F5D742}#1{FFFFFF}" ถูกลบ
-<modelpreviewinvalidfont>{FFFFFF}หากต้องการใช้ตัวเลือกนี้ ให้เปลี่ยนฟอนต์อักษรเป็น 5!
-<noprojectsfound>{FFFFFF}ขณะนี้คุณไม่มีโปรเจ็กต์ใดๆ
-<modeltexterror>{FFFFFF}ไม่สามารถเปลี่ยนข้อความแสดงตัวอย่างโมเดลได้
-<infocompmodedisabled>{FFFFFF}โหมดกะทัดรัด: {FF0000}ปิด
-<infocompmodeenabled>{FFFFFF}โหมดกะทัดรัด: {00FF00}เปิด
-<compmodeenabled>{00FF00}เปิด{FFFFFF}
-<compmodedisabled>{FF0000}ปิด{FFFFFF}
-<manualchangetypemzoom>ซูม
-<manualchangetypemcolor1>สี 1
-<manualchangetypemcolor2>สี 2
+<nopermit>{FFFFFF}�س������Ѻ͹حҵ��������觹�� �ô��͡�Թ RCON
+<editordisabled>{FFFFFF}�͡�ҡ������������
+<editorinuse>{FFFFFF}�������䢡��ѧ�١���¼��������!
+<infodialogcaption>������
+<infoeditorleave>{FFFFFF}�ҡ��ͧ����͡�ҡ����ͧ��� ������{00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}ʤ�Ի��١���͡! #n{FFFFFF}��Ǩ�ͺ Logs �ͧ�������������Ѻ�������������!
+<infoeditorreset>{FFFFFF}�׹��ҡ�õ�駤������!
+<infoeditorkeyswiched>{FFFFFF}Keys �١����¹����!
+<infoeditorfastselectdisabled>{FFFFFF}������͡Ẻ��ǹ: {FF0000}�Դ
+<infoeditorfastselectenabled>{FFFFFF}������͡Ẻ��ǹ: {00FF00}�Դ
+<infoeditortdvisibility>{FFFFFF}���ʴ� TextDraws �ա������¹�ŧ!
+<infoinvalidmodelid>{FFFFFF}Model ID ���١��ͧ!
+<languagefilenotfound>{FFFFFF}��辺������ҹ��!
+<infoprojectexported>{FFFFFF}���͡��ਡ�����º��������! #n{FFFFFF}���͡��ਡ��价��
+<infoprojectexporterror>{FFFFFF}�Դ��ͼԴ��Ҵ������͡...
+<infoparamnamechange>{FFFFFF}����¹���͵��������!#n������������: {F5D742}#1#n{FFFFFF}TextDraw ��ͤ���: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}���͵���ù��١������!
+<infoparamnamechangecharserr>{FFFFFF}���͵���õ�ͧ������ѡ��о�������ͪ�ͧ��ҧ!
+<infoparamnamechangeammerr>{FFFFFF}���͵���õ�ͧ�դ����������Թ 35 �ѡ���!
+<infomaxtextdrawsreached>{FFFFFF}�ӹǹ Textdraw �֧�ӹǹ�٧�ش����!
+<infolanguagechanged>{FFFFFF}����¹��������
+<fsenabled>{00FF00}�Դ{FFFFFF}
+<fsdisabled>{FF0000}�Դ{FFFFFF}
+<tdvforme>{F5D742}੾�Щѹ{FFFFFF}
+<tdvforall>{0080C0}������{FFFFFF}
+<keysinverted>{FFFF00}����¹{FFFFFF}
+<infoprojectlimit>{FFFFFF}�ӹǹ�����Ţ��ਡ���٧�ش����!
+<infoprojectinvalidname>{FFFFFF}��������Թ� ����Թ� �������ѡ������١��ͧ!
+<infoprojectexists>{FFFFFF}��ਡ��������������!
+<infoprojectcreated>{FFFFFF}���ҧ��ਡ�� "{F5D742}#1{FFFFFF}" ���������!
+<infoprojectclosed>{FFFFFF}��ਡ�����Ѻ��úѹ�֡��лԴ���º��������
+<infoprojectsaveerror>{FFFFFF}�Դ��ͼԴ��Ҵ��кѹ�֡��ਡ��
+<infoprojectloaded>{FFFFFF}��ਡ�� "{F5D742}#1{FFFFFF}" ��Ŵ���������!
+<previewmodelidinvalid>{FFFFFF}Model ID ���١��ͧ!
+<projectrenamed>{FFFFFF}����¹������ਡ�����������. #n{FFFFFF}������ਡ�����:"{F5D742}#1{FFFFFF}"#n{FFFFFF}������ਡ������: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}��������Թ� ����Թ� �������ѡ������١��ͧ
+<projectnameexists>{FFFFFF}��ਡ��������������!
+<projectnamechangeerror>{FFFFFF}�Դ��ͼԴ��Ҵ�������¹������ਡ��
+<projectloaderror>{FFFFFF}�Դ��ͼԴ��Ҵ�����Ŵ���硵�
+<projectdeleteerror>{FFFFFF}�Դ��ͼԴ��Ҵ���ź���硵�
+<projectdeleted>{FFFFFF}���硵� "{F5D742}#1{FFFFFF}" �١ź
+<modelpreviewinvalidfont>{FFFFFF}�ҡ��ͧ����������͡��� �������¹�͹���ѡ���� 5!
+<noprojectsfound>{FFFFFF}��й��س��������硵���
+<modeltexterror>{FFFFFF}�������ö����¹��ͤ����ʴ�������ҧ������
+<infocompmodedisabled>{FFFFFF}�����зѴ�Ѵ: {FF0000}�Դ
+<infocompmodeenabled>{FFFFFF}�����зѴ�Ѵ: {00FF00}�Դ
+<compmodeenabled>{00FF00}�Դ{FFFFFF}
+<compmodedisabled>{FF0000}�Դ{FFFFFF}
+<manualchangetypemzoom>���
+<manualchangetypemcolor1>�� 1
+<manualchangetypemcolor2>�� 2
 
 #GAMETEXTS
 
-<tdโคลนdinfo>~y~CLONNED_ID_~r~#1
+<td�Źdinfo>~y~CLONNED_ID_~r~#1
 <tddeletedinfo>~r~DELETED_ID_#1
 <tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
 <tdselectedinfo>~g~SELECTED_ID_~r~#1
@@ -90,272 +90,272 @@
 <tdalignment_down>~w~Alignment~n~~p~DOWN
 <tdfontplayerprogressbar>~w~Font~n~~r~Player Progress Bar
 <tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
-<tdfontprevmodelinfo>~w~Font~n~~b~ตัวอย่างโมเดล
+<tdfontprevmodelinfo>~w~Font~n~~b~������ҧ����
 
 #DIALOGS
 
 <dialog name="dialogsettings">
-	<caption>การตั้งค่า
-	<info0>{FFFFFF}เปลี่ยนตำแหน่ง
-	<info1>{FFFFFF}เปลี่ยนสีไฮไลท์
-	<info2>{FFFFFF}เปลี่ยนสีปุ่ม
-	<info3>{FFFFFF}สลับ SHIFT ด้วย SPACEBAR #1
-	<info4>{FFFFFF}เลือกด่วน: [#2]
-	<info5>{FFFFFF}แสดง TextDraw: [#3]
-	<info6>{FFFFFF}โหมดกะทัดรัด: [#4]
-	<info7>{FFFFFF}เปลี่ยนภาษา
-	<info8>{FF0000}คืนค่าเป็นการตั้งค่าเริ่มต้น
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>��õ�駤��
+	<info0>{FFFFFF}����¹���˹�
+	<info1>{FFFFFF}����¹�����ŷ�
+	<info2>{FFFFFF}����¹�ջ���
+	<info3>{FFFFFF}��Ѻ SHIFT ���� SPACEBAR #1
+	<info4>{FFFFFF}���͡��ǹ: [#2]
+	<info5>{FFFFFF}�ʴ� TextDraw: [#3]
+	<info6>{FFFFFF}�����зѴ�Ѵ: [#4]
+	<info7>{FFFFFF}����¹����
+	<info8>{FF0000}�׹����繡�õ�駤���������
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="spritechange">
 	<caption>Sprite change
-	<info0>{FFFFFF}ป้อนชื่อไลบรารีและชื่อสไปรต์.
-	<info1>{FFFFFF}ตัวอย่าง: {FF8040}hud:radar_impound
-	<button1>ยืนยัน
-	<button2>กลับ
+	<info0>{FFFFFF}��͹�����ź������Ъ�����õ�.
+	<info1>{FFFFFF}������ҧ: {FF8040}hud:radar_impound
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="overridecolorchange">
-	<caption>เปลี่ยนสีไฮไลท์
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹�����ŷ�
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="buttonscolorchange">
-	<caption>เปลี่ยนสีปุ่ม
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹�ջ���
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="oldversionsettingsreset">
-	<caption>ตรวจพบเวอร์ชันอื่น
-	<info0>{FFFFFF}เวอร์ชันของสคริปต์แตกต่างจากเวอร์ชันของไฟล์ configuration
-	<info1>{FFFFFF}คุณต้องการกู้คืนการตั้งค่าเพื่อให้สคริปต์สามารถทำงานได้อย่างถูกต้องไหม?
-	<button1>ใช่
-	<button2>ไม่
+	<caption>��Ǩ�������ѹ���
+	<info0>{FFFFFF}�����ѹ�ͧʤ�Ի��ᵡ��ҧ�ҡ�����ѹ�ͧ��� configuration
+	<info1>{FFFFFF}�س��ͧ��á��׹��õ�駤���������ʤ�Ի������ö�ӧҹ�����ҧ�١��ͧ���?
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="settingsreset">
-	<caption>การคืนค่าการตั้งค่าเริ่มต้น
-	<info0>{FFFFFF}คุณแน่ใจหรือไม่ว่าต้องการกู้คืนการตั้งค่าเริ่มต้น?
-	<button1>ใช่
-	<button2>ไม่
+	<caption>��ä׹��ҡ�õ�駤���������
+	<info0>{FFFFFF}�س������������ҵ�ͧ��á��׹��õ�駤���������?
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="newproject">
-	<caption>สร้างโปรเจ็กต์ใหม่
-	<info0>{FFFFFF}ป้อนชื่อโปรเจ็กต์ใหม่
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>���ҧ���硵�����
+	<info0>{FFFFFF}��͹�������硵�����
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="textdrawslist">
-	<caption>TextDraws ของฉัน (#1/#2)
-	<info0>{FFFFFF}ID/Text#t{FFFFFF}ชื่อตัวแปร
-	<info1>{FF8800}สร้าง TextDraw ใหม่#t
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>TextDraws �ͧ�ѹ (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}���͵����
+	<info1>{FF8800}���ҧ TextDraw ����#t
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="projectslist">
-	<caption>โปรเจ็กต์ของฉัน (#1/#2)
-	<info0>{FF8800}ชื่อ#t{FF8800}จำนวน TextDraw#t{FF8800}เปลี่ยนแปลงล่าสุด#n
-	<button1>เลือก
-	<button2>กลับ
+	<caption>���硵�ͧ�ѹ (#1/#2)
+	<info0>{FF8800}����#t{FF8800}�ӹǹ TextDraw#t{FF8800}����¹�ŧ����ش#n
+	<button1>���͡
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="exportproject">
-	<caption>ส่งออกเป็น...
-	<info0>{FF8800}Nการส่งออกปกติ
-	<info1>{FF8800}ฟังก์ชั่นการทำงานใน filterscript
-	<button1>ส่งออก
-	<button2>กลับ
+	<caption>���͡��...
+	<info0>{FF8800}N������͡����
+	<info1>{FF8800}�ѧ���蹡�÷ӧҹ� filterscript
+	<button1>���͡
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="newtextdraw">
-	<caption>TextDraw ใหม่
-	<info0>{FF8800}เรียบง่าย
-	<info1>{FF8800}ใช้เทมเพลต
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>TextDraw ����
+	<info0>{FF8800}���º����
+	<info1>{FF8800}�����ŵ
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
-<dialog name="exitยืนยันation">
-	<caption>ออก
-	<info0>{FFFFFF}คุณแน่ใจหรือไม่ว่าต้องการออกจากตัวแก้ไข?
-	<info1>{FFFFFF}โครงการที่เปิดอยู่จะถูกบันทึกโดยอัตโนมัติ
-	<button1>ใช่
-	<button2>ไม่
+<dialog name="exit�׹�ѹation">
+	<caption>�͡
+	<info0>{FFFFFF}�س������������ҵ�ͧ����͡�ҡ������?
+	<info1>{FFFFFF}�ç��÷���Դ����ж١�ѹ�֡���ѵ��ѵ�
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="tdoptions">
 	<caption>ID #1 "#2"
-	<info0>{FF8800}แก้ไข
-	<info1>{FF8800}โคลน
-	<info2>{FF8800}เปลี่ยนเลเยอร์
-	<info3>{FF8800}เปลี่ยนชื่อตัวแปร
-	<info4>{FF0000}ลบ
-	<button1>ยืนยัน
-	<button2>กลับ
+	<info0>{FF8800}���
+	<info1>{FF8800}�Ź
+	<info2>{FF8800}����¹�������
+	<info3>{FF8800}����¹���͵����
+	<info4>{FF0000}ź
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="projectsoptions">
-	<caption>โปรเจ็กต์
-	<info0>{FFFFFF}โหลด
-	<info1>{FFFFFF}เปลี่ยนชื่อ
-	<info2>{FF0000}ลบ
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>���硵�
+	<info0>{FFFFFF}��Ŵ
+	<info1>{FFFFFF}����¹����
+	<info2>{FF0000}ź
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="previewmodelid">
-	<caption>ตัวอย่างโมเดล
-	<info0>{FFFFFF}ป้อนไอดีโมเดล ไอดีรถ หรือไอดี Object
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>������ҧ����
+	<info0>{FFFFFF}��͹�ʹ����� �ʹ�ö �����ʹ� Object
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="variablechange">
-	<caption>เปลี่ยนชื่อตัวแปร
-	<info0>{FFFFFF}ป้อนชื่อตัวแปรใหม่
-	<info1>{FFFFFF}เว้นว่างไว้เพื่อลบชื่อที่กำหนดเอง
-	<info2>{FFFFFF}ชื่อตัวแปรปัจจุบัน: {F5D742}#1
+	<caption>����¹���͵����
+	<info0>{FFFFFF}��͹���͵��������
+	<info1>{FFFFFF}�����ҧ�������ź���ͷ���˹��ͧ
+	<info2>{FFFFFF}���͵���ûѨ�غѹ: {F5D742}#1
 	<info3>{FFFFFF}TextDraw text: {F5D742}#2
-	<button1>ยืนยัน
-	<button2>กลับ
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="colorchange">
-	<caption>เปลี่ยนสี
-	<info0>{FFFFFF}ระบุสีในรูปแบบที่กำหนด:#n
-	<info1>{FFFFFF}ตัวอย่างสำหรับ RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
-	<info2>{FFFFFF}ตัวอย่างสำหรับ HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
-	<info3>{FFFFFF}RGBA ปัจจุบัน: {F5D742}#1 #2 #3 #4
-	<info4>{FFFFFF}HEX/HTML ปัจจุบัน: {F5D742}#5
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��
+	<info0>{FFFFFF}�к�����ٻẺ����˹�:#n
+	<info1>{FFFFFF}������ҧ����Ѻ RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}������ҧ����Ѻ HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}RGBA �Ѩ�غѹ: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}HEX/HTML �Ѩ�غѹ: {F5D742}#5
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
-<dialog name="deletedยืนยัน">
-	<caption>กำลังลบ
-	<info0>{FFFFFF}คุณแน่ใจหรือไม่ว่าต้องการลบ TextDraw นี้?
+<dialog name="deleted�׹�ѹ">
+	<caption>���ѧź
+	<info0>{FFFFFF}�س������������ҵ�ͧ���ź TextDraw ���?
 	<info1>{FFFFFF}Text: {F5D742}"#1"
-	<button1>ใช่
-	<button2>ไม่
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="usetemplate">
-	<caption>ใช้เทมเพลต
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>�����ŵ
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="premadecolors">
-	<caption>เปลี่ยนสี
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="textchange">
-	<caption>เปลี่ยนข้อความ
-	<info0>{FFFFFF}ป้อนข้อความที่จะตั้งค่า
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��ͤ���
+	<info0>{FFFFFF}��͹��ͤ������е�駤��
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="spritechangelist">
 	<caption>Change Sprite 
-	<info0>{FF8800}ป้อนด้วยตนเอง
-	<info1>{FF8800}เลือกจาก library
-	<button1>ยืนยัน
-	<button2>กลับ
+	<info0>{FF8800}��͹���µ��ͧ
+	<info1>{FF8800}���͡�ҡ library
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="boxsizechangelist">
-	<caption>เปลี่ยนขนาด
-	<info0>{FF8800}กล่องข้อความ (ขนาด)
-	<info1>{FF8800}กล่อง (ความกว้าง)
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��Ҵ
+	<info0>{FF8800}���ͧ��ͤ��� (��Ҵ)
+	<info1>{FF8800}���ͧ (�������ҧ)
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="previewmodelchangelist">
-	<caption>ตัวอย่างโมเดล
-	<info0>{FF8800}เปลี่ยนโมเดล ID
-	<info1>{FF8800}เปลี่ยนการหมุน
-	<info2>{FF8800}เปลี่ยนการซูม
-	<info3>{FF8800}เปลี่ยนสีของรถ
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>������ҧ����
+	<info0>{FF8800}����¹���� ID
+	<info1>{FF8800}����¹�����ع
+	<info2>{FF8800}����¹��ë��
+	<info3>{FF8800}����¹�բͧö
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
-<dialog name="deleteprojectยืนยัน">
-	<caption>กำลังลบ
-	<info0>{FFFFFF}คุณแน่ใจหรือไม่ว่าต้องการลบโปรเจ็กต์นี้?
-	<button1>ใช่
-	<button2>ไม่
+<dialog name="deleteproject�׹�ѹ">
+	<caption>���ѧź
+	<info0>{FFFFFF}�س������������ҵ�ͧ���ź���硵���?
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="changeprojectname">
-	<caption>เปลี่ยนชื่อโปรเจ็กต์
-	<info0>{FFFFFF}ป้อนชื่อใหม่
-	<info1>{FFFFFF}ชื่อเดิม: {F5D742}"#1"
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹�������硵�
+	<info0>{FFFFFF}��͹��������
+	<info1>{FFFFFF}�������: {F5D742}"#1"
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="colorchangelist1">
-	<caption>เปลี่ยนสี
-	<info0>{FF8800}สีข้อความ
-	<info1>{FF8800}พื้นหลัง / สีเส้นขอบ
-	<info2>{FF8800}สีกล่อง
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��
+	<info0>{FF8800}�բ�ͤ���
+	<info1>{FF8800}�����ѧ / ����鹢ͺ
+	<info2>{FF8800}�ա��ͧ
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="colorchangelist2">
-	<caption>เปลี่ยนสี
-	<info0>{FF8800}สีที่ทำไว้ให้แล้ว
-	<info1>{FF8800}กำหนดเอง
-	<info2>{FF8800}เปลี่ยนความโปร่งใส
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹��
+	<info0>{FF8800}�շ�������������
+	<info1>{FF8800}��˹��ͧ
+	<info2>{FF8800}����¹���������
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="exportwitharray">
-	<caption>การส่งออกดปรเจ็ก
-	<info0>{FFFFFF}คุณต้องการส่งออกโปรเจ็กต์นี้โดยเปิดใช้งานโหมดอาร์เรย์หรือไม่?
-	<info1>{FFFFFF}Textdraws ที่มีชื่อตัวแปรเริ่มต้นจะถูกเพิ่มในอาร์เรย์เพื่อลดจำนวนโค้ด
-	<button1>ใช่
-	<button2>ไม่
+	<caption>������͡�����
+	<info0>{FFFFFF}�س��ͧ������͡���硵������Դ��ҹ�������������������?
+	<info1>{FFFFFF}Textdraws ����ժ��͵����������鹨ж١�����������������Ŵ�ӹǹ��
+	<button1>��
+	<button2>���
 </dialog>
 
 <dialog name="manualvarchange">
-	<caption>การเปลี่ยนแปลงค่าด้วยตนเอง
-	<info0>{FFFFFF}ตัวแปร#t{FFFFFF}ค่าปัจจุบัน
-	<info1>{FFFFFF}ตัวแปร {F5D742}X#t{FFFFFF}#1
-	<info2>{FFFFFF}ตัวแปร {F5D742}Y#t{FFFFFF}#2
-	<info3>{FFFFFF}ตัวแปร {F5D742}Z#t{FFFFFF}#3
-	<info4>{FFFFFF}ตัวแปร {F5D742}ซูม#t{FFFFFF}#4
-	<info5>{FFFFFF}ตัวแปร {F5D742}สี 1#t{FFFFFF}#5
-	<info6>{FFFFFF}ตัวแปร {F5D742}สี 2#t{FFFFFF}#6
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>�������¹�ŧ��Ҵ��µ��ͧ
+	<info0>{FFFFFF}�����#t{FFFFFF}��һѨ�غѹ
+	<info1>{FFFFFF}����� {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}����� {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}����� {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}����� {F5D742}���#t{FFFFFF}#4
+	<info5>{FFFFFF}����� {F5D742}�� 1#t{FFFFFF}#5
+	<info6>{FFFFFF}����� {F5D742}�� 2#t{FFFFFF}#6
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="manualchangemessage">
-	<caption>การเปลี่ยนแปลงค่าด้วยตนเอง
-	<info0>{FFFFFF}ป้อนค่าใหม่สำหรับ {F5D742}#1#n{FFFFFF}ค่าปัจจุบัน: {F5D742}#2
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>�������¹�ŧ��Ҵ��µ��ͧ
+	<info0>{FFFFFF}��͹�����������Ѻ {F5D742}#1#n{FFFFFF}��һѨ�غѹ: {F5D742}#2
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
 
 <dialog name="barmaxpercentagechange">
-	<caption>เปลี่ยนค่าสูงสุดของ Progress bar
-	<info0>{FFFFFF}ป้อนค่าใหม่สำหรับค่าสูงสุดของ Progress bar
-	<info1>{FFFFFF}ค่าสูงสุดในปัจจุบัน: {F5D742}#1%
-	<button1>ยืนยัน
-	<button2>กลับ
+	<caption>����¹����٧�ش�ͧ Progress bar
+	<info0>{FFFFFF}��͹�����������Ѻ����٧�ش�ͧ Progress bar
+	<info1>{FFFFFF}����٧�ش㹻Ѩ�غѹ: {F5D742}#1%
+	<button1>�׹�ѹ
+	<button2>��Ѻ
 </dialog>
