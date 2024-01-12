@@ -28,7 +28,7 @@
     "keysinverted": "SWITCHED",
 	"textyes": "Yes",
 	"textno": "No",
-	"textglobal": "Global",
+	"textpublic": "Public",
 	"textplayer": "Player",
     "infoprojectlimit": "The maximum number of projects has been reached.",
     "infoprojectinvalidname": "The name is too short, too long or has invalid characters.",
@@ -359,7 +359,7 @@
     },
 	"groupoptions": {
       "caption": "Group ID #1 \"#2\"",
-	  "info0": "ID/TextDraw#tVariable Name",
+	  "info0": "ID/TextDraw/Group#tVariable Name",
       "info1": "Change Position",
 	  "info2": "Change Visibility#t#1",
 	  "info3": "Rename",

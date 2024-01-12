@@ -23,8 +23,8 @@ public OnFilterScriptInit()
 	{
 		ScriptScriptActive = false;
 		printf("\n[NTD ERROR] Could not find directory or directories!");
-		printf("[NTD ERROR] Please create 'NTD' directory inside 'scriptfiles'!");
-		printf("[NTD ERROR] Within 'NTD' you should create the 'exports', 'projects' and 'languages' directory!");
+		printf("[NTD ERROR] Please create 'ntd' directory inside 'scriptfiles'!");
+		printf("[NTD ERROR] Within 'ntd' you should create the 'exports', 'projects' and 'languages' directory!");
 		printf("[NTD ERROR] The script will be unloaded or blocked!\n");
 		SendRconCommand("unloadfs ntd");
 		return 1;

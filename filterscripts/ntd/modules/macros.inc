@@ -36,7 +36,7 @@ for (new i_%0 = 0; ; ++i_%0) \
 // TextDraw listing single TextDraw format
 #define TDLIST_TD_FORMAT \
 	new yesnotext[32], typetext[32], grouptext[32]; \
-	format(typetext, 32, "%s%s", (TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2 : HEX_PALETTE_3), (TextDraw[i][TD_IsGlobal] ? GetLanguageMessage("textglobal", LANG_TYPE_MESSAGES) : GetLanguageMessage("textplayer", LANG_TYPE_MESSAGES))); \
+	format(typetext, 32, "%s%s", (TextDraw[i][TD_IsGlobal] ? HEX_PALETTE_2 : HEX_PALETTE_3), (TextDraw[i][TD_IsGlobal] ? GetLanguageMessage("textpublic", LANG_TYPE_MESSAGES) : GetLanguageMessage("textplayer", LANG_TYPE_MESSAGES))); \
 	format(yesnotext, 32, "%s%s", (TextDraw[i][TD_Selectable] ? HEX_PALETTE_2 : HEX_PALETTE_3), (TextDraw[i][TD_Selectable] ? GetLanguageMessage("textyes", LANG_TYPE_MESSAGES) : GetLanguageMessage("textno", LANG_TYPE_MESSAGES))); \
 	format(grouptext, 32, (TextDraw[i][TD_GroupID] == -1 ? "" : " ( %s )"), (TextDraw[i][TD_GroupID] == -1 ? "" : GetGroupName(TextDraw[i][TD_GroupID]))); \
 	AddDialogListitem(playerid, "%s%i %s\"%s\"%s\t%s\t%s\t%s", \
