@@ -1,0 +1,363 @@
+# Nickk's TextDraw Editor - Language File
+# Language: Georgian
+# Author: Lasho4
+# Version: 2.0
+
+#MESSAGES
+
+<nopermit>{FFFFFF}Ar Gakvt Am Brdzanebis Gamokenebis Ufleba. Gaiaret RCON Avtorizacia.
+<editordisabled>{FFFFFF}Editori Gaitisha.
+<editorinuse>{FFFFFF}Editors Sxva Motamashe Ikenebs!
+<infodialogcaption>Informacia
+<infoeditorleave>{FFFFFF}Gasasvlelead Daweret: {00FFFF}/NTD
+<infoeditorlocked>{FFFFFF}Skripti Daibloka #n{FFFFFF}Sheamowmet Serveris Logi!
+<infoeditorreset>{FFFFFF}Parametrebi Agdga!
+<infoeditorkeyswiched>{FFFFFF}Gilakebi Sheicvala!
+<infoeditorfastselectdisabled>{FFFFFF}Swrafi Archeva: {FF0000}OFF
+<infoeditorfastselectenabled>{FFFFFF}Swrafi Archeva: {00FF00}ON
+<infoeditortdvisibility>{FFFFFF}TextDrawebis Chveneba Sheicvala
+<infoinvalidmodelid>{FFFFFF}Modelis ID Arasworia!
+<languagefilenotfound>{FFFFFF}Ena Ver Moidzebna!
+<infoprojectexported>{FFFFFF}Proekti Warmatebit Daeksportda #n{FFFFFF}Proektis Eksporti
+<infoprojectexporterror>{FFFFFF}Shecdoma Eksportis Dros...
+<infoparamnamechange>{FFFFFF}Cvladis Saxeli Sheicvala#nAxali SAxeli: {F5D742}#1#n{FFFFFF}TextDraw Teksti: {F5D742}#2
+<infoparamnamechangetaken>{FFFFFF}This variable name has already been used!
+<infoparamnamechangecharserr>{FFFFFF}Cvladis Saxeli Ar Unda Sheicavdes Ucxo Simboloebs
+<infoparamnamechangeammerr>{FFFFFF}Cvladis Saxeli Ar Unda Ikos 35'ze Meti
+<infomaxtextdrawsreached>{FFFFFF}TextDrawebis Limiti Amoiwura!
+<infolanguagechanged>{FFFFFF}Ena Sheicvala.
+<fsenabled>{00FF00}ON{FFFFFF}
+<fsdisabled>{FF0000}OFF{FFFFFF}
+<tdvforme>{F5D742}MXOLOD ME{FFFFFF}
+<tdvforall>{0080C0}YVELA{FFFFFF}
+<keysinverted>{FFFF00}SHEICVALA{FFFFFF}
+<infoprojectlimit>{FFFFFF}Proektebis Limiti Amoiwura!
+<infoprojectinvalidname>{FFFFFF}Saxeli Dzanlian Moklea An Sheicavs Araswor Simboloebs
+<infoprojectexists>{FFFFFF}Es Proekti Ukve Arsebobs.
+<infoprojectcreated>{FFFFFF}Proekti"{F5D742}#1{FFFFFF}" Warmatebit Sheikmna!
+<infoprojectclosed>{FFFFFF}Proekti Warmatebit Sheinaxa Da Daixura.
+<infoprojectsaveerror>{FFFFFF}Shecdoma Proektis Shenaxvis Dros.
+<infoprojectloaded>{FFFFFF}Proekti "{F5D742}#1{FFFFFF}" Warmatebit Chaitvirta!
+<previewmodelidinvalid>{FFFFFF}Modelis ID Arasworia!
+<projectrenamed>{FFFFFF}Proekti Warmatebit Sheicvala. #n{FFFFFF}Dzveli Saxeli:"{F5D742}#1{FFFFFF}"#n{FFFFFF}Axali Saxeli: "{F5D742}#2{FFFFFF}"
+<projectnamechangecharerr>{FFFFFF}Saxeli Dzalian Moklea An Sheicavs Ucxo Simboloebs.
+<projectnameexists>{FFFFFF}Es Proekti Ukve Arsebobs
+<projectnamechangeerror>{FFFFFF}Shecdoma Proektis Saxelis Gadarkmevis Dros.
+<projectloaderror>{FFFFFF}Shecdoma Proektis Chatvirtvis Dros.
+<projectdeleteerror>{FFFFFF}Shecdoma Proektis Washlis Dros.
+<projectdeleted>{FFFFFF}Proekti "{F5D742}#1{FFFFFF}" Waishala.
+<modelpreviewinvalidfont>{FFFFFF}Am Funkiistvis, Fonti Daakenet 5ze!
+<noprojectsfound>{FFFFFF}Am Momentshi Ar Gavkt Proektebi.
+<modeltexterror>{FFFFFF}Cannot change model preview text
+<infocompmodedisabled>{FFFFFF}Compact Rejimi: {FF0000}OFF
+<infocompmodeenabled>{FFFFFF}Compact Rejimi: {00FF00}ON
+<compmodeenabled>{00FF00}ON{FFFFFF}
+<compmodedisabled>{FF0000}OFF{FFFFFF}
+<manualchangetypemzoom>Zoom
+<manualchangetypemcolor1>Feri 1
+<manualchangetypemcolor2>Feri 2
+
+#GAMETEXTS
+
+<tdclonedinfo>~y~CLONNED_ID_~r~#1
+<tddeletedinfo>~r~DELETED_ID_#1
+<tdcreatedinfo>~g~NEW_TEXDRAW_CREATED_~r~#1
+<tdselectedinfo>~g~SELECTED_ID_~r~#1
+<tdfontinfo>~w~Font~n~~y~#1
+<tdcoloralpha>~w~Transparency:~y~#1~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdeditorposition>~w~X:~y~#1~n~~w~Y:~y~#2~n~~p~SHIFT=Faster~n~SPACEBAR=End
+<tdprevmodelcolor>~w~Color 1:~y~#1 ~w~Color 2:~y~#2 ~n~~p~SHIFT=Color 2~n~ALT=Manual~n~SPACEBAR=End
+<tdposition>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~~p~ALT=Manual~n~~p~SPACEBAR=End
+<tdrotation>~w~X:~y~#1 ~w~Y:~y~#2~n~~w~Z:~y~#3~n~~p~SHIFT=Value Y~n~ALT=Manual~n~SPACEBAR=End
+<tdsize>~w~X:~y~#1 ~w~Y:~y~#2~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdpremodelzoom>~w~Zoom:~y~#1~n~~p~SHIFT=Faster~n~ALT=Manual~n~SPACEBAR=End
+<tdsprite>~w~Sprite: ~y~#1~n~~w~(~g~ID: #2~w~)~n~~p~SPACEBAR=End
+<tdlayer>~w~Layer: ~y~#1~n~~p~SPACEBAR=END
+<tdpublic>~g~Public
+<tdperplayer>~b~For Player
+<tdclickable>~w~Clickable: ~g~YES
+<tdnotclickable>~w~Clickable: ~r~NO
+<tdshadowsize>~w~Shadow Size~n~~y~#1
+<tdboxenabled>~w~Box: ~g~ON
+<tdboxdisabled>~w~Box: ~r~OFF
+<tdoutlinesize>~w~Outline Size~n~~y~#1
+<tdproportionality_true>~g~Proportional
+<tdproportionality_false>~r~Non-Proportional
+<tdalignment_left>~w~Alignment~n~~y~LEFT
+<tdalignment_center>~w~Alignment~n~~g~CENTER
+<tdalignment_right>~w~Alignment~n~~r~RIGHT
+<tdalignment_up>~w~Alignment~n~~b~UP
+<tdalignment_down>~w~Alignment~n~~p~DOWN
+<tdfontplayerprogressbar>~w~Font~n~~r~Player Progress Bar
+<tdfontspriteinfo>~w~Font~n~~g~TXD Sprite
+<tdfontprevmodelinfo>~w~Font~n~~b~Model Preview
+
+#DIALOGS
+
+<dialog name="dialogsettings">
+	<caption>Editoris Parametrebi
+	<info0>{FFFFFF}Editoris Poziciis Shecvla
+	<info1>{FFFFFF}Monishvnis Feris Shecvla
+	<info2>{FFFFFF}Gilakis Feris Shecvla
+	<info3>{FFFFFF}Shecvla SHIFT SPACEBAR'it #1
+	<info4>{FFFFFF}Swrafi Archeva: [#2]
+	<info5>{FFFFFF}TextDraw Chvenba: [#3]
+	<info6>{FFFFFF}Compact Rejimi: [#4]
+	<info7>{FFFFFF}Enis Shecvla
+	<info8>{FF0000}Dziritadi Parametrebis Dabruneba
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="spritechange">
+	<caption>Sprite change
+	<info0>{FFFFFF}Chaweret SPRITE'is Saxeli
+	<info1>{FFFFFF}Nimushi: {FF8040}hud:radar_impound
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="overridecolorchange">
+	<caption>Monishvnis Feris Shecvla
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="buttonscolorchange">
+	<caption>Gilakis Feris Shecvla
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="oldversionsettingsreset">
+	<caption>Sxva Versia Dafiksirda
+	<info0>{FFFFFF}Es Skripti Gansxvavebulia Am Konfiguraciisgan.
+	<info1>{FFFFFF}Gnebavt Daabrunot Dziritadi Parametrebi Uket Mushaobistvis?
+	<button1>Ki
+	<button2>Ara
+</dialog>
+
+<dialog name="settingsreset">
+	<caption>Dziritadi Parametrebis Dabruneba
+	<info0>{FFFFFF}Gnebavt Dziritadi Parametrebis Dabruneba?
+	<button1>Ki
+	<button2>Ara
+</dialog>
+
+<dialog name="newproject">
+	<caption>New project
+	<info0>{FFFFFF}Chaweret Axali Proektis Saxeli
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="textdrawslist">
+	<caption>Chemi TextDraws (#1/#2)
+	<info0>{FFFFFF}ID/Text#t{FFFFFF}Cvladis Saxeli
+	<info1>{FF8800}Shekmeni Axali TextDraw#t
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="projectslist">
+	<caption>Chemi Proektebi (#1/#2)
+	<info0>{FF8800}Name#t{FF8800}TextDraw Amtvlelik#t{FF8800}Bolo Shecvla#n
+	<button1>Archeva
+	<button2>Ukan
+</dialog>
+
+<dialog name="exportproject">
+	<caption>Exporti ...
+	<info0>{FF8800}Chveulebrivi Export
+	<info1>{FF8800}Funkciuri Filterscript
+	<button1>Export
+	<button2>Back
+</dialog>
+
+<dialog name="newtextdraw">
+	<caption>Axali TextDraw
+	<info0>{FF8800}Chveulebrici
+	<info1>{FF8800}Gamoikene Template
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="exitconfirmation">
+	<caption>Gasvla
+	<info0>{FFFFFF}Namdvilad Gsurt Editoridan Gasvla?
+	<info1>{FFFFFF}Gaxsnili Proektebi Avtomaturad Sheinaxeba.
+	<button1>KI
+	<button2>ARA
+</dialog>
+
+<dialog name="tdoptions">
+	<caption>ID #1 "#2"
+	<info0>{FF8800}Damateba
+	<info1>{FF8800}Kloni
+	<info2>{FF8800}Fenis Shecvla
+	<info3>{FF8800}Cvladis Shecvla
+	<info4>{FF0000}Washla
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="projectsoptions">
+	<caption>Proekti
+	<info0>{FFFFFF}Chatvirtva
+	<info1>{FFFFFF}Saxelis Shecvla
+	<info2>{FF0000}Washla
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="previewmodelid">
+	<caption>Model Preview
+	<info0>{FFFFFF}Chaweret Obiektis Modelis ID
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="variablechange">
+	<caption>Shecvla Cvladi
+	<info0>{FFFFFF}Chawere Axali Cvladis Saxeli
+	<info1>{FFFFFF}Datove Carieli Chveulebrivi Saxelistvis
+	<info2>{FFFFFF}Axlandeli Cvladi: {F5D742}#1
+	<info3>{FFFFFF}TextDraw Teksti: {F5D742}#2
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchange">
+	<caption>Color change
+	<info0>{FFFFFF}Provide Color in the given formats:#n
+	<info1>{FFFFFF}Example for RGBA: {FF5A57}224 {58FF57}66 {5AA7FF}245 {FFFFFF}255
+	<info2>{FFFFFF}Example for HEX/HTML: {FF5A57}E0{58FF57}42{5AA7FF}F5{FFFFFF}FF#n
+	<info3>{FFFFFF}Current RGBA: {F5D742}#1 #2 #3 #4
+	<info4>{FFFFFF}Current HEX/HTML: {F5D742}#5
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="deletedconfirm">
+	<caption>Deleting
+	<info0>{FFFFFF}Namdvilad Gsurt Am TextDrawis Washla?
+	<info1>{FFFFFF}Text: {F5D742}"#1"
+	<button1>YES
+	<button2>NO
+</dialog>
+
+<dialog name="usetemplate">
+	<caption>Use template
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="premadecolors">
+	<caption>Change color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="textchange">
+	<caption>Change text
+	<info0>{FFFFFF}Enter the text to be set
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="spritechangelist">
+	<caption>Change Sprite 
+	<info0>{FF8800}Enter manualy
+	<info1>{FF8800}Choose from library
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="boxsizechangelist">
+	<caption>Change size
+	<info0>{FF8800}Text/Box (Size)
+	<info1>{FF8800}Box (Width)
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="previewmodelchangelist">
+	<caption>Model preview
+	<info0>{FF8800}Modelis Shecvla
+	<info1>{FF8800}Motrialebis Shecvla
+	<info2>{FF8800}Zoomis Shecvla
+	<info3>{FF8800}Mankanis Feris Shecvla
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="deleteprojectconfirm">
+	<caption>Washla
+	<info0>{FFFFFF}Namdvilad Gsurt Waishalot Es Proekti?
+	<button1>KI
+	<button2>ARA
+</dialog>
+
+<dialog name="changeprojectname">
+	<caption>Change project name
+	<info0>{FFFFFF}Chaweret Proektis Axali Saxeli.
+	<info1>{FFFFFF}Exlandeli Saxeli: {F5D742}"#1"
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchangelist1">
+	<caption>Change color
+	<info0>{FF8800}Text color
+	<info1>{FF8800}Background / border color
+	<info2>{FF8800}Box color
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="colorchangelist2">
+	<caption>Change color
+	<info0>{FF8800}Premade colors
+	<info1>{FF8800}Custom
+	<info2>{FF8800}Change transparency
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="exportwitharray">
+	<caption>Project export
+	<info0>{FFFFFF}Would you like to export this project with array mode enabled?
+	<info1>{FFFFFF}Textdraws with the default variable name will be added to the array to reduce the amount of code.
+	<button1>Yes
+	<button2>No
+</dialog>
+
+<dialog name="manualvarchange">
+	<caption>Manual change of value
+	<info0>{FFFFFF}Cvladi#t{FFFFFF}Exlandeli Value
+	<info1>{FFFFFF}Value {F5D742}X#t{FFFFFF}#1
+	<info2>{FFFFFF}Value {F5D742}Y#t{FFFFFF}#2
+	<info3>{FFFFFF}Value {F5D742}Z#t{FFFFFF}#3
+	<info4>{FFFFFF}Value {F5D742}Zoom#t{FFFFFF}#4
+	<info5>{FFFFFF}Value {F5D742}Feri 1#t{FFFFFF}#5
+	<info6>{FFFFFF}Value {F5D742}Feri 2#t{FFFFFF}#6
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="manualchangemessage">
+	<caption>Manual change of value
+	<info0>{FFFFFF}Chaweret Axali Zoma{F5D742}#1#n{FFFFFF}Exlandeli Zoma: {F5D742}#2
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+<dialog name="barmaxpercentagechange">
+	<caption>Change max. Progress bar value
+	<info0>{FFFFFF}Maksimum Progres Baris Zoma.
+	<info1>{FFFFFF}Exlandeli Zoma: {F5D742}#1%
+	<button1>Confirm
+	<button2>Back
+</dialog>
+
+
